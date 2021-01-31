@@ -6,7 +6,7 @@ from typing import Any, TypeVar
 date_adder_type = TypeVar("date_adder_type", bound="DateAdder")
 
 
-class DateAdder(BaseEstimator, TransformerMixin):
+class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     def __init__(
         self,
         day_of_week: bool = False,
