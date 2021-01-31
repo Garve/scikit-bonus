@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="scikit-bonus-garve",  # Replace with your own username
+    name="scikit-bonus",
     version="0.0.1",
     author="Robert Kübler",
     author_email="xgarve@gmail.com",
