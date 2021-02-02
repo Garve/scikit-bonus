@@ -1,4 +1,4 @@
-from skbonus.pandas.dates import DateFeaturesAdder
+from skbonus.pandas.time import DateFeaturesAdder
 import pandas as pd
 
 d = DateFeaturesAdder()

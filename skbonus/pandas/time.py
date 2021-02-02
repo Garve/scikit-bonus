@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from typing import Any, TypeVar
-
-date_adder_type = TypeVar("date_adder_type", bound="DateAdder")
+from typing import Any, Optional, List
 
 
 class DateFeaturesAdder(BaseEstimator, TransformerMixin):
@@ -21,7 +19,6 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         week_of_year: bool = False,
         month: bool = True,
         year: bool = True,
-        dummify: bool = False,
     ) -> None:
         """
         Read all hyper parameters.
@@ -33,7 +30,6 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         :param week_of_year: Add week of year (ISO).
         :param month: Add month.
         :param year: Add year.
-        :param dummify: Create dummy variables of all columns.
         """
         self.day_of_week = day_of_week
         self.day_of_month = day_of_month
@@ -42,7 +38,6 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         self.week_of_year = week_of_year
         self.month = month
         self.year = year
-        self.dummify = dummify
 
     @staticmethod
     def _add_day_of_week(X: pd.DataFrame, use: bool) -> pd.DataFrame:
@@ -125,7 +120,13 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         """
         return X.assign(year=lambda df: df.index.year) if use else X
 
-    def fit(self, X: pd.DataFrame, y: Any = None) -> date_adder_type:
+    def fit(self, X: pd.DataFrame, y: Any = None) -> "DateFeaturesAdder":
+        """
+        Does nothing. Just for scikit-learn compatibility.
+        :param X:
+        :param y:
+        :return:
+        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -144,7 +145,42 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
             .pipe(self._add_month, use=self.month)
             .pipe(self._add_year, use=self.year)
         )
-        if self.dummify:
-            return pd.get_dummies(res, columns=res.columns)
-        else:
-            return res
+        return res
+
+
+class Dummyfier(BaseEstimator, TransformerMixin):
+    """
+    This class is a wrapper for pd.get_dummies for use in scikit-learn pipelines.
+    It one hot encodes specified columns.
+    """
+
+    def __init__(
+        self, columns: Optional[List[str]] = None, drop_first: bool = False
+    ) -> None:
+        """
+        Read all hyperparameters.
+
+        :param columns: Columns to be one hot encoded. If None, use all columns of pandas type category or object.
+        :param drop_first: Drop the first of the columns created by the one hot encoding.
+        """
+        self.columns = columns
+        self.drop_first = drop_first
+
+    def fit(self, X: pd.DataFrame, y: None = None) -> "Dummyfier":
+        """
+        Does nothing.  Just for scikit-learn compatibility.
+
+        :param X:
+        :param y:
+        :return:
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        One hot encode the columns.
+
+        :param X: Dataframe to be one hot encoded.
+        :return: The one hot encoded dataframe.
+        """
+        return pd.get_dummies(X, columns=self.columns, drop_first=self.drop_first)
