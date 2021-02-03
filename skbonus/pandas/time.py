@@ -148,7 +148,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         return res
 
 
-class Dummyfier(BaseEstimator, TransformerMixin):
+class Dummifier(BaseEstimator, TransformerMixin):
     """
     This class is a wrapper for pd.get_dummies for use in scikit-learn pipelines.
     It one hot encodes specified columns.
@@ -158,7 +158,7 @@ class Dummyfier(BaseEstimator, TransformerMixin):
         self, columns: Optional[List[str]] = None, drop_first: bool = False
     ) -> None:
         """
-        Read all hyperparameters.
+        Read all hyper parameters.
 
         :param columns: Columns to be one hot encoded. If None, use all columns of pandas type category or object.
         :param drop_first: Drop the first of the columns created by the one hot encoding.
@@ -166,7 +166,7 @@ class Dummyfier(BaseEstimator, TransformerMixin):
         self.columns = columns
         self.drop_first = drop_first
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "Dummyfier":
+    def fit(self, X: pd.DataFrame, y: None = None) -> "Dummifier":
         """
         Does nothing.  Just for scikit-learn compatibility.
 
@@ -184,3 +184,44 @@ class Dummyfier(BaseEstimator, TransformerMixin):
         :return: The one hot encoded dataframe.
         """
         return pd.get_dummies(X, columns=self.columns, drop_first=self.drop_first)
+
+
+class PowerTrendAdder(BaseEstimator, TransformerMixin):
+    """
+    Adds a power trend to the data.
+    """
+
+    def __init__(self, power: float = 1) -> None:
+        """
+        Read all hyper parameters.
+
+        :param power: Exponent to use for the trend, i.e. linear (power=1), root (power=0.5), or cube (power=3).
+        """
+        self.power = power
+
+    def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrendAdder":
+        """
+        Fits the model. It assigns value 0 to the first item of the time index and 1 to the second one.
+        This way, we can get a value for any other date in a linear fashion.
+
+        :param X: Input dataframe with a time index.
+        :param y:
+        :return:
+        """
+        t1 = X.index[0].value
+        t2 = X.index[1].value
+
+        self.mapper_ = lambda x: (x - t1) / (t2 - t1)
+
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add the trend to the input dataframe.
+
+        :param X: Input dataframe with a time index.
+        :return: Dataframe with an additional trend columns.
+        """
+        index = X.index.astype(int)
+
+        return X.assign(trend=self.mapper_(index) ** self.power)
