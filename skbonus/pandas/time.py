@@ -53,14 +53,14 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(
-            self,
-            day_of_week: bool = False,
-            day_of_month: bool = True,
-            day_of_year: bool = False,
-            week_of_month: bool = False,
-            week_of_year: bool = False,
-            month: bool = True,
-            year: bool = True
+        self,
+        day_of_week: bool = False,
+        day_of_month: bool = True,
+        day_of_year: bool = False,
+        week_of_month: bool = False,
+        week_of_year: bool = False,
+        month: bool = True,
+        year: bool = True,
     ) -> None:
         self.day_of_week = day_of_week
         self.day_of_month = day_of_month
@@ -138,11 +138,9 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         -------
         transformed_X : pd.DataFrame
             A pandas dataframe with additional time feature columns.
-
         """
         res = (
-            X
-            .pipe(self._add_day_of_week)
+            X.pipe(self._add_day_of_week)
             .pipe(self._add_day_of_month)
             .pipe(self._add_day_of_year)
             .pipe(self._add_week_of_month)
@@ -276,29 +274,37 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
     >>> df = pd.DataFrame({'A': range(7)}, index=pd.date_range(start='2019-12-29', periods=7))
     >>> sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'])
     >>> sda.fit_transform(df)
-                A	new_year_2020
-    2019-12-29	0	          0.0
-    2019-12-30	1	          0.0
-    2019-12-31	2	          0.0
-    2020-01-01	3	          1.0
-    2020-01-02	4	          0.0
-    2020-01-03	5	          0.0
-    2020-01-04	6	          0.0
+                A   new_year_2020
+    2019-12-29  0             0.0
+    2019-12-30  1             0.0
+    2019-12-31  2             0.0
+    2020-01-01  3             1.0
+    2020-01-02  4             0.0
+    2020-01-03  5             0.0
+    2020-01-04  6             0.0
 
-    >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'], window=5, center=True, win_type='gaussian', std=1)
+    >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'],
+    ... window=5, center=True, win_type='gaussian', std=1)
     >>> smooth_sda.fit_transform(df)
-                A	new_year_2020
-    2019-12-29	0	          NaN
-    2019-12-30	1	          NaN
-    2019-12-31	2	     0.606531
-    2020-01-01	3	     1.000000
-    2020-01-02	4	     0.606531
-    2020-01-03	5	          NaN
-    2020-01-04	6	          NaN
+                A   new_year_2020
+    2019-12-29  0             NaN
+    2019-12-30  1             NaN
+    2019-12-31  2        0.606531
+    2020-01-01  3        1.000000
+    2020-01-02  4        0.606531
+    2020-01-03  5             NaN
+    2020-01-04  6             NaN
     """
 
-    def __init__(self, name: str, dates: List[Union[pd.Timestamp, str]], window: int = 1, center: bool = False,
-                 win_type: Optional[str] = None, **window_function_kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        dates: List[Union[pd.Timestamp, str]],
+        window: int = 1,
+        center: bool = False,
+        win_type: Optional[str] = None,
+        **window_function_kwargs
+    ) -> None:
         self.name = name
         self.dates = dates
         self.window = window
@@ -338,8 +344,9 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         """
         dummy_dates = pd.Series(X.index.isin(self.dates)).astype(int)
         smoothed_dates = (
-            dummy_dates
-            .rolling(window=self.window, center=self.center, win_type=self.win_type)
+            dummy_dates.rolling(
+                window=self.window, center=self.center, win_type=self.win_type
+            )
             .sum(**self.window_function_kwargs)
             .values
         )
