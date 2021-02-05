@@ -2,5 +2,4 @@ build
 dist
 *.egg-info
 .pytest_cache
-main.py
 venv

@@ -1,5 +1,6 @@
-from skbonus.pandas.time import DateFeaturesAdder, PowerTrendAdder
 import pandas as pd
+
+from skbonus.pandas.time import DateFeaturesAdder, PowerTrendAdder
 
 dfa = DateFeaturesAdder(
     day_of_week=True,
@@ -9,6 +10,7 @@ dfa = DateFeaturesAdder(
     week_of_year=True,
     month=True,
     year=True,
+    special_dates={"new_year_2000": [pd.Timestamp("2000-01-01")]},
 )
 pta = PowerTrendAdder(power=2)
 
@@ -52,3 +54,7 @@ def test__add_month():
 
 def test__add_year():
     assert dfa._add_year(test_df).year.tolist() == [1988, 2000, 1950]
+
+
+def test__add_special_dates():
+    assert dfa._add_special_dates(test_df).new_year_2000.tolist() == [0, 1, 0]

@@ -1,6 +1,7 @@
-from skbonus.metrics import mape, smape, mda
-import pytest
 import numpy as np
+import pytest
+
+from skbonus.metrics import mape, smape, mda
 
 
 @pytest.mark.parametrize(

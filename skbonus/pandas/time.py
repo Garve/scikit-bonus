@@ -1,7 +1,8 @@
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from typing import Any
 
 
 class DateFeaturesAdder(BaseEstimator, TransformerMixin):
@@ -32,6 +33,12 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     year : bool, default=True
         Whether to extract the year from the index and add it as a new column.
 
+    special_dates : Optional[Dict[str, List[pd.Timestamp]]], default=None
+        For each key in this dictionery, add another column to the dataframe. The value is
+        1 if the date from the index lies within the corresponding list, else 0. If you need an
+        indicator for whether the index lies within the dates from 2020-02-15 to 2020-02-23, for example,
+        use special_dates={'special_february_days': pd.date_range(start='2020-02-15', end='2020-02-23')}.
+
     Examples
     --------
     >>> import pandas as pd
@@ -42,12 +49,13 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     ...         pd.Timestamp("2000-01-01"),
     ...         pd.Timestamp("1950-12-31"),
     ...     ])
-    >>> dfa = DateFeaturesAdder()
+    >>> new_year = {'new_year_2000': [pd.Timestamp('2000-01-01')]}
+    >>> dfa = DateFeaturesAdder(special_dates=new_year)
     >>> dfa.fit_transform(df)
-                A   day_of_month    month    year
-    1988-08-08  a              8        8    1988
-    2000-01-01  b              1        1    2000
-    1950-12-31  c             31       12    1950
+                A   day_of_month    month    year   new_year_2000
+    1988-08-08  a              8        8    1988               0
+    2000-01-01  b              1        1    2000               1
+    1950-12-31  c             31       12    1950               0
     """
 
     def __init__(
@@ -59,6 +67,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         week_of_year: bool = False,
         month: bool = True,
         year: bool = True,
+        special_dates: Optional[Dict[str, List[pd.Timestamp]]] = None,
     ) -> None:
         self.day_of_week = day_of_week
         self.day_of_month = day_of_month
@@ -67,6 +76,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         self.week_of_year = week_of_year
         self.month = month
         self.year = year
+        self.special_dates = special_dates
 
     def _add_day_of_week(self, X: pd.DataFrame) -> pd.DataFrame:
         return (
@@ -105,8 +115,21 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     def _add_year(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.assign(year=lambda df: df.index.year) if self.year else X
 
+    def _add_special_dates(self, X: pd.DataFrame) -> pd.DataFrame:
+        return (
+            X.assign(
+                **{
+                    date_name: X.index.isin(dates).astype(int)
+                    for date_name, dates in self.special_dates.items()
+                }
+            )
+            if self.special_dates
+            else X
+        )
+
     def fit(self, X: pd.DataFrame, y: Any = None) -> "DateFeaturesAdder":
         """
+        Fit the estimator. In this special case, nothing is done.
 
         Parameters
         ----------
@@ -145,6 +168,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
             .pipe(self._add_week_of_year)
             .pipe(self._add_month)
             .pipe(self._add_year)
+            .pipe(self._add_special_dates)
         )
         return res
 
