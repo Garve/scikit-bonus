@@ -115,6 +115,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         ----------
         X : pd.DataFrame
             A pandas dataframe with a DatetimeIndex.
+
         y : Ignored
             Not used, present here for API consistency by convention.
 
@@ -194,6 +195,7 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         X : pd.DataFrame
             A pandas dataframe with a DatetimeIndex.
         y : Ignored
+
             Not used, present here for API consistency by convention.
 
         Returns
@@ -245,21 +247,26 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
     ----------
     name : str
         The name of the new column. Usually a holiday name such as Easter, Christmas, Black Friday, ...
+
     dates : List[Union[pd.Timestamp, str]]
         A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
         Christmas from 2018 to 2020 can be encoded as ['2018-12-24', '2019-12-24', '2020-12-24'].
+
     window : int, default=1
         Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
         it to something larger than 1 only makes sense for a continous DatetimeIndex.
+
     center : bool, default=False
         Whether the window is centered. If True, a window of size 5 at time t includes the times
         t-2, t-1, t, t+1 and t+2. Useful if the effect of a holiday can be seen before the holiday already.
         If False, the window would include t-4, t-3, t-2, t-1, t. Useful if the effect of a holiday starts
         exactly with the holiday and wears off over time.
+
     win_type : Optional[str], default=None
         Type of smoothing. A value of None leaves the default one hot encoding, i.e. the output column
         contains 0 and 1 only. Another interesting window is 'gaussian', which also requires the parameter std.
         See the notes below for further information.
+
     window_function_kwargs : Optional[Any]
         Settings for certain win_type functions, for example std if win_type='gaussian'.
 
@@ -320,6 +327,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         ----------
         X : pd.DataFrame
             A pandas dataframe with a DatetimeIndex.
+
         y : Ignored
             Not used, present here for API consistency by convention.
 
@@ -337,6 +345,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         ----------
         X : pd.DataFrame
             A pandas dataframe with a DatetimeIndex.
+
         Returns
         -------
         transformed_X : pd.DataFrame

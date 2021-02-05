@@ -11,6 +11,7 @@ def mape(y_true: np.array, y_pred: np.array) -> float:
     ----------
     y_true : np.array (non-negative numbers)
         Observed values.
+
     y_pred : np.array
         Predicted values.
 
@@ -40,6 +41,7 @@ def smape(y_true: np.array, y_pred: np.array) -> float:
     ----------
     y_true : np.array (non-negative numbers)
         Observed values.
+
     y_pred : np.array
         Predicted values.
 
@@ -70,6 +72,7 @@ def mda(y_true: np.array, y_pred: np.array) -> float:
     ----------
     y_true : np.array (non-negative numbers)
         Observed values.
+
     y_pred : np.array
         Predicted values.
 
