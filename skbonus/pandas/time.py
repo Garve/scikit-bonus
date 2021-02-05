@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -7,7 +7,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     """
-    This class enriches pandas dataframes with a DatetimeIndex with new columns.
+    This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns are easy
+    derivations from the index, such as the day of week or month.
     This is especially useful when dealing with time series regressions or classifications.
 
     Parameters
@@ -33,12 +34,6 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     year : bool, default=True
         Whether to extract the year from the index and add it as a new column.
 
-    special_dates : Optional[Dict[str, List[pd.Timestamp]]], default=None
-        For each key in this dictionery, add another column to the dataframe. The value is
-        1 if the date from the index lies within the corresponding list, else 0. If you need an
-        indicator for whether the index lies within the dates from 2020-02-15 to 2020-02-23, for example,
-        use special_dates={'special_february_days': pd.date_range(start='2020-02-15', end='2020-02-23')}.
-
     Examples
     --------
     >>> import pandas as pd
@@ -49,25 +44,23 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     ...         pd.Timestamp("2000-01-01"),
     ...         pd.Timestamp("1950-12-31"),
     ...     ])
-    >>> new_year = {'new_year_2000': [pd.Timestamp('2000-01-01')]}
-    >>> dfa = DateFeaturesAdder(special_dates=new_year)
+    >>> dfa = DateFeaturesAdder()
     >>> dfa.fit_transform(df)
-                A   day_of_month    month    year   new_year_2000
-    1988-08-08  a              8        8    1988               0
-    2000-01-01  b              1        1    2000               1
-    1950-12-31  c             31       12    1950               0
+                A   day_of_month    month    year
+    1988-08-08  a              8        8    1988
+    2000-01-01  b              1        1    2000
+    1950-12-31  c             31       12    1950
     """
 
     def __init__(
-        self,
-        day_of_week: bool = False,
-        day_of_month: bool = True,
-        day_of_year: bool = False,
-        week_of_month: bool = False,
-        week_of_year: bool = False,
-        month: bool = True,
-        year: bool = True,
-        special_dates: Optional[Dict[str, List[pd.Timestamp]]] = None,
+            self,
+            day_of_week: bool = False,
+            day_of_month: bool = True,
+            day_of_year: bool = False,
+            week_of_month: bool = False,
+            week_of_year: bool = False,
+            month: bool = True,
+            year: bool = True
     ) -> None:
         self.day_of_week = day_of_week
         self.day_of_month = day_of_month
@@ -76,7 +69,6 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         self.week_of_year = week_of_year
         self.month = month
         self.year = year
-        self.special_dates = special_dates
 
     def _add_day_of_week(self, X: pd.DataFrame) -> pd.DataFrame:
         return (
@@ -115,18 +107,6 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     def _add_year(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.assign(year=lambda df: df.index.year) if self.year else X
 
-    def _add_special_dates(self, X: pd.DataFrame) -> pd.DataFrame:
-        return (
-            X.assign(
-                **{
-                    date_name: X.index.isin(dates).astype(int)
-                    for date_name, dates in self.special_dates.items()
-                }
-            )
-            if self.special_dates
-            else X
-        )
-
     def fit(self, X: pd.DataFrame, y: Any = None) -> "DateFeaturesAdder":
         """
         Fit the estimator. In this special case, nothing is done.
@@ -161,14 +141,14 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
 
         """
         res = (
-            X.pipe(self._add_day_of_week)
+            X
+            .pipe(self._add_day_of_week)
             .pipe(self._add_day_of_month)
             .pipe(self._add_day_of_year)
             .pipe(self._add_week_of_month)
             .pipe(self._add_week_of_year)
             .pipe(self._add_month)
             .pipe(self._add_year)
-            .pipe(self._add_special_dates)
         )
         return res
 
@@ -249,6 +229,122 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         index = X.index.astype(int)
 
         return X.assign(trend=self.mapper_(index) ** self.power)
+
+
+class SpecialDatesAdder(BaseEstimator, TransformerMixin):
+    """
+    This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns
+    contain whether the index lies within a time interval. For example, the output can be
+    a one hot encoded column containing a 1 if the corresponding date from the index is within
+    the given date range, and 0 otherwise.
+    The output can also be a smoothed by sliding a window over the one hot encoded column as a next step.
+    This makes sense when, for example, a certain holiday has effects on the next days or the days before, too.
+    See the examples to get a better understanding.
+
+    This is especially useful when dealing with time series regressions or classifications.
+
+    Parameters
+    ----------
+    name : str
+        The name of the new column. Usually a holiday name such as Easter, Christmas, Black Friday, ...
+    dates : List[Union[pd.Timestamp, str]]
+        A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
+        Christmas from 2018 to 2020 can be encoded as ['2018-12-24', '2019-12-24', '2020-12-24'].
+    window : int, default=1
+        Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
+        it to something larger than 1 only makes sense for a continous DatetimeIndex.
+    center : bool, default=False
+        Whether the window is centered. If True, a window of size 5 at time t includes the times
+        t-2, t-1, t, t+1 and t+2. Useful if the effect of a holiday can be seen before the holiday already.
+        If False, the window would include t-4, t-3, t-2, t-1, t. Useful if the effect of a holiday starts
+        exactly with the holiday and wears off over time.
+    win_type : Optional[str], default=None
+        Type of smoothing. A value of None leaves the default one hot encoding, i.e. the output column
+        contains 0 and 1 only. Another interesting window is 'gaussian', which also requires the parameter std.
+        See the notes below for further information.
+    window_function_kwargs : Optional[Any]
+        Settings for certain win_type functions, for example std if win_type='gaussian'.
+
+    Notes
+    -----
+    win_type accepts a string of any scipy.signal window function, see
+    https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({'A': range(7)}, index=pd.date_range(start='2019-12-29', periods=7))
+    >>> sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'])
+    >>> sda.fit_transform(df)
+                A	new_year_2020
+    2019-12-29	0	          0.0
+    2019-12-30	1	          0.0
+    2019-12-31	2	          0.0
+    2020-01-01	3	          1.0
+    2020-01-02	4	          0.0
+    2020-01-03	5	          0.0
+    2020-01-04	6	          0.0
+
+    >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'], window=5, center=True, win_type='gaussian', std=1)
+    >>> smooth_sda.fit_transform(df)
+                A	new_year_2020
+    2019-12-29	0	          NaN
+    2019-12-30	1	          NaN
+    2019-12-31	2	     0.606531
+    2020-01-01	3	     1.000000
+    2020-01-02	4	     0.606531
+    2020-01-03	5	          NaN
+    2020-01-04	6	          NaN
+    """
+
+    def __init__(self, name: str, dates: List[Union[pd.Timestamp, str]], window: int = 1, center: bool = False,
+                 win_type: Optional[str] = None, **window_function_kwargs) -> None:
+        self.name = name
+        self.dates = dates
+        self.window = window
+        self.center = center
+        self.win_type = win_type
+        self.window_function_kwargs = window_function_kwargs
+
+    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDatesAdder":
+        """
+        Fit the estimator. In this special case, nothing is done.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe with a DatetimeIndex.
+        y : Ignored
+            Not used, present here for API consistency by convention.
+
+        Returns
+        -------
+        self
+            Fitted transformer.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe with a DatetimeIndex.
+        Returns
+        -------
+        transformed_X : pd.DataFrame
+            A pandas dataframe with an additional column for special dates.
+        """
+        dummy_dates = pd.Series(X.index.isin(self.dates)).astype(int)
+        smoothed_dates = (
+            dummy_dates
+            .rolling(window=self.window, center=self.center, win_type=self.win_type)
+            .sum(**self.window_function_kwargs)
+            .values
+        )
+
+        return X.assign(**{self.name: smoothed_dates})
 
 
 if __name__ == "__main__":
