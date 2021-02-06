@@ -1,11 +1,11 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Dict
 
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-class DateFeaturesAdder(BaseEstimator, TransformerMixin):
+class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     """
     This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns are easy
     derivations from the index, such as the day of week or month.
@@ -13,6 +13,15 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
+    second : bool, default=False
+        Whether to extract the day of week from the index and add it as a new column.
+
+    minute : bool, default=False
+        Whether to extract the day of week from the index and add it as a new column.
+
+    hour : bool, default=False
+        Whether to extract the day of week from the index and add it as a new column.
+
     day_of_week : bool, default=False
         Whether to extract the day of week from the index and add it as a new column.
 
@@ -44,8 +53,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     ...         pd.Timestamp("2000-01-01"),
     ...         pd.Timestamp("1950-12-31"),
     ...     ])
-    >>> dfa = DateFeaturesAdder()
-    >>> dfa.fit_transform(df)
+    >>> TimeFeaturesAdder().fit_transform(df)
                 A   day_of_month    month    year
     1988-08-08  a              8        8    1988
     2000-01-01  b              1        1    2000
@@ -54,6 +62,9 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
+        second: bool = False,
+        minute: bool = False,
+        hour: bool = False,
         day_of_week: bool = False,
         day_of_month: bool = True,
         day_of_year: bool = False,
@@ -62,6 +73,9 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         month: bool = True,
         year: bool = True,
     ) -> None:
+        self.second = second
+        self.minute = minute
+        self.hour = hour
         self.day_of_week = day_of_week
         self.day_of_month = day_of_month
         self.day_of_year = day_of_year
@@ -70,9 +84,20 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         self.month = month
         self.year = year
 
+    def _add_second(self, X: pd.DataFrame) -> pd.DataFrame:
+        return X.assign(second=lambda df: df.index.second) if self.second else X
+
+    def _add_minute(self, X: pd.DataFrame) -> pd.DataFrame:
+        return X.assign(minute=lambda df: df.index.minute) if self.minute else X
+
+    def _add_hour(self, X: pd.DataFrame) -> pd.DataFrame:
+        return X.assign(hour=lambda df: df.index.hour) if self.hour else X
+
     def _add_day_of_week(self, X: pd.DataFrame) -> pd.DataFrame:
         return (
-            X.assign(day_of_week=lambda df: df.index.weekday) if self.day_of_week else X
+            X.assign(day_of_week=lambda df: df.index.weekday + 1)
+            if self.day_of_week
+            else X
         )
 
     def _add_day_of_month(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -96,7 +121,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
 
     def _add_week_of_year(self, X: pd.DataFrame) -> pd.DataFrame:
         return (
-            X.assign(week_of_year=lambda df: df.index.weekofyear)
+            X.assign(week_of_year=lambda df: df.index.isocalendar().week)
             if self.week_of_year
             else X
         )
@@ -107,7 +132,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
     def _add_year(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.assign(year=lambda df: df.index.year) if self.year else X
 
-    def fit(self, X: pd.DataFrame, y: Any = None) -> "DateFeaturesAdder":
+    def fit(self, X: pd.DataFrame, y: Any = None) -> "TimeFeaturesAdder":
         """
         Fit the estimator. In this special case, nothing is done.
 
@@ -142,6 +167,9 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
         """
         res = (
             X.pipe(self._add_day_of_week)
+            .pipe(self._add_second)
+            .pipe(self._add_minute)
+            .pipe(self._add_hour)
             .pipe(self._add_day_of_month)
             .pipe(self._add_day_of_year)
             .pipe(self._add_week_of_month)
@@ -167,10 +195,9 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> df = pd.DataFrame(
     ...     {"A": ["a", "b", "c", "d"]},
-    ...     index=pd.date_range(start='1988-08-08', periods=4)
+    ...     index=pd.date_range(start="1988-08-08", periods=4)
     ... )
-    >>> pta = PowerTrendAdder(power=2)
-    >>> pta.fit_transform(df)
+    >>> PowerTrendAdder(power=2).fit_transform(df)
                 A   trend
     1988-08-08  a     0.0
     1988-08-09  b     1.0
@@ -233,7 +260,7 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         return X.assign(trend=self.date_to_index_(index) ** self.power)
 
 
-class SpecialDatesAdder(BaseEstimator, TransformerMixin):
+class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     """
     This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns
     contain whether the index lies within a time interval. For example, the output can be
@@ -252,7 +279,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
 
     dates : List[Union[pd.Timestamp, str]]
         A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
-        Christmas from 2018 to 2020 can be encoded as ['2018-12-24', '2019-12-24', '2020-12-24'].
+        Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
 
     window : int, default=1
         Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
@@ -266,7 +293,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
 
     win_type : Optional[str], default=None
         Type of smoothing. A value of None leaves the default one hot encoding, i.e. the output column
-        contains 0 and 1 only. Another interesting window is 'gaussian', which also requires the parameter std.
+        contains 0 and 1 only. Another interesting window is "gaussian", which also requires the parameter std.
         See the notes below for further information.
 
     pad_value : Union[float, np.nan], default=0.
@@ -275,7 +302,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         See the examples below for further information.
 
     window_function_kwargs : Optional[Any]
-        Settings for certain win_type functions, for example std if win_type='gaussian'.
+        Settings for certain win_type functions, for example std if win_type="gaussian".
 
     Notes
     -----
@@ -285,10 +312,8 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
     Examples
     --------
     >>> import pandas as pd
-    >>> import numpy as np
-    >>> df = pd.DataFrame({'A': range(7)}, index=pd.date_range(start='2019-12-29', periods=7))
-    >>> sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'])
-    >>> sda.fit_transform(df)
+    >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
+    >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"]).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             0.0
     2019-12-30  1             0.0
@@ -298,9 +323,8 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
     2020-01-03  5             0.0
     2020-01-04  6             0.0
 
-    >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'],
-    ... window=5, center=True, win_type='gaussian', std=1)
-    >>> smooth_sda.fit_transform(df)
+    >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"],
+    ... window=5, center=True, win_type="gaussian", std=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0        0.000000
     2019-12-30  1        0.135335
@@ -310,9 +334,8 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
     2020-01-03  5        0.135335
     2020-01-04  6        0.000000
 
-    >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'],
-    ... window=5, center=True, win_type='gaussian', std=1, pad_value=np.nan)
-    >>> smooth_sda.fit_transform(df)
+    >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"],
+    ... window=5, center=True, win_type="gaussian", std=1, pad_value=np.nan).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             NaN
     2019-12-30  1             NaN
@@ -331,7 +354,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         center: bool = False,
         win_type: Optional[str] = None,
         pad_value: Union[float, "np.nan"] = 0,
-        **window_function_kwargs
+        **window_function_kwargs,
     ) -> None:
         self.name = name
         self.dates = dates
@@ -341,7 +364,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         self.pad_value = pad_value
         self.window_function_kwargs = window_function_kwargs
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDatesAdder":
+    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialEventsAdder":
         """
         Fit the estimator. In this special case, nothing is done.
 
@@ -362,6 +385,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
+        Adds the new date feature to the dataframe.
 
         Parameters
         ----------
@@ -388,6 +412,131 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         )
 
         return X.assign(**{self.name: smoothed_dates})
+
+
+class CyclicalEncoder(BaseEstimator, TransformerMixin):
+    """
+    This class breaks each cyclic feature into two new features, corresponding to the representation of
+    this feature on a circle. For example, take the hours from 0 to 23. On a normal, round  analog clock,
+    these features are perfectly aligned on a circle already. You can do the same with days, month, ...
+    See below for an example.
+
+    This method has the advantage that close points in time stay close together. See the examples below.
+
+    Otherwise, if algorithms deal with the raw value for hour they cannot know that 0 and 23 are actually close.
+    Another possibility is one hot encoding the hour. This has the disadvantage that it breaks the distances
+    between different hours. Hour 5 and 16 have the same distance as hour 0 and 23 when doing this.
+
+    Parameters
+    ----------
+    cycles : Optional[Dict[str, Dict[str, str]]], default=None
+        Define cycles in the form {cycle_name: {"min": min_value, "max": max_value}}, e.g.
+        {"day_of_week": {"min": 1, "max": 7}}. Probably you need thos for very specific cycles already
+        since are implemented already:
+            - "second": {"min": 0, "max": 59},
+            - "minute": {"min": 0, "max": 59},
+            - "hour": {"min": 0, "max": 23},
+            - "day_of_week": {"min": 1, "max": 7},
+            - "day_of_month": {"min": 1, "max": 31},
+            - "day_of_year": {"min": 1, "max": 366},
+            - "week_of_month": {"min": 1, "max": 5},
+            - "week_of_year": {"min": 1, "max": 53},
+            - "month": {"min": 1, "max": 12}
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({"hour": [22, 23, 0, 1, 2]})
+    >>> CyclicalEncoder().fit_transform(df)
+        hour        hour_cos         hour_sin
+    0     22        0.866025       -0.500000
+    1     23        0.965926       -0.258819
+    2      0        1.000000        0.000000
+    3      1        0.965926        0.258819
+    4      2        0.866025        0.500000
+    """
+
+    def __init__(self, cycles: Optional[Dict[str, Dict[str, str]]] = None) -> None:
+        DEFAULT_CYCLES = {
+            "second": {"min": 0, "max": 59},
+            "minute": {"min": 0, "max": 59},
+            "hour": {"min": 0, "max": 23},
+            "day_of_week": {"min": 1, "max": 7},
+            "day_of_month": {"min": 1, "max": 31},
+            "day_of_year": {"min": 1, "max": 366},
+            "week_of_month": {"min": 1, "max": 5},
+            "week_of_year": {"min": 1, "max": 53},
+            "month": {"min": 1, "max": 12},
+        }
+        self.time_units = cycles
+        if cycles is not None:
+            self.time_units.update(DEFAULT_CYCLES)
+        else:
+            self.time_units = DEFAULT_CYCLES
+
+    def fit(self, X: pd.DataFrame, y=None) -> "CyclicalEncoder":
+        """
+        Fit the estimator. In this special case, nothing is done.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe with a DatetimeIndex.
+
+        y : Ignored
+            Not used, present here for API consistency by convention.
+
+        Returns
+        -------
+        self
+            Fitted transformer.
+        """
+        return self
+
+    def transform(self, X):
+        """
+        Adds the cyclic features to the dataframe.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe. The column names should be the one output by the TimeFeaturesAdder or
+            as specified in the cycles keyword in this class. The standard names are
+                - "second"
+                - "minute"
+                - "hour"
+                - "day_of_week"
+                - "day_of_month"
+                - "day_of_year"
+                - "week_of_month"
+                - "week_of_year"
+                - "month"
+
+        Returns
+        -------
+        transformed_X : pd.DataFrame
+            A pandas dataframe with two additional columns for each original column.
+        """
+        return X.assign(
+            **{
+                f"{col}_cos": np.cos(
+                    (X[col] - self.time_units[col]["min"])
+                    / (self.time_units[col]["max"] + 1 - self.time_units[col]["min"])
+                    * 2
+                    * np.pi
+                )
+                for col in X.columns
+            },
+            **{
+                f"{col}_sin": np.sin(
+                    (X[col] - self.time_units[col]["min"])
+                    / (self.time_units[col]["max"] + 1 - self.time_units[col]["min"])
+                    * 2
+                    * np.pi
+                )
+                for col in X.columns
+            },
+        )
 
 
 if __name__ == "__main__":
