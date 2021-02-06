@@ -269,6 +269,11 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         contains 0 and 1 only. Another interesting window is 'gaussian', which also requires the parameter std.
         See the notes below for further information.
 
+    pad_value : Union[float, np.nan], default=0.
+        When using sliding windows of length > 1, the time series has to be extended to prevent NaNs at
+        the start or end of the smoothed time series. If you wish for these NaNs, pad_value=input np.nan.
+        See the examples below for further information.
+
     window_function_kwargs : Optional[Any]
         Settings for certain win_type functions, for example std if win_type='gaussian'.
 
@@ -280,6 +285,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
     Examples
     --------
     >>> import pandas as pd
+    >>> import numpy as np
     >>> df = pd.DataFrame({'A': range(7)}, index=pd.date_range(start='2019-12-29', periods=7))
     >>> sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'])
     >>> sda.fit_transform(df)
@@ -294,6 +300,18 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
 
     >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'],
     ... window=5, center=True, win_type='gaussian', std=1)
+    >>> smooth_sda.fit_transform(df)
+                A   new_year_2020
+    2019-12-29  0        0.000000
+    2019-12-30  1        0.135335
+    2019-12-31  2        0.606531
+    2020-01-01  3        1.000000
+    2020-01-02  4        0.606531
+    2020-01-03  5        0.135335
+    2020-01-04  6        0.000000
+
+    >>> smooth_sda = SpecialDatesAdder('new_year_2020', ['2020-01-01'],
+    ... window=5, center=True, win_type='gaussian', std=1, pad_value=np.nan)
     >>> smooth_sda.fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             NaN
@@ -312,6 +330,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         window: int = 1,
         center: bool = False,
         win_type: Optional[str] = None,
+        pad_value: Union[float, "np.nan"] = 0,
         **window_function_kwargs
     ) -> None:
         self.name = name
@@ -319,6 +338,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         self.window = window
         self.center = center
         self.win_type = win_type
+        self.pad_value = pad_value
         self.window_function_kwargs = window_function_kwargs
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDatesAdder":
@@ -353,12 +373,17 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
         transformed_X : pd.DataFrame
             A pandas dataframe with an additional column for special dates.
         """
-        dummy_dates = pd.Series(X.index.isin(self.dates)).astype(int)
+        dummy_dates = pd.Series(X.index.isin(self.dates), index=X.index)
+        extended_index = extended_index = X.index.union(
+            [X.index.min() - i * X.index.freq for i in range(1, self.window + 1)]
+        ).union([X.index.max() + i * X.index.freq for i in range(1, self.window + 1)])
+
         smoothed_dates = (
-            dummy_dates.rolling(
-                window=self.window, center=self.center, win_type=self.win_type
-            )
+            dummy_dates.reindex(extended_index)
+            .fillna(self.pad_value)
+            .rolling(window=self.window, center=self.center, win_type=self.win_type)
             .sum(**self.window_function_kwargs)
+            .reindex(X.index)
             .values
         )
 
