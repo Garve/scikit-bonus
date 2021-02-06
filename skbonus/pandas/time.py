@@ -468,11 +468,11 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             "week_of_year": {"min": 1, "max": 53},
             "month": {"min": 1, "max": 12},
         }
-        self.time_units = cycles
+        self.cycles = cycles
         if cycles is not None:
-            self.time_units.update(DEFAULT_CYCLES)
+            self.cycles.update(DEFAULT_CYCLES)
         else:
-            self.time_units = DEFAULT_CYCLES
+            self.cycles = DEFAULT_CYCLES
 
     def fit(self, X: pd.DataFrame, y=None) -> "CyclicalEncoder":
         """
@@ -520,8 +520,8 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         return X.assign(
             **{
                 f"{col}_cos": np.cos(
-                    (X[col] - self.time_units[col]["min"])
-                    / (self.time_units[col]["max"] + 1 - self.time_units[col]["min"])
+                    (X[col] - self.cycles[col]["min"])
+                    / (self.cycles[col]["max"] + 1 - self.cycles[col]["min"])
                     * 2
                     * np.pi
                 )
@@ -529,8 +529,8 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             },
             **{
                 f"{col}_sin": np.sin(
-                    (X[col] - self.time_units[col]["min"])
-                    / (self.time_units[col]["max"] + 1 - self.time_units[col]["min"])
+                    (X[col] - self.cycles[col]["min"])
+                    / (self.cycles[col]["max"] + 1 - self.cycles[col]["min"])
                     * 2
                     * np.pi
                 )
