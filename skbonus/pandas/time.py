@@ -254,7 +254,7 @@ class SpecialDatesAdder(BaseEstimator, TransformerMixin):
 
     window : int, default=1
         Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
-        it to something larger than 1 only makes sense for a continous DatetimeIndex.
+        it to something larger than 1 only makes sense for a DatetimeIndex with equidistant dates.
 
     center : bool, default=False
         Whether the window is centered. If True, a window of size 5 at time t includes the times
