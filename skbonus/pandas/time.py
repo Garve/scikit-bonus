@@ -154,7 +154,7 @@ class DateFeaturesAdder(BaseEstimator, TransformerMixin):
 
 class PowerTrendAdder(BaseEstimator, TransformerMixin):
     """
-    Adds a power trend to a pandas dataframe with a DatetimeIndex. For example, it can create a new column
+    Adds a power trend to a pandas dataframe with a continous DatetimeIndex. For example, it can create a new column
     with numbers increasing quadratically in the index.
 
     Parameters
@@ -167,12 +167,8 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> df = pd.DataFrame(
     ...     {"A": ["a", "b", "c", "d"]},
-    ...     index=[
-    ...         pd.Timestamp("1988-08-08"),
-    ...         pd.Timestamp("1988-08-09"),
-    ...         pd.Timestamp("1988-08-10"),
-    ...         pd.Timestamp("1988-08-11"),
-    ...     ])
+    ...     index=pd.date_range(start='1988-08-08', periods=4)
+    ... )
     >>> pta = PowerTrendAdder(power=2)
     >>> pta.fit_transform(df)
                 A   trend
@@ -187,15 +183,17 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrendAdder":
         """
-        Fits the model. It assigns value 0 to the first item of the time index and 1 to the second one.
-        This way, we can get a value for any other date in a linear fashion.
+        Fits the model. It assigns value 0 to the first item of the time index and 1 to the second one etc.
+        This way, we can get a value for any other date in a linear fashion. These values are later transformed.
+
+        Raises a ValueError if the DatetimeIndex has no frequency.
 
         Parameters
         ----------
         X : pd.DataFrame
             A pandas dataframe with a DatetimeIndex.
-        y : Ignored
 
+        y : Ignored
             Not used, present here for API consistency by convention.
 
         Returns
@@ -203,17 +201,21 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         self
             Fitted transformer.
         """
-        smallest_dates = X.index[np.argsort(X.index)[:2]]
-        t1 = smallest_dates[0].value
-        t2 = smallest_dates[1].value
+        freq = X.index.freq
+        if freq is None:
+            raise ValueError(
+                "DatetimeIndex is not continuous. Frequency could not be calculated."
+            )
+        t1 = X.index.min().value
+        t2 = (X.index.min() + freq).value
 
-        self.mapper_ = lambda x: (x - t1) / (t2 - t1)
+        self.date_to_index_ = lambda x: (x - t1) / (t2 - t1)
 
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Add the trend column to the input dataframe
+        Add the trend column to the input dataframe.
 
         Parameters
         ----------
@@ -228,7 +230,7 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         """
         index = X.index.astype(int)
 
-        return X.assign(trend=self.mapper_(index) ** self.power)
+        return X.assign(trend=self.date_to_index_(index) ** self.power)
 
 
 class SpecialDatesAdder(BaseEstimator, TransformerMixin):
