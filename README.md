@@ -21,7 +21,7 @@ DatetimeIndex and run a simple, even linear regression. These features can
 be the hour, the day of week, the week of the year or the month, among others.
 
 Let us look at an example:
-```
+```python
 import pandas as pd
 from skbonus.pandas.time import TimeFeaturesAdder
 
@@ -81,7 +81,7 @@ The CyclicalEncoder arranges the hours in the way you know it from a
 normal, analog, round clock.
 
 In code:
-```
+```python
 import pandas as pd
 from skbonus.pandas.time import CyclicalEncoder
 
@@ -112,7 +112,7 @@ OUTPUT:
 Let us check out the famous air passenger example:
 
 
-```
+```python
 from sktime.datasets import load_airline
 
 data_raw = load_airline()
@@ -121,7 +121,7 @@ print(data_raw)
 
 This yields the pandas series
 
-```
+```python
 Period
 1949-01    112.0
 1949-02    118.0
@@ -141,7 +141,7 @@ While the index of this series looks fine, it's actually a [PeriodIndex](https:/
 which scikit-bonus cannot deal with so far. Also, it's a series and not a dataframe.
 
 We can address both problems via
-```
+```python
 data = (
     data_raw
     .to_frame() # convert to dataframe
@@ -160,7 +160,7 @@ since we deal with a time series.
 So, let us use the first 100 dates as the training set, and the remaining 44 are the
 test set.
 
-```
+```python
 y = y = data["Number of airline passengers"]
 X = data.drop(columns=["Number of airline passengers"])
 
@@ -186,7 +186,7 @@ We want to cover these properties with the following approach:
 
 Putting everything together in a pipeline looks like this:
 
-```
+```python
 from sklearn.linear_model import LinearRegression
 from sklearn.compose import TransformedTargetRegressor, make_column_transformer
 from sklearn.pipeline import make_pipeline
