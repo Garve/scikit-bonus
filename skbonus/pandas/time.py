@@ -429,10 +429,10 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    cycles : Optional[Dict[str, Dict[str, str]]], default=None
-        Define cycles in the form {cycle_name: {"min": min_value, "max": max_value}}, e.g.
-        {"day_of_week": {"min": 1, "max": 7}}. Probably you need thos for very specific cycles already
-        since are implemented already:
+    additional_cycles : Optional[Dict[str, Dict[str, str]]], default=None
+        Define additional additional_cycles in the form {cycle_name: {"min": min_value, "max": max_value}}, e.g.
+        {"day_of_week": {"min": 1, "max": 7}}. Probably you need this only for very specific additional_cycles, as
+        these ones are already implemented:
             - "second": {"min": 0, "max": 59},
             - "minute": {"min": 0, "max": 59},
             - "hour": {"min": 0, "max": 23},
@@ -456,7 +456,9 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     4      2        0.866025        0.500000
     """
 
-    def __init__(self, cycles: Optional[Dict[str, Dict[str, str]]] = None) -> None:
+    def __init__(
+        self, additional_cycles: Optional[Dict[str, Dict[str, str]]] = None
+    ) -> None:
         DEFAULT_CYCLES = {
             "second": {"min": 0, "max": 59},
             "minute": {"min": 0, "max": 59},
@@ -468,11 +470,11 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             "week_of_year": {"min": 1, "max": 53},
             "month": {"min": 1, "max": 12},
         }
-        self.cycles = cycles
-        if cycles is not None:
-            self.cycles.update(DEFAULT_CYCLES)
+        self.additional_cycles = additional_cycles
+        if additional_cycles is not None:
+            self.additional_cycles.update(DEFAULT_CYCLES)
         else:
-            self.cycles = DEFAULT_CYCLES
+            self.additional_cycles = DEFAULT_CYCLES
 
     def fit(self, X: pd.DataFrame, y=None) -> "CyclicalEncoder":
         """
@@ -501,7 +503,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         ----------
         X : pd.DataFrame
             A pandas dataframe. The column names should be the one output by the TimeFeaturesAdder or
-            as specified in the cycles keyword in this class. The standard names are
+            as specified in the additional_cycles keyword in this class. The standard names are
                 - "second"
                 - "minute"
                 - "hour"
@@ -520,8 +522,12 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         return X.assign(
             **{
                 f"{col}_cos": np.cos(
-                    (X[col] - self.cycles[col]["min"])
-                    / (self.cycles[col]["max"] + 1 - self.cycles[col]["min"])
+                    (X[col] - self.additional_cycles[col]["min"])
+                    / (
+                        self.additional_cycles[col]["max"]
+                        + 1
+                        - self.additional_cycles[col]["min"]
+                    )
                     * 2
                     * np.pi
                 )
@@ -529,8 +535,12 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             },
             **{
                 f"{col}_sin": np.sin(
-                    (X[col] - self.cycles[col]["min"])
-                    / (self.cycles[col]["max"] + 1 - self.cycles[col]["min"])
+                    (X[col] - self.additional_cycles[col]["min"])
+                    / (
+                        self.additional_cycles[col]["max"]
+                        + 1
+                        - self.additional_cycles[col]["min"]
+                    )
                     * 2
                     * np.pi
                 )
