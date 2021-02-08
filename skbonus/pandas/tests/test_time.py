@@ -26,9 +26,9 @@ sda = SpecialEventsAdder(
     "black_friday_2018",
     ["2018-11-23"],
     window=15,
-    center=True,
-    win_type="gaussian",
-    std=1,
+    win_type="general_gaussian",
+    p=1,
+    sig=1,
 )
 
 pta = PowerTrendAdder()

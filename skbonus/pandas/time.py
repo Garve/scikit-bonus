@@ -25,7 +25,7 @@ class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     day_of_week : bool, default=False
         Whether to extract the day of week from the index and add it as a new column.
 
-    day_of_month : bool, default=True
+    day_of_month : bool, default=False
         Whether to extract the day of month from the index and add it as a new column.
 
     day_of_year : bool, default=False
@@ -37,10 +37,10 @@ class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     week_of_year : bool, default=False
         Whether to extract the week of year from the index and add it as a new column.
 
-    month : bool, default=True
+    month : bool, default=False
         Whether to extract the month from the index and add it as a new column.
 
-    year : bool, default=True
+    year : bool, default=False
         Whether to extract the year from the index and add it as a new column.
 
     Examples
@@ -53,7 +53,7 @@ class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     ...         pd.Timestamp("2000-01-01"),
     ...         pd.Timestamp("1950-12-31"),
     ...     ])
-    >>> TimeFeaturesAdder().fit_transform(df)
+    >>> TimeFeaturesAdder(day_of_month=True, month=True, year=True).fit_transform(df)
                 A   day_of_month    month    year
     1988-08-08  a              8        8    1988
     2000-01-01  b              1        1    2000
@@ -66,12 +66,12 @@ class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
         minute: bool = False,
         hour: bool = False,
         day_of_week: bool = False,
-        day_of_month: bool = True,
+        day_of_month: bool = False,
         day_of_year: bool = False,
         week_of_month: bool = False,
         week_of_year: bool = False,
-        month: bool = True,
-        year: bool = True,
+        month: bool = False,
+        year: bool = False,
     ) -> None:
         self.second = second
         self.minute = minute
@@ -285,24 +285,21 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
         Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
         it to something larger than 1 only makes sense for a DatetimeIndex with equidistant dates.
 
-    center : bool, default=False
-        Whether the window is centered. If True, a window of size 5 at time t includes the times
-        t-2, t-1, t, t+1 and t+2. Useful if the effect of a holiday can be seen before the holiday already.
-        If False, the window would include t-4, t-3, t-2, t-1, t. Useful if the effect of a holiday starts
-        exactly with the holiday and wears off over time.
-
     win_type : Optional[str], default=None
         Type of smoothing. A value of None leaves the default one hot encoding, i.e. the output column
         contains 0 and 1 only. Another interesting window is "gaussian", which also requires the parameter std.
         See the notes below for further information.
 
-    pad_value : Union[float, np.nan], default=0.
+    pad_value : Union[float, np.nan], default=0
         When using sliding windows of length > 1, the time series has to be extended to prevent NaNs at
         the start or end of the smoothed time series. If you wish for these NaNs, pad_value=input np.nan.
         See the examples below for further information.
 
-    window_function_kwargs : Optional[Any]
-        Settings for certain win_type functions, for example std if win_type="gaussian".
+    p : float, default=1
+        Only used if win_type="general_gaussian". Determines the shape of the rolling curve.
+
+    sig : float, default=1
+        Only used if win_type="general_gaussian". Determines the standard deviation of the rolling curve.
 
     Notes
     -----
@@ -324,7 +321,7 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     2020-01-04  6             0.0
 
     >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"],
-    ... window=5, center=True, win_type="gaussian", std=1).fit_transform(df)
+    ... window=5, win_type="general_gaussian", p=1, sig=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0        0.000000
     2019-12-30  1        0.135335
@@ -335,7 +332,8 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     2020-01-04  6        0.000000
 
     >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"],
-    ... window=5, center=True, win_type="gaussian", std=1, pad_value=np.nan).fit_transform(df)
+    ... window=5, win_type="general_gaussian", pad_value=np.nan,
+    ... p=1, sig=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             NaN
     2019-12-30  1             NaN
@@ -351,18 +349,18 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
         name: str,
         dates: List[Union[pd.Timestamp, str]],
         window: int = 1,
-        center: bool = False,
         win_type: Optional[str] = None,
         pad_value: Union[float, "np.nan"] = 0,
-        **window_function_kwargs,
+        p: float = 1,
+        sig: float = 1,
     ) -> None:
         self.name = name
         self.dates = dates
         self.window = window
-        self.center = center
         self.win_type = win_type
         self.pad_value = pad_value
-        self.window_function_kwargs = window_function_kwargs
+        self.p = p
+        self.sig = sig
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialEventsAdder":
         """
@@ -381,6 +379,7 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
         self
             Fitted transformer.
         """
+        self.freq_ = X.index.freq
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -399,14 +398,14 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
         """
         dummy_dates = pd.Series(X.index.isin(self.dates), index=X.index)
         extended_index = extended_index = X.index.union(
-            [X.index.min() - i * X.index.freq for i in range(1, self.window + 1)]
-        ).union([X.index.max() + i * X.index.freq for i in range(1, self.window + 1)])
+            [X.index.min() - i * self.freq_ for i in range(1, self.window + 1)]
+        ).union([X.index.max() + i * self.freq_ for i in range(1, self.window + 1)])
 
         smoothed_dates = (
             dummy_dates.reindex(extended_index)
             .fillna(self.pad_value)
-            .rolling(window=self.window, center=self.center, win_type=self.win_type)
-            .sum(**self.window_function_kwargs)
+            .rolling(window=self.window, center=True, win_type=self.win_type)
+            .sum(p=self.p, sig=self.sig)
             .reindex(X.index)
             .values
         )
@@ -419,7 +418,19 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     This class breaks each cyclic feature into two new features, corresponding to the representation of
     this feature on a circle. For example, take the hours from 0 to 23. On a normal, round  analog clock,
     these features are perfectly aligned on a circle already. You can do the same with days, month, ...
-    See below for an example.
+
+    The column names affected by default are
+        - second
+        - minute
+        - hour
+        - day_of_week
+        - day_of_month
+        - day_of_year
+        - week_of_month
+        - week_of_year
+        - month
+
+    You can add more with the additional_cycles parameter.
 
     This method has the advantage that close points in time stay close together. See the examples below.
 
@@ -531,7 +542,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
                     * 2
                     * np.pi
                 )
-                for col in X.columns
+                for col in X.columns.intersection(self.additional_cycles.keys())
             },
             **{
                 f"{col}_sin": np.sin(
@@ -544,7 +555,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
                     * 2
                     * np.pi
                 )
-                for col in X.columns
+                for col in X.columns.intersection(self.additional_cycles.keys())
             },
         )
 
