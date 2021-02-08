@@ -104,7 +104,7 @@ OUTPUT:
 
 > Note that the hours 0 and 23 are as close together as 0 and 1.
 
-![img_3.png](readme_images/img_3.png)
+![img_3.png](readme_images/clock.png)
 
 
 ### Air Passengers
@@ -172,7 +172,7 @@ y_test = y[100:]
 
 Before we continue, let us take a look at the time series.
 
-![img.png](readme_images/img.png)
+![img.png](readme_images/original_series.png)
 
 We can see that it has
  1. an increasing amplitude
@@ -199,7 +199,7 @@ ct = make_column_transformer(
 
 pre = make_pipeline(
     TimeFeaturesAdder(month=True),
-    PowerTrendAdder(power=0.9848), # via hyper parameter optimization
+    PowerTrendAdder(power=0.92727), # via hyper parameter optimization
     ct,
     TransformedTargetRegressor(
         regressor=LinearRegression(),
@@ -218,7 +218,7 @@ OUTPUT:
 
 Quite decent for such a simple model! Our predictions look like this:
 
-![img_2.png](readme_images/img_2.png)
+![img.png](readme_images/fit.png)
 
 
 > ## I hope this can help you a bit with your projects.
