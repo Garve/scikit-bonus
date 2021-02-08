@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from ..exceptions import NoFrequencyError
+
 
 class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     """
@@ -213,7 +215,8 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         Fits the model. It assigns value 0 to the first item of the time index and 1 to the second one etc.
         This way, we can get a value for any other date in a linear fashion. These values are later transformed.
 
-        Raises a ValueError if the DatetimeIndex has no frequency.
+        Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
+        TimeSeriesSplit whe using cross validation.
 
         Parameters
         ----------
@@ -230,8 +233,8 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         """
         freq = X.index.freq
         if freq is None:
-            raise ValueError(
-                "DatetimeIndex is not continuous. Frequency could not be calculated."
+            raise NoFrequencyError(
+                "DatetimeIndex has no frequency. This can happen when doing cross validation without using a TimeSeriesSplit."
             )
         t1 = X.index.min().value
         t2 = (X.index.min() + freq).value
@@ -266,9 +269,9 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     contain whether the index lies within a time interval. For example, the output can be
     a one hot encoded column containing a 1 if the corresponding date from the index is within
     the given date range, and 0 otherwise.
-    The output can also be a smoothed by sliding a window over the one hot encoded column as a next step.
-    This makes sense when, for example, a certain holiday has effects on the next days or the days before, too.
-    See the examples to get a better understanding.
+    The output can also be a smoothed via a general Gaussian sliding window over the one hot encoded column as
+    a next step. This makes sense when, for example, a certain holiday has effects on the next days or the days
+    before, too. See the examples to get a better understanding.
 
     This is especially useful when dealing with time series regressions or classifications.
 
@@ -287,24 +290,20 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
 
     win_type : Optional[str], default=None
         Type of smoothing. A value of None leaves the default one hot encoding, i.e. the output column
-        contains 0 and 1 only. Another interesting window is "gaussian", which also requires the parameter std.
-        See the notes below for further information.
+        contains 0 and 1 only. Another interesting window is "general_gaussian", which also requires the parameters
+        p and sig. See the notes below for further information.
+
+    p : float, default=1
+        Only used if win_type="general_gaussian". Determines the shape of the rolling curve. p=1 yields a typical
+        Gaussian curve while p=0.5 yields a Laplace curve, for example.
+
+    sig : float, default=1
+        Only used if win_type="general_gaussian". Determines the standard deviation of the rolling curve.
 
     pad_value : Union[float, np.nan], default=0
         When using sliding windows of length > 1, the time series has to be extended to prevent NaNs at
         the start or end of the smoothed time series. If you wish for these NaNs, pad_value=input np.nan.
         See the examples below for further information.
-
-    p : float, default=1
-        Only used if win_type="general_gaussian". Determines the shape of the rolling curve.
-
-    sig : float, default=1
-        Only used if win_type="general_gaussian". Determines the standard deviation of the rolling curve.
-
-    Notes
-    -----
-    win_type accepts a string of any scipy.signal window function, see
-    https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows.
 
     Examples
     --------
@@ -350,21 +349,24 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
         dates: List[Union[pd.Timestamp, str]],
         window: int = 1,
         win_type: Optional[str] = None,
-        pad_value: Union[float, "np.nan"] = 0,
         p: float = 1,
         sig: float = 1,
+        pad_value: Union[float, "np.nan"] = 0,
     ) -> None:
         self.name = name
         self.dates = dates
         self.window = window
         self.win_type = win_type
-        self.pad_value = pad_value
         self.p = p
         self.sig = sig
+        self.pad_value = pad_value
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialEventsAdder":
         """
-        Fit the estimator. In this special case, nothing is done.
+        Fit the estimator. The frequency of the DatetimeIndex is extracted.
+
+        Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
+        TimeSeriesSplit whe using cross validation.
 
         Parameters
         ----------
@@ -380,6 +382,10 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
             Fitted transformer.
         """
         self.freq_ = X.index.freq
+        if self.freq_ is None:
+            raise NoFrequencyError(
+                "DatetimeIndex has no frequency. This can happen when doing cross validation without using a TimeSeriesSplit."
+            )
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
