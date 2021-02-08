@@ -30,7 +30,7 @@ data = pd.DataFrame(
     index=pd.date_range(start="2020-01-01", periods=10, freq="d")
 )
 
-tfa = TimeFeaturesAdder()
+tfa = TimeFeaturesAdder(day_of_month=True, month=True, year=True)
 tfa.fit(data)
 print(tfa.transform(data))
 
@@ -161,13 +161,13 @@ So, let us use the first 100 dates as the training set, and the remaining 44 are
 test set.
 
 ```python
-y = y = data["Number of airline passengers"]
+y = data["Number of airline passengers"]
 X = data.drop(columns=["Number of airline passengers"])
 
 X_train = X.iloc[:100]
 X_test = X.iloc[100:]
-y_train = target[:100]
-y_test = target[100:]
+y_train = y[:100]
+y_test = y[100:]
 ```
 
 Before we continue, let us take a look at the time series.
@@ -198,13 +198,8 @@ ct = make_column_transformer(
 )
 
 pre = make_pipeline(
-    TimeFeaturesAdder(
-        year=False,
-        day_of_month=False
-    ),
-    PowerTrendAdder(
-        power=0.9848 # via hyper parameter optimization
-    ),
+    TimeFeaturesAdder(month=True),
+    PowerTrendAdder(power=0.9848), # via hyper parameter optimization
     ct,
     TransformedTargetRegressor(
         regressor=LinearRegression(),
