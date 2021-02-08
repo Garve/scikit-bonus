@@ -12,7 +12,7 @@ with a fixed frequency, for example created via
 
 Let us see two examples of what this module provides for you.
 
-### TimeFeaturesAdder
+### SimpleTimeFeatures
 Very often, you don't need to use complicated models such as an
 [RNN](https://en.wikipedia.org/wiki/Recurrent_neural_network) or
 [ARIMA](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average).
@@ -21,16 +21,17 @@ DatetimeIndex and run a simple, even linear regression. These features can
 be the hour, the day of week, the week of the year or the month, among others.
 
 Let us look at an example:
+
 ```python
 import pandas as pd
-from skbonus.pandas.time import TimeFeaturesAdder
+from skbonus.pandas.time import SimpleTimeFeatures
 
 data = pd.DataFrame(
     {"X_1": range(10)},
     index=pd.date_range(start="2020-01-01", periods=10, freq="d")
 )
 
-tfa = TimeFeaturesAdder(day_of_month=True, month=True, year=True)
+tfa = SimpleTimeFeatures(day_of_month=True, month=True, year=True)
 tfa.fit(data)
 print(tfa.transform(data))
 
@@ -50,7 +51,7 @@ OUTPUT:
 2020-01-10    9            10      1  2020
 ```
 
-The TimeFeaturesAdder has many more built-in features. The full list
+The SimpleTimeFeatures has many more built-in features. The full list
 is
  * second
  * minute
@@ -181,7 +182,7 @@ We can see that it has
 
 We want to cover these properties with the following approach:
  1. apply the logarithm on the data
- 2. extract the month from the DatetimeIndex using scikit-bonus' TimeFeaturesAdder
+ 2. extract the month from the DatetimeIndex using scikit-bonus' SimpleTimeFeatures
  3. Add a linear trend using scikit-bonus' PowerTrendAdder
 
 Putting everything together in a pipeline looks like this:
@@ -198,7 +199,7 @@ ct = make_column_transformer(
 )
 
 pre = make_pipeline(
-    TimeFeaturesAdder(month=True),
+    SimpleTimeFeatures(month=True),
     PowerTrendAdder(power=0.92727), # via hyper parameter optimization
     ct,
     TransformedTargetRegressor(

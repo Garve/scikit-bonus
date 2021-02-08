@@ -3,15 +3,15 @@ import pandas as pd
 import pytest
 
 from skbonus.pandas.time import (
-    TimeFeaturesAdder,
-    SpecialEventsAdder,
+    SimpleTimeFeatures,
+    BumpAdder,
     PowerTrendAdder,
     CyclicalEncoder,
 )
 
 from skbonus.exceptions import NoFrequencyError
 
-dfa = TimeFeaturesAdder(
+dfa = SimpleTimeFeatures(
     second=True,
     minute=True,
     hour=True,
@@ -24,7 +24,7 @@ dfa = TimeFeaturesAdder(
     year=True,
 )
 
-sda = SpecialEventsAdder(
+sda = BumpAdder(
     "black_friday_2018",
     ["2018-11-23"],
     window=15,

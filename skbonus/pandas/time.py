@@ -7,7 +7,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from skbonus.exceptions import NoFrequencyError
 
 
-class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
+class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     """
     This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns are easy
     derivations from the index, such as the day of week or month.
@@ -55,7 +55,7 @@ class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     ...         pd.Timestamp("2000-01-01"),
     ...         pd.Timestamp("1950-12-31"),
     ...     ])
-    >>> TimeFeaturesAdder(day_of_month=True, month=True, year=True).fit_transform(df)
+    >>> SimpleTimeFeatures(day_of_month=True, month=True, year=True).fit_transform(df)
                 A   day_of_month    month    year
     1988-08-08  a              8        8    1988
     2000-01-01  b              1        1    2000
@@ -134,7 +134,7 @@ class TimeFeaturesAdder(BaseEstimator, TransformerMixin):
     def _add_year(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.assign(year=lambda df: df.index.year) if self.year else X
 
-    def fit(self, X: pd.DataFrame, y: Any = None) -> "TimeFeaturesAdder":
+    def fit(self, X: pd.DataFrame, y: Any = None) -> "SimpleTimeFeatures":
         """
         Fit the estimator. In this special case, nothing is done.
 
@@ -263,7 +263,7 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         return X.assign(trend=self.date_to_index_(index) ** self.power)
 
 
-class SpecialEventsAdder(BaseEstimator, TransformerMixin):
+class BumpAdder(BaseEstimator, TransformerMixin):
     """
     This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns
     contain whether the index lies within a time interval. For example, the output can be
@@ -309,7 +309,7 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     --------
     >>> import pandas as pd
     >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
-    >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"]).fit_transform(df)
+    >>> BumpAdder("new_year_2020", ["2020-01-01"]).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             0.0
     2019-12-30  1             0.0
@@ -319,7 +319,7 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     2020-01-03  5             0.0
     2020-01-04  6             0.0
 
-    >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"],
+    >>> BumpAdder("new_year_2020", ["2020-01-01"],
     ... window=5, win_type="general_gaussian", p=1, sig=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0        0.000000
@@ -330,7 +330,7 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
     2020-01-03  5        0.135335
     2020-01-04  6        0.000000
 
-    >>> SpecialEventsAdder("new_year_2020", ["2020-01-01"],
+    >>> BumpAdder("new_year_2020", ["2020-01-01"],
     ... window=5, win_type="general_gaussian", pad_value=np.nan,
     ... p=1, sig=1).fit_transform(df)
                 A   new_year_2020
@@ -361,7 +361,7 @@ class SpecialEventsAdder(BaseEstimator, TransformerMixin):
         self.sig = sig
         self.pad_value = pad_value
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialEventsAdder":
+    def fit(self, X: pd.DataFrame, y: None = None) -> "BumpAdder":
         """
         Fit the estimator. The frequency of the DatetimeIndex is extracted.
 
@@ -519,7 +519,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : pd.DataFrame
-            A pandas dataframe. The column names should be the one output by the TimeFeaturesAdder or
+            A pandas dataframe. The column names should be the one output by the SimpleTimeFeatures or
             as specified in the additional_cycles keyword in this class. The standard names are
                 - "second"
                 - "minute"
