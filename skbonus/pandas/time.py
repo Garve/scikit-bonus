@@ -182,7 +182,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         return res
 
 
-class PowerTrendAdder(BaseEstimator, TransformerMixin):
+class PowerTrend(BaseEstimator, TransformerMixin):
     """
     Adds a power trend to a pandas dataframe with a continous DatetimeIndex. For example, it can create a new column
     with numbers increasing quadratically in the index.
@@ -199,7 +199,7 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
     ...     {"A": ["a", "b", "c", "d"]},
     ...     index=pd.date_range(start="1988-08-08", periods=4)
     ... )
-    >>> PowerTrendAdder(power=2).fit_transform(df)
+    >>> PowerTrend(power=2).fit_transform(df)
                 A   trend
     1988-08-08  a     0.0
     1988-08-09  b     1.0
@@ -210,7 +210,7 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
     def __init__(self, power: float = 1) -> None:
         self.power = power
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrendAdder":
+    def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
         """
         Fits the model. It assigns value 0 to the first item of the time index and 1 to the second one etc.
         This way, we can get a value for any other date in a linear fashion. These values are later transformed.
@@ -231,15 +231,12 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
         self
             Fitted transformer.
         """
-        freq = X.index.freq
-        if freq is None:
+        self.freq_ = X.index.freq
+        if self.freq_ is None:
             raise NoFrequencyError(
                 "DatetimeIndex has no frequency. This can happen when doing cross validation without using a TimeSeriesSplit."
             )
-        t1 = X.index.min().value
-        t2 = (X.index.min() + freq).value
-
-        self.date_to_index_ = lambda x: (x - t1) / (t2 - t1)
+        self.t0 = X.index.min()
 
         return self
 
@@ -258,12 +255,11 @@ class PowerTrendAdder(BaseEstimator, TransformerMixin):
             The dataframe with an additional trend column.
 
         """
-        index = X.index.astype(int)
+        index_as_int = (X.index - self.t0) / self.freq_
+        return X.assign(trend=index_as_int ** self.power)
 
-        return X.assign(trend=self.date_to_index_(index) ** self.power)
 
-
-class BumpAdder(BaseEstimator, TransformerMixin):
+class SpecialDayBumps(BaseEstimator, TransformerMixin):
     """
     This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns
     contain whether the index lies within a time interval. For example, the output can be
@@ -309,7 +305,7 @@ class BumpAdder(BaseEstimator, TransformerMixin):
     --------
     >>> import pandas as pd
     >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
-    >>> BumpAdder("new_year_2020", ["2020-01-01"]).fit_transform(df)
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"]).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             0.0
     2019-12-30  1             0.0
@@ -319,7 +315,7 @@ class BumpAdder(BaseEstimator, TransformerMixin):
     2020-01-03  5             0.0
     2020-01-04  6             0.0
 
-    >>> BumpAdder("new_year_2020", ["2020-01-01"],
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"],
     ... window=5, win_type="general_gaussian", p=1, sig=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0        0.000000
@@ -330,7 +326,7 @@ class BumpAdder(BaseEstimator, TransformerMixin):
     2020-01-03  5        0.135335
     2020-01-04  6        0.000000
 
-    >>> BumpAdder("new_year_2020", ["2020-01-01"],
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"],
     ... window=5, win_type="general_gaussian", pad_value=np.nan,
     ... p=1, sig=1).fit_transform(df)
                 A   new_year_2020
@@ -361,7 +357,7 @@ class BumpAdder(BaseEstimator, TransformerMixin):
         self.sig = sig
         self.pad_value = pad_value
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "BumpAdder":
+    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
         """
         Fit the estimator. The frequency of the DatetimeIndex is extracted.
 

@@ -183,7 +183,7 @@ We can see that it has
 We want to cover these properties with the following approach:
  1. apply the logarithm on the data
  2. extract the month from the DatetimeIndex using scikit-bonus' SimpleTimeFeatures
- 3. Add a linear trend using scikit-bonus' PowerTrendAdder
+ 3. Add a linear trend using scikit-bonus' PowerTrend
 
 Putting everything together in a pipeline looks like this:
 
@@ -200,7 +200,7 @@ ct = make_column_transformer(
 
 pre = make_pipeline(
     SimpleTimeFeatures(month=True),
-    PowerTrendAdder(power=0.92727), # via hyper parameter optimization
+    PowerTrend(power=0.92727), # via hyper parameter optimization
     ct,
     TransformedTargetRegressor(
         regressor=LinearRegression(),

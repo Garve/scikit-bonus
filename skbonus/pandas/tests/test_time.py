@@ -4,8 +4,8 @@ import pytest
 
 from skbonus.pandas.time import (
     SimpleTimeFeatures,
-    BumpAdder,
-    PowerTrendAdder,
+    SpecialDayBumps,
+    PowerTrend,
     CyclicalEncoder,
 )
 
@@ -24,7 +24,7 @@ dfa = SimpleTimeFeatures(
     year=True,
 )
 
-sda = BumpAdder(
+sda = SpecialDayBumps(
     "black_friday_2018",
     ["2018-11-23"],
     window=15,
@@ -33,7 +33,7 @@ sda = BumpAdder(
     sig=1,
 )
 
-pta = PowerTrendAdder()
+pta = PowerTrend()
 
 ce = CyclicalEncoder()
 
