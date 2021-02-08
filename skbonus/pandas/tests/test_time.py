@@ -9,6 +9,8 @@ from skbonus.pandas.time import (
     CyclicalEncoder,
 )
 
+from skbonus.exceptions import NoFrequencyError
+
 dfa = TimeFeaturesAdder(
     second=True,
     minute=True,
@@ -90,7 +92,7 @@ def test_specialeventsadder(date, value):
 
 
 def test_powertrendadder_exception():
-    with pytest.raises(ValueError):
+    with pytest.raises(NoFrequencyError):
         pta.fit(non_continuous_input)
 
 
