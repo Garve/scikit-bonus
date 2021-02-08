@@ -213,7 +213,7 @@ pre.score(X_test, y_test)
 
 ---------------------
 OUTPUT:
-    0.499063986036663
+    0.6843610111874758
 ```
 
 Quite decent for such a simple model! Our predictions look like this:
