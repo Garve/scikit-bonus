@@ -2,6 +2,8 @@
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
 
+Give it a try with a smiple `pip install scikit-bonus`!
+
 ## The time module
 The time module contains transformers for dealing with time series in
 a simple-to-understand way.
