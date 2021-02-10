@@ -216,7 +216,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         This way, we can get a value for any other date in a linear fashion. These values are later transformed.
 
         Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
-        TimeSeriesSplit whe using cross validation.
+        TimeSeriesSplit when using cross validation.
 
         Parameters
         ----------
@@ -362,7 +362,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         Fit the estimator. The frequency of the DatetimeIndex is extracted.
 
         Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
-        TimeSeriesSplit whe using cross validation.
+        TimeSeriesSplit when using cross validation.
 
         Parameters
         ----------

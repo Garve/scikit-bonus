@@ -1,7 +1,12 @@
 import setuptools
 import skbonus
 
-base_packages = ["scikit-learn>=0.24.0", "pandas>=1.2.1", "numpy>=1.20.0"]
+base_packages = [
+    "scikit-learn>=0.24.0",
+    "pandas>=1.2.1",
+    "numpy>=1.20.0",
+    "scipy>=1.6.0",
+]
 
 test_packages = [
     "flake8>=3.8.4",
