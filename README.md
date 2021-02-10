@@ -164,8 +164,8 @@ So, let us use the first 100 dates as the training set, and the remaining 44 are
 test set.
 
 ```python
-y = data["Number of airline passengers"]
 X = data.drop(columns=["Number of airline passengers"])
+y = data["Number of airline passengers"]
 
 X_train = X.iloc[:100]
 X_test = X.iloc[100:]
@@ -196,7 +196,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder
 
 ct = make_column_transformer(
-    (OneHotEncoder(sparse=False), ["month"]),
+    (OneHotEncoder(), ["month"]),
     remainder="passthrough"
 )
 
