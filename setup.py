@@ -4,8 +4,8 @@ import skbonus
 base_packages = [
     "scikit-learn>=0.24.0",
     "pandas>=1.2.1",
-    "numpy>=1.20.0",
-    "scipy>=1.6.0",
+    "numpy>=1.18.5",
+    "scipy>=1.5.0",
 ]
 
 test_packages = [
