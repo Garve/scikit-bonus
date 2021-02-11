@@ -1,3 +1,6 @@
+import warnings
+from typing import Callable, Tuple
+
 import numpy as np
 from scipy.optimize import minimize
 from sklearn.base import BaseEstimator, RegressorMixin
@@ -7,7 +10,6 @@ from sklearn.utils.validation import (
     check_is_fitted,
     _check_sample_weight,
 )
-import warnings
 
 
 class LADRegression(BaseEstimator, RegressorMixin):
@@ -78,6 +80,43 @@ class LADRegression(BaseEstimator, RegressorMixin):
         self.copy_X = copy_X
         self.positive = positive
 
+    @staticmethod
+    def _get_objective(
+        X: np.array, y: np.array, sample_weight: np.array
+    ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        """
+        Produces the loss function to be minimized, and its gradient to speed up computations.
+
+        Parameters
+        ----------
+        X : np.array of shape (n_samples, n_features)
+            The training data.
+
+        y : np.array, 1-dimensional
+            The target values.
+
+        sample_weight : np.array, default=None
+            Individual weights for each sample. Use np.abs(1/y_train) to optimize for the lowest
+            MAPE (Mean Average Percentage Error).
+
+        Returns
+        -------
+        loss : Callable[[np.array], float]
+            The loss function to be minimized.
+
+        grad_loss : Callable[[np.array], np.array]
+            The gradient of the loss function. Speeds up finding of he minimum.
+
+        """
+
+        def mae_loss(params):
+            return np.mean(sample_weight * np.abs(y - X @ params))
+
+        def grad_mae_loss(params):
+            return -(sample_weight * np.sign(y - X @ params)) @ X / X.shape[0]
+
+        return mae_loss, grad_mae_loss
+
     def fit(
         self,
         X: np.array,
@@ -114,23 +153,19 @@ class LADRegression(BaseEstimator, RegressorMixin):
         else:
             X_ = X
 
-        def mae_loss(params):
-            return np.mean(sample_weight * np.abs(y - X_ @ params))
-
-        def diff_mae_loss(params):
-            return -(sample_weight * np.sign(y - X_ @ params)) @ X_ / n
-
         if self.fit_intercept:
             X_ = np.hstack([X_, np.ones(shape=(n, 1))])
+
+        loss, grad_loss = self._get_objective(X_, y, sample_weight)
 
         d = X_.shape[1]
         bounds = [(0, np.inf) for _ in range(d)] if self.positive else None
         minimize_result = minimize(
-            mae_loss,
+            loss,
             x0=np.zeros(d),
             bounds=bounds,
             method="L-BFGS-B",
-            jac=diff_mae_loss,
+            jac=grad_loss,
             tol=1e-20,
         )
         self.convergence_status_ = minimize_result.message
