@@ -7,6 +7,7 @@ from sklearn.utils.validation import (
     check_is_fitted,
     _check_sample_weight,
 )
+import warnings
 
 
 class LADRegression(BaseEstimator, RegressorMixin):
@@ -133,6 +134,8 @@ class LADRegression(BaseEstimator, RegressorMixin):
             tol=1e-20,
         )
         self.convergence_status_ = minimize_result.message
+        if minimize_result.status != 0:
+            warnings.warn(self.convergence_status_)
 
         if self.fit_intercept:
             *self.coef_, self.intercept_ = minimize_result.x

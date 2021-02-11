@@ -33,6 +33,26 @@ def test_coefs_and_intercept__no_noise(coefs, intercept):
         (np.array([0]), 0),
     ],
 )
+def test_score(coefs, intercept):
+    np.random.seed(0)
+    X = np.random.randn(10000, coefs.shape[0])
+    np.random.seed(0)
+    y = X @ coefs + intercept + np.random.randn(10000)
+
+    lad = LADRegression()
+    lad.fit(X, y)
+    assert lad.score(X, y) > 0.9
+
+
+@pytest.mark.parametrize(
+    "coefs, intercept",
+    [
+        (np.array([0, 0, 3, 0, 6]), 3),
+        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
+        (np.array([4, -4]), 0),
+        (np.array([0]), 0),
+    ],
+)
 def test_coefs_and_intercept__no_noise_positive(coefs, intercept):
     np.random.seed(0)
     X = np.random.randn(100, coefs.shape[0])
