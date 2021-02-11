@@ -254,8 +254,8 @@ class LADRegression(BaseScipyMinimizeRegressor):
 
 class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     """
-    Linear regression where overestimating is "over_multiplier" times worse than underestimating.
-    A value of over_multiplier=5 implies that overestimations by the model are penalized with a factor of 5
+    Linear regression where overestimating is "overestimation_punishment_factor" times worse than underestimating.
+    A value of overestimation_punishment_factor=5 implies that overestimations by the model are penalized with a factor of 5
     while underestimations have a default factor of 1.
 
     ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
@@ -276,7 +276,7 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     positive : bool, default=False
         When set to True, forces the coefficients to be positive.
 
-    over_multiplier : float, default=1
+    overestimation_punishment_factor : float, default=1
         Factor to punish overestimations more (if the value is larger than 1) or less (if the value is between 0 and 1).
 
     Attributes
@@ -298,15 +298,15 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     >>> np.random.seed(0)
     >>> X = np.random.randn(100, 4)
     >>> y = X @ np.array([1, 2, 3, 4]) + 2*np.random.randn(100)
-    >>> over_bad = ImbalancedLinearRegression(over_multiplier=50)
+    >>> over_bad = ImbalancedLinearRegression(overestimation_punishment_factor=50)
     >>> over_bad.fit(X, y)
-    ImbalancedLinearRegression(over_multiplier=50)
+    ImbalancedLinearRegression(overestimation_punishment_factor=50)
     >>> over_bad.coef_
     array([0.36267036, 1.39526844, 3.4247146 , 3.93679175])
 
-    >>> under_bad = ImbalancedLinearRegression(over_multiplier=0.01)
+    >>> under_bad = ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
     >>> under_bad.fit(X, y)
-    ImbalancedLinearRegression(over_multiplier=0.01)
+    ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
     >>> under_bad.coef_
     array([0.73519586, 1.28698197, 2.61362614, 4.35989806])
 
@@ -317,10 +317,10 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
         fit_intercept: bool = True,
         copy_X: bool = True,
         positive: bool = False,
-        over_multiplier: float = 1.0,
+        overestimation_punishment_factor: float = 1.0,
     ) -> None:
         super().__init__(fit_intercept, copy_X, positive)
-        self.over_multiplier = over_multiplier
+        self.overestimation_punishment_factor = overestimation_punishment_factor
 
     def _get_objective(
         self, X: np.array, y: np.array, sample_weight: np.array
@@ -328,7 +328,7 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
         def imbalanced_loss(params):
             return 0.5 * np.mean(
                 sample_weight
-                * np.where(X @ params > y, self.over_multiplier, 1)
+                * np.where(X @ params > y, self.overestimation_punishment_factor, 1)
                 * np.square(y - X @ params)
             )
 
@@ -336,7 +336,7 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
             return (
                 -(
                     sample_weight
-                    * np.where(X @ params > y, self.over_multiplier, 1)
+                    * np.where(X @ params > y, self.overestimation_punishment_factor, 1)
                     * (y - X @ params)
                 )
                 @ X

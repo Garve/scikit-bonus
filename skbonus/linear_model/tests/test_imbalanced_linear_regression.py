@@ -88,7 +88,7 @@ def test_under_estimation(coefs, intercept):
     X = np.random.randn(100, coefs.shape[0])
     y = X @ coefs + intercept + 2 * np.random.randn(100)
 
-    imb = ImbalancedLinearRegression(over_multiplier=50)
+    imb = ImbalancedLinearRegression(overestimation_punishment_factor=50)
     imb.fit(X, y)
     assert (imb.predict(X) < y).mean() > 0.8
 
@@ -107,6 +107,6 @@ def test_over_estimation(coefs, intercept):
     X = np.random.randn(100, coefs.shape[0])
     y = X @ coefs + intercept + 2 * np.random.randn(100)
 
-    imb = ImbalancedLinearRegression(over_multiplier=0.01)
+    imb = ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
     imb.fit(X, y)
     assert (imb.predict(X) < y).mean() < 0.15
