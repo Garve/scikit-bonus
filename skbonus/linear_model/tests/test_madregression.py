@@ -46,11 +46,9 @@ def test_coefs_and_intercept__no_noise_positive(coefs, intercept):
 
 
 def test_coefs_and_intercept__no_noise_sample_weight():
-    X = np.array([[1], [2], [3], [4], [5]])
-    y = np.array([2, 4, 6, 20, 25])
+    X = np.array([[1], [2], [3], [4], [5], [6]])
+    y = np.array([2, 4, 6, 20, 25, 30])
 
     lad = LADRegression()
-    lad.fit(
-        X, y, coef_init=np.array([3]), sample_weight=np.array([0.0, 0.0, 0.0, 1.0, 1.0])
-    )
-    np.testing.assert_almost_equal(5, lad.coef_[0], decimal=2)
+    lad.fit(X, y, sample_weight=np.array([0.0, 0.0, 0.0, 1.0, 1.0, 1.0]))
+    np.testing.assert_almost_equal(5, lad.coef_[0], decimal=5)

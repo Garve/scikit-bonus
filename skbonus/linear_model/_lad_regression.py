@@ -56,7 +56,7 @@ class LADRegression(BaseEstimator, RegressorMixin):
     >>> l.fit(X, y)
     LADRegression()
     >>> l.coef_
-    array([1.        , 1.99999999, 3.        , 3.99999999])
+    array([1., 2., 3., 4.])
 
     >>> import numpy as np
     >>> np.random.seed(0)
@@ -66,7 +66,7 @@ class LADRegression(BaseEstimator, RegressorMixin):
     >>> l.fit(X, y)
     LADRegression(positive=True)
     >>> l.coef_
-    array([0.        , 1.42653583, 0.        , 4.29939267])
+    array([0.        , 1.42423304, 0.        , 4.29789588])
 
     """
 
@@ -81,8 +81,6 @@ class LADRegression(BaseEstimator, RegressorMixin):
         self,
         X: np.array,
         y: np.array,
-        coef_init: np.array = None,
-        intercept_init: np.array = None,
         sample_weight: np.array = None,
     ) -> "LADRegression":
         """
@@ -96,14 +94,6 @@ class LADRegression(BaseEstimator, RegressorMixin):
         y : np.array, 1-dimensional
             The target values.
 
-        coef_init : np.array, default=None
-            Used for the numerical optimization of the mean absolute error loss function. Initialization value
-            for the coefficients.
-
-        intercept_init : np.array, default=None
-            Used for the numerical optimization of the mean absolute error loss function. Initialization value
-            for the intercept.
-
         sample_weight : np.array, default=None
             Individual weights for each sample. Use np.abs(1/y_train) to optimize for the lowest
             MAPE (Mean Average Percentage Error).
@@ -116,34 +106,38 @@ class LADRegression(BaseEstimator, RegressorMixin):
         X, y = check_X_y(X, y)
         sample_weight = _check_sample_weight(sample_weight, X)
 
-        def mae_loss(params):
-            return np.mean(sample_weight * np.abs(y - X_ @ params))
-
-        n, d = X.shape
+        n = X.shape[0]
 
         if self.copy_X:
             X_ = X.copy()
         else:
             X_ = X
 
-        coefs = np.zeros(d) if coef_init is None else coef_init
+        def mae_loss(params):
+            return np.mean(sample_weight * np.abs(y - X_ @ params))
+
+        def diff_mae_loss(params):
+            return -(sample_weight * np.sign(y - X_ @ params)) @ X_ / n
 
         if self.fit_intercept:
             X_ = np.hstack([X_, np.ones(shape=(n, 1))])
-            intercept = np.zeros(1) if intercept_init is None else intercept_init
-            start_params = np.hstack([coefs, intercept])
-            bounds = [(0, np.inf) for _ in range(d + 1)] if self.positive else None
 
-            *self.coef_, self.intercept_ = minimize(
-                mae_loss, x0=start_params, bounds=bounds, method="L-BFGS-B"
-            ).x
+        d = X_.shape[1]
+        bounds = [(0, np.inf) for _ in range(d)] if self.positive else None
+        minimize_result = minimize(
+            mae_loss,
+            x0=np.zeros(d),
+            bounds=bounds,
+            method="L-BFGS-B",
+            jac=diff_mae_loss,
+            tol=1e-20,
+        )
+        self.convergence_status_ = minimize_result.message
+
+        if self.fit_intercept:
+            *self.coef_, self.intercept_ = minimize_result.x
         else:
-            start_params = coefs
-            bounds = [(0, np.inf) for _ in range(d)] if self.positive else None
-
-            self.coef_ = minimize(
-                mae_loss, x0=start_params, bounds=bounds, method="L-BFGS-B"
-            ).x
+            self.coef_ = minimize_result.x
             self.intercept_ = 0.0
 
         self.coef_ = np.array(self.coef_)
