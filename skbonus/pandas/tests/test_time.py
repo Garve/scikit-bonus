@@ -2,14 +2,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from skbonus.exceptions import NoFrequencyError
 from skbonus.pandas.time import (
     SimpleTimeFeatures,
     SpecialDayBumps,
     PowerTrend,
     CyclicalEncoder,
 )
-
-from skbonus.exceptions import NoFrequencyError
 
 dfa = SimpleTimeFeatures(
     second=True,

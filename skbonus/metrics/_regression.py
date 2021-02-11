@@ -1,8 +1,48 @@
+from typing import Optional
+
 import numpy as np
-from sklearn.utils.validation import check_consistent_length
+from sklearn.utils.validation import check_consistent_length, _check_sample_weight
 
 
-def mape(y_true: np.array, y_pred: np.array) -> float:
+def mean_absolute_deviation(
+    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+) -> float:
+    """
+    Returns the MAD (Mean Absolute Deviation) of a prediction, i.e. the average of the vector
+    |y_true - y_pred|.
+
+    Parameters
+    ----------
+    y_true : np.array
+        Observed values.
+
+    y_pred : np.array
+        Predicted values.
+
+    sample_weight : Optional[np.array], default=None
+        Individual weights for each sample.
+
+    Returns
+    -------
+    mad : float
+        MAD value of the input.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> y_true = np.array([1, 2, 4])
+    >>> y_pred = np.array([1, 1, 2])
+    >>> mean_absolute_deviation(y_true, y_pred)
+    1.0
+    """
+    check_consistent_length(y_true, y_pred)
+    sample_weight = _check_sample_weight(sample_weight, y_true)
+    return np.mean(sample_weight * np.abs(y_true - y_pred))
+
+
+def mean_absolute_percentage_error(
+    y_true: np.array, y_pred: np.array, sample_weight: np.array = None
+) -> float:
     """
     Returns the MAPE (Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector
     |(y_true - y_pred) / y_true|.
@@ -15,6 +55,9 @@ def mape(y_true: np.array, y_pred: np.array) -> float:
     y_pred : np.array
         Predicted values.
 
+    sample_weight : Optional[np.array], default=None
+        Individual weights for each sample.
+
     Returns
     -------
     mape : float
@@ -25,14 +68,17 @@ def mape(y_true: np.array, y_pred: np.array) -> float:
     >>> import numpy as np
     >>> y_true = np.array([1, 2, 4])
     >>> y_pred = np.array([1, 1, 2])
-    >>> mape(y_true, y_pred)
+    >>> mean_absolute_percentage_error(y_true, y_pred)
     0.3333333333333333
     """
     check_consistent_length(y_true, y_pred)
-    return np.mean(np.abs((y_true - y_pred) / y_true))
+    sample_weight = _check_sample_weight(sample_weight, y_true)
+    return np.mean(sample_weight * np.abs((y_true - y_pred) / y_true))
 
 
-def smape(y_true: np.array, y_pred: np.array) -> float:
+def symmetric_mean_absolute_percentage_error(
+    y_true: np.array, y_pred: np.array, sample_weight: np.array = None
+) -> float:
     """
     Returns the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector
     2 * |(y_true - y_pred)| / (|y_true| + |y_pred|).
@@ -45,6 +91,9 @@ def smape(y_true: np.array, y_pred: np.array) -> float:
     y_pred : np.array
         Predicted values.
 
+    sample_weight : Optional[np.array], default=None
+        Individual weights for each sample.
+
     Returns
     -------
     smape : float
@@ -55,14 +104,19 @@ def smape(y_true: np.array, y_pred: np.array) -> float:
     >>> import numpy as np
     >>> y_true = np.array([1, 2, 4])
     >>> y_pred = np.array([1, 1, 2])
-    >>> smape(y_true, y_pred)
+    >>> symmetric_mean_absolute_percentage_error(y_true, y_pred)
     0.4444444444444444
     """
     check_consistent_length(y_true, y_pred)
-    return 2 * np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred)))
+    sample_weight = _check_sample_weight(sample_weight, y_true)
+    return 2 * np.mean(
+        sample_weight * np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))
+    )
 
 
-def mda(y_true: np.array, y_pred: np.array) -> float:
+def mean_directional_accuracy(
+    y_true: np.array, y_pred: np.array, sample_weight: np.array = None
+) -> float:
     """
     Returns the MDA (Mean Directional Accuracy) of a prediction, i.e. the average of the vector
     1_{sgn(y_true - y_true_lag_1) = sgn(y_pred - y_true_lag_1)}. In plain words, it computes how often
@@ -76,6 +130,10 @@ def mda(y_true: np.array, y_pred: np.array) -> float:
     y_pred : np.array
         Predicted values.
 
+    sample_weight : Optional[np.array], default=None
+        Individual weights for each sample. The first entry is ignored since the MDA loss term consists
+        of len(y_true) - 1 summands.
+
     Returns
     -------
     mda : float
@@ -86,11 +144,15 @@ def mda(y_true: np.array, y_pred: np.array) -> float:
     >>> import numpy as np
     >>> y_true = np.array([1, 2, 4])
     >>> y_pred = np.array([1, 1, 3])
-    >>> mda(y_true, y_pred)
+    >>> mean_directional_accuracy(y_true, y_pred)
     0.5
     """
     check_consistent_length(y_true, y_pred)
-    return np.mean(np.sign(np.diff(y_true)) == np.sign(y_pred[1:] - y_true[:-1]))
+    sample_weight = _check_sample_weight(sample_weight, y_true)
+    return np.mean(
+        sample_weight[1:] * np.sign(np.diff(y_true))
+        == np.sign(y_pred[1:] - y_true[:-1])
+    )
 
 
 if __name__ == "__main__":

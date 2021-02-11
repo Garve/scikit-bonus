@@ -1,3 +1,3 @@
-from ._lad_regression import LADRegression
+from ._special_regressors import LADRegression, ImbalancedLinearRegression
 
-__all__ = ["LADRegression"]
+__all__ = ["LADRegression", "ImbalancedLinearRegression"]

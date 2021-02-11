@@ -1,7 +1,12 @@
 import numpy as np
 import pytest
 
-from skbonus.metrics import mape, smape, mda
+from skbonus.metrics import (
+    mean_absolute_percentage_error,
+    symmetric_mean_absolute_percentage_error,
+    mean_directional_accuracy,
+    mean_absolute_deviation,
+)
 
 
 @pytest.mark.parametrize(
@@ -14,7 +19,9 @@ from skbonus.metrics import mape, smape, mda
     ],
 )
 def test_mape(y_true, y_pred, result):
-    np.testing.assert_almost_equal(mape(y_true, y_pred), result)
+    np.testing.assert_almost_equal(
+        mean_absolute_percentage_error(y_true, y_pred), result
+    )
 
 
 @pytest.mark.parametrize(
@@ -27,7 +34,9 @@ def test_mape(y_true, y_pred, result):
     ],
 )
 def test_smape(y_true, y_pred, result):
-    np.testing.assert_almost_equal(smape(y_true, y_pred), result)
+    np.testing.assert_almost_equal(
+        symmetric_mean_absolute_percentage_error(y_true, y_pred), result
+    )
 
 
 @pytest.mark.parametrize(
@@ -39,4 +48,16 @@ def test_smape(y_true, y_pred, result):
     ],
 )
 def test_mda(y_true, y_pred, result):
-    np.testing.assert_almost_equal(mda(y_true, y_pred), result)
+    np.testing.assert_almost_equal(mean_directional_accuracy(y_true, y_pred), result)
+
+
+@pytest.mark.parametrize(
+    "y_true, y_pred, result",
+    [
+        (np.array([1, 2, 4]), np.array([1, 1, 3]), 2 / 3.0),
+        (np.array([1, 5, 3, 6, 7, 8]), np.array([1, 6, 4, 4, 6, 5]), 8 / 6.0),
+        (np.array(10 * [1]), np.array(10 * [1]), 0.0),
+    ],
+)
+def test_mad(y_true, y_pred, result):
+    np.testing.assert_almost_equal(mean_absolute_deviation(y_true, y_pred), result)

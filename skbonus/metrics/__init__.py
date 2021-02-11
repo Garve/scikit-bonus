@@ -1,3 +1,13 @@
-from ._regression import mape, smape, mda
+from ._regression import (
+    mean_absolute_percentage_error,
+    symmetric_mean_absolute_percentage_error,
+    mean_directional_accuracy,
+    mean_absolute_deviation,
+)
 
-__all__ = ["mape", "smape", "mda"]
+__all__ = [
+    "mean_absolute_percentage_error",
+    "symmetric_mean_absolute_percentage_error",
+    "mean_directional_accuracy",
+    "mean_absolute_deviation",
+]
