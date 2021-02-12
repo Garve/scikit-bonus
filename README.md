@@ -2,7 +2,18 @@
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
 
-Give it a try with a smiple `pip install scikit-bonus`!
+Give it a try with a simple `pip install scikit-bonus`!
+
+## Special linear regressors
+This module contains linear regressors for special use-cases, for example
+* the `LADRegression` which optimizes for the *absolute* mean deviation
+  (error) instead of the mean *squared* error and
+* the `ImbalancedLinearRegression` that lets you punish over and under
+  estimations of the model differently.
+
+Since a picture says more than a thousand words:
+![special_regressions.png](readme_images/special_regressions.png)
+
 
 ## The time module
 The time module contains transformers for dealing with time series in
@@ -20,7 +31,7 @@ Very often, you don't need to use complicated models such as an
 [ARIMA](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average).
 It is often sufficient to just extract some simple date features from the
 DatetimeIndex and run a simple, even linear regression. These features can
-be the hour, the day of week, the week of the year or the month, among others.
+be the hour, the day of the week, the week of the year, or the month, among others.
 
 Let us look at an example:
 
@@ -222,7 +233,3 @@ OUTPUT:
 Quite decent for such a simple model! Our predictions look like this:
 
 ![img.png](readme_images/fit.png)
-
-
-> ## I hope this can help you a bit with your projects.
-> ## That's all for now!
