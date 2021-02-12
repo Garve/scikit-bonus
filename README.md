@@ -13,6 +13,10 @@ This module contains linear regressors for special use-cases, for example
 
 Since a picture says more than a thousand words:
 ![special_regressions.png](readme_images/special_regressions.png)
+In the left picture, you can see how the LAD regression line is not affected by outliers.
+
+In the right picture, an imbalanced linear regression was trained to punish overestimations by the model 5 times as high as under estimations.
+That's why it makes sense that the imbalanced regression line is lower: the model is more afraid of overestimate the true labels.
 
 
 ## The time module
