@@ -1,3 +1,6 @@
+![pypi](https://img.shields.io/pypi/v/scikit-bonus?style=for-the-badge)
+![maintainability](https://img.shields.io/codeclimate/maintainability-percentage/Garve/scikit-bonus?style=for-the-badge)
+![loc](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
 # scikit-bonus
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
@@ -6,10 +9,8 @@ Give it a try with a simple `pip install scikit-bonus`!
 
 ## Special linear regressors
 This module contains linear regressors for special use-cases, for example
-*   the `LADRegression` which optimizes for the *absolute* mean deviation
-    (error) instead of the mean *squared* error and
-*   the `ImbalancedLinearRegression` that lets you punish over and under
-    estimations of the model differently.
+*   the `LADRegression` which optimizes for the *absolute* mean deviation (error) instead of the mean *squared* error and
+*   the `ImbalancedLinearRegression` that lets you punish over and under estimations of the model differently.
 
 Since a picture says more than a thousand words:
 ![special_regressions.png](readme_images/special_regressions.png)
@@ -165,7 +166,7 @@ data = (
 )
 ```
 
-Let us create the dataset in the scikit-learn-typical _X_, _y_ form and split
+Let us create the dataset in the scikit-learn-typical *X*, *y* form and split
 it into a train and test set. Note that we do not do a random split
 since we deal with a time series.
 
