@@ -1,6 +1,8 @@
 ![pypi](https://img.shields.io/pypi/v/scikit-bonus?style=for-the-badge)
-![maintainability](https://img.shields.io/codeclimate/maintainability-percentage/Garve/scikit-bonus?style=for-the-badge)
+![maintainability](https://img.shields.io/codeclimate/maintainability/Garve/scikit-bonus?style=for-the-badge)
+![code quality](https://img.shields.io/codacy/grade/726bd54b587e48038e0f0251e3159972?style=for-the-badge)
 ![loc](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
+726bd54b587e48038e0f0251e3159972
 # scikit-bonus
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
