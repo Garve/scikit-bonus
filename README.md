@@ -1,3 +1,7 @@
+[![Pypi](https://img.shields.io/pypi/v/scikit-bonus?style=for-the-badge)](https://pypi.org/project/scikit-bonus/)
+![Code Climate](https://img.shields.io/codeclimate/maintainability-percentage/Garve/scikit-bonus?style=for-the-badge)
+![Size](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
+
 # scikit-bonus
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
