@@ -8,8 +8,7 @@ def mean_absolute_deviation(
     y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
-    Returns the MAD (Mean Absolute Deviation) of a prediction, i.e. the average of the vector
-    |y_true - y_pred|.
+    Return the MAD (Mean Absolute Deviation) of a prediction, i.e. the average of the vector |y_true - y_pred|.
 
     Parameters
     ----------
@@ -44,8 +43,7 @@ def mean_absolute_percentage_error(
     y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
-    Returns the MAPE (Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector
-    |(y_true - y_pred) / y_true|.
+    Return the MAPE (Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector |(y_true - y_pred) / y_true|.
 
     Parameters
     ----------
@@ -80,8 +78,7 @@ def symmetric_mean_absolute_percentage_error(
     y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
-    Returns the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector
-    2 * |(y_true - y_pred)| / (|y_true| + |y_pred|).
+    Return the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector 2 * |(y_true - y_pred)| / (|y_true| + |y_pred|).
 
     Parameters
     ----------
@@ -118,9 +115,9 @@ def mean_directional_accuracy(
     y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
-    Returns the MDA (Mean Directional Accuracy) of a prediction, i.e. the average of the vector
-    1_{sgn(y_true - y_true_lag_1) = sgn(y_pred - y_true_lag_1)}. In plain words, it computes how often
-    the model got the direction of the time series movement right.
+    Return the MDA (Mean Directional Accuracy) of a prediction, i.e. the average of the vector 1_{sgn(y_true - y_true_lag_1) = sgn(y_pred - y_true_lag_1)}.
+
+    In plain words, it computes how often the model got the direction of the time series movement right.
 
     Parameters
     ----------
