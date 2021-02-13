@@ -10,10 +10,8 @@ Give it a try with a simple `pip install scikit-bonus`!
 
 ## Special linear regressors
 This module contains linear regressors for special use-cases, for example
-  * the `LADRegression` which optimizes for the *absolute* mean deviation
-    (error) instead of the mean *squared* error and
-  * the `ImbalancedLinearRegression` that lets you punish over and under
-    estimations of the model differently.
+* the `LADRegression` which optimizes for the *absolute* mean deviation (error) instead of the mean *squared* error and
+* the `ImbalancedLinearRegression` that lets you punish over and under estimations of the model differently.
 
 Since a picture says more than a thousand words:
 ![special_regressions.png](readme_images/special_regressions.png)
