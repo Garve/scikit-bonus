@@ -13,7 +13,7 @@ This module contains linear regressors for special use-cases, for example
 *   the `ImbalancedLinearRegression` that lets you punish over and under estimations of the model differently.
 
 Since a picture says more than a thousand words:
-![special_regressions.png](readme_images/special_regressions.png)
+![special_regressions.png](https://github.com/Garve/scikit-bonus/blob/master/readme_images/special_regressions.png?raw=true)
 In the left picture, you can see how the LAD regression line is not affected by outliers.
 
 In the right picture, an imbalanced linear regression was trained to punish overestimations by the model 5 times as high as under estimations.
@@ -122,7 +122,7 @@ OUTPUT:
 
 > Note that the hours 0 and 23 are as close together as 0 and 1.
 
-![img_3.png](readme_images/clock.png)
+![img_3.png](https://github.com/Garve/scikit-bonus/blob/master/readme_images/clock.png?raw=true)
 
 ### Air Passengers
 
@@ -189,7 +189,7 @@ y_test = y[100:]
 
 Before we continue, let us take a look at the time series.
 
-![img.png](readme_images/original_series.png)
+![img.png](https://github.com/Garve/scikit-bonus/blob/master/readme_images/original_series.png?raw=true)
 
 We can see that it has
 1.   an increasing amplitude
@@ -235,4 +235,4 @@ OUTPUT:
 
 Quite decent for such a simple model! Our predictions look like this:
 
-![img.png](readme_images/fit.png)
+![img.png](https://github.com/Garve/scikit-bonus/blob/master/readme_images/fit.png?raw=true)
