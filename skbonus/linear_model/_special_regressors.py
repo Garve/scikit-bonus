@@ -15,8 +15,7 @@ from sklearn.utils.validation import (
 
 class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     """
-    Base class for regressors relying on scipy's minimze method. Derive a class from this one and give it
-    the function to be minimized.
+    Base class for regressors relying on scipy's minimze method. Derive a class from this one and give it the function to be minimized.
 
     Parameters
     ----------
@@ -71,6 +70,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     def __init__(
         self, fit_intercept: bool = True, copy_X: bool = True, positive: bool = False
     ) -> None:
+        """Initialize."""
         self.fit_intercept = fit_intercept
         self.copy_X = copy_X
         self.positive = positive
@@ -80,7 +80,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         self, *args
     ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
         """
-        Produces the loss function to be minimized, and its gradient to speed up computations.
+        Produce the loss function to be minimized, and its gradient to speed up computations.
 
         Returns
         -------
@@ -255,12 +255,12 @@ class LADRegression(BaseScipyMinimizeRegressor):
 class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     """
     Linear regression where overestimating is "overestimation_punishment_factor" times worse than underestimating.
+
     A value of overestimation_punishment_factor=5 implies that overestimations by the model are penalized with a factor of 5
     while underestimations have a default factor of 1.
 
     ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
     the observed targets in the dataset, and the targets predicted by the linear approximation.
-
     Compared to normal linear regression, this approach allows for a distinct treatment of over or under estimations.
 
     Parameters
@@ -319,6 +319,7 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
         positive: bool = False,
         overestimation_punishment_factor: float = 1.0,
     ) -> None:
+        """Initialize."""
         super().__init__(fit_intercept, copy_X, positive)
         self.overestimation_punishment_factor = overestimation_punishment_factor
 
