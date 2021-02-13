@@ -1,11 +1,12 @@
+"""Preprocess data for training with a focus on pandas compatibility."""
+
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
 
 class OneHotEncoderWithNames(OneHotEncoder):
     """
-    Razor-thin layer around scikit-learn's OneHotEncoder class to return a pandas dataframe with
-    the appropriate column names.
+    Razor-thin layer around scikit-learn's OneHotEncoder class to return a pandas dataframe with the appropriate column names.
 
     Description from the maintainers of scikit-learn:
 
@@ -97,8 +98,7 @@ class OneHotEncoderWithNames(OneHotEncoder):
 
     def fit(self, X: pd.DataFrame, y: None = None):
         """
-        Fits a OneHotEncoder while also storing the dataframe column names that let us check if the columns match
-        when calling the transform method.
+        Fits a OneHotEncoder while also storing the dataframe column names that let us check if the columns match when calling the transform method.
 
         Parameters
         ----------
