@@ -2,6 +2,9 @@
 ![maintainability](https://img.shields.io/codeclimate/maintainability-percentage/Garve/scikit-bonus?style=for-the-badge)
 ![loc](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
 # scikit-bonus
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/aff7f0f677714ffe8df9d01536788cb9)](https://app.codacy.com/gh/Garve/scikit-bonus?utm_source=github.com&utm_medium=referral&utm_content=Garve/scikit-bonus&utm_campaign=Badge_Grade)
+
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
 
