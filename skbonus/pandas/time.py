@@ -1,3 +1,5 @@
+"""Module for time series utilities with a focus on pandas compatibility."""
+
 from typing import Any, List, Optional, Union, Dict
 
 import numpy as np
@@ -9,8 +11,9 @@ from skbonus.exceptions import NoFrequencyError
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     """
-    This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns are easy
-    derivations from the index, such as the day of week or month.
+    This class enriches pandas dataframes with a DatetimeIndex with new columns.
+
+    These new columns are easy derivations from the index, such as the day of week or month.
     This is especially useful when dealing with time series regressions or classifications.
 
     Parameters
@@ -75,6 +78,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         month: bool = False,
         year: bool = False,
     ) -> None:
+        """Initialize."""
         self.second = second
         self.minute = minute
         self.hour = hour
@@ -155,7 +159,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Inserts all chosen time features as new columns into the dataframe and outputs it.
+        Insert all chosen time features as new columns into the dataframe and outputs it.
 
         Parameters
         ----------
@@ -184,8 +188,9 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
 
 class PowerTrend(BaseEstimator, TransformerMixin):
     """
-    Adds a power trend to a pandas dataframe with a continous DatetimeIndex. For example, it can create a new column
-    with numbers increasing quadratically in the index.
+    Adds a power trend to a pandas dataframe with a continous DatetimeIndex.
+
+    For example, it can create a new column with numbers increasing quadratically in the index.
 
     Parameters
     ----------
@@ -208,11 +213,14 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, power: float = 1) -> None:
+        """Initialize."""
         self.power = power
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
         """
-        Fits the model. It assigns value 0 to the first item of the time index and 1 to the second one etc.
+        Fit the model.
+
+        It assigns value 0 to the first item of the time index and 1 to the second one etc.
         This way, we can get a value for any other date in a linear fashion. These values are later transformed.
 
         Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
@@ -261,10 +269,11 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
 class SpecialDayBumps(BaseEstimator, TransformerMixin):
     """
-    This class enriches pandas dataframes with a DatetimeIndex with new columns. These new columns
-    contain whether the index lies within a time interval. For example, the output can be
-    a one hot encoded column containing a 1 if the corresponding date from the index is within
-    the given date range, and 0 otherwise.
+    This class enriches pandas dataframes with a DatetimeIndex with new columns specified in the "dates" keyword.
+
+    These new columns contain whether the index lies within a time interval. For example, the output can be
+    a one hot encoded column containing a 1 if the corresponding date from the index is within the given date range, and 0 otherwise.
+
     The output can also be a smoothed via a general Gaussian sliding window over the one hot encoded column as
     a next step. This makes sense when, for example, a certain holiday has effects on the next days or the days
     before, too. See the examples to get a better understanding.
@@ -349,6 +358,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         sig: float = 1,
         pad_value: Union[float, "np.nan"] = 0,
     ) -> None:
+        """Initialize."""
         self.name = name
         self.dates = dates
         self.window = window
@@ -386,7 +396,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Adds the new date feature to the dataframe.
+        Add the new date feature to the dataframe.
 
         Parameters
         ----------
@@ -417,8 +427,9 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
 class CyclicalEncoder(BaseEstimator, TransformerMixin):
     """
-    This class breaks each cyclic feature into two new features, corresponding to the representation of
-    this feature on a circle. For example, take the hours from 0 to 23. On a normal, round  analog clock,
+    This class breaks each cyclic feature into two new features, corresponding to the representation of this feature on a circle.
+
+    For example, take the hours from 0 to 23. On a normal, round  analog clock,
     these features are perfectly aligned on a circle already. You can do the same with days, month, ...
 
     The column names affected by default are
@@ -472,6 +483,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     def __init__(
         self, additional_cycles: Optional[Dict[str, Dict[str, str]]] = None
     ) -> None:
+        """Initialize."""
         DEFAULT_CYCLES = {
             "second": {"min": 0, "max": 59},
             "minute": {"min": 0, "max": 59},
@@ -510,7 +522,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         """
-        Adds the cyclic features to the dataframe.
+        Add the cyclic features to the dataframe.
 
         Parameters
         ----------
