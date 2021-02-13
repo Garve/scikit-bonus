@@ -1,3 +1,5 @@
+"""This module contains several loss metrics."""
+
 from typing import Optional
 
 import numpy as np
