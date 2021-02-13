@@ -41,7 +41,7 @@ def mean_absolute_deviation(
 
 
 def mean_absolute_percentage_error(
-    y_true: np.array, y_pred: np.array, sample_weight: np.array = None
+    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
     Returns the MAPE (Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector
@@ -77,7 +77,7 @@ def mean_absolute_percentage_error(
 
 
 def symmetric_mean_absolute_percentage_error(
-    y_true: np.array, y_pred: np.array, sample_weight: np.array = None
+    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
     Returns the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction, i.e. the average of the vector
@@ -115,7 +115,7 @@ def symmetric_mean_absolute_percentage_error(
 
 
 def mean_directional_accuracy(
-    y_true: np.array, y_pred: np.array, sample_weight: np.array = None
+    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
 ) -> float:
     """
     Returns the MDA (Mean Directional Accuracy) of a prediction, i.e. the average of the vector

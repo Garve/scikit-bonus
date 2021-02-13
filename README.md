@@ -6,10 +6,10 @@ Give it a try with a simple `pip install scikit-bonus`!
 
 ## Special linear regressors
 This module contains linear regressors for special use-cases, for example
-* the `LADRegression` which optimizes for the *absolute* mean deviation
-  (error) instead of the mean *squared* error and
-* the `ImbalancedLinearRegression` that lets you punish over and under
-  estimations of the model differently.
+*   the `LADRegression` which optimizes for the *absolute* mean deviation
+    (error) instead of the mean *squared* error and
+*   the `ImbalancedLinearRegression` that lets you punish over and under
+    estimations of the model differently.
 
 Since a picture says more than a thousand words:
 ![special_regressions.png](readme_images/special_regressions.png)
@@ -70,16 +70,16 @@ OUTPUT:
 
 The SimpleTimeFeatures has many more built-in features. The full list
 is
- * second
- * minute
- * hour
- * day_of_week
- * day_of_month
- * day_of_year
- * week_of_month
- * week_of_year
- * month
- * year
+*   second
+*   minute
+*   hour
+*   day_of_week
+*   day_of_month
+*   day_of_year
+*   week_of_month
+*   week_of_year
+*   month
+*   year
 
 You can work with these features directly, but
 of course, you can utilize scikit-learn to further process these features,
@@ -193,14 +193,14 @@ Before we continue, let us take a look at the time series.
 ![img.png](readme_images/original_series.png)
 
 We can see that it has
- 1. an increasing amplitude
- 2. a seasonal pattern
- 3. an upward trend
+1.   an increasing amplitude
+2.   a seasonal pattern
+3.   an upward trend
 
 We want to cover these properties with the following approach:
- 1. apply the logarithm on the data
- 2. extract the month from the DatetimeIndex using scikit-bonus' SimpleTimeFeatures
- 3. Add a linear trend using scikit-bonus' PowerTrend
+1.   apply the logarithm on the data
+2.   extract the month from the DatetimeIndex using scikit-bonus' SimpleTimeFeatures
+3.   Add a linear trend using scikit-bonus' PowerTrend
 
 Putting everything together in a pipeline looks like this:
 

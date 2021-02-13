@@ -118,20 +118,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         self
             Fitted regressor.
         """
-        X, y = check_X_y(X, y)
-        sample_weight = _check_sample_weight(sample_weight, X)
-
-        n = X.shape[0]
-
-        if self.copy_X:
-            X_ = X.copy()
-        else:
-            X_ = X
-
-        if self.fit_intercept:
-            X_ = np.hstack([X_, np.ones(shape=(n, 1))])
-
-        loss, grad_loss = self._get_objective(X_, y, sample_weight)
+        X_, grad_loss, loss = self._prepare_inputs(X, sample_weight, y)
 
         d = X_.shape[1]
         bounds = [(0, np.inf) for _ in range(d)] if self.positive else None
@@ -156,6 +143,19 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         self.coef_ = np.array(self.coef_)
 
         return self
+
+    def _prepare_inputs(self, X, sample_weight, y):
+        X, y = check_X_y(X, y)
+        sample_weight = _check_sample_weight(sample_weight, X)
+        n = X.shape[0]
+        if self.copy_X:
+            X_ = X.copy()
+        else:
+            X_ = X
+        if self.fit_intercept:
+            X_ = np.hstack([X_, np.ones(shape=(n, 1))])
+        loss, grad_loss = self._get_objective(X_, y, sample_weight)
+        return X_, grad_loss, loss
 
     def predict(self, X: np.array) -> np.array:
         """
