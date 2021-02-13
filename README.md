@@ -18,7 +18,6 @@ In the left picture, you can see how the LAD regression line is not affected by 
 In the right picture, an imbalanced linear regression was trained to punish overestimations by the model 5 times as high as under estimations.
 That's why it makes sense that the imbalanced regression line is lower: the model is more afraid of overestimate the true labels.
 
-
 ## The time module
 The time module contains transformers for dealing with time series in
 a simple-to-understand way.
@@ -89,8 +88,8 @@ scikit-bonus.
 
 ### CyclicalEncoder
 In short, this encoder takes a single cyclic feature such
-as most time features (except for _year_) and converts it
-into a _two-dimensional_ feature with the property that close points
+as most time features (except for *year*) and converts it
+into a *two-dimensional* feature with the property that close points
 in time are close in the encoded space.
 
 Consider hours for example: A model working with hours in the form
@@ -124,11 +123,9 @@ OUTPUT:
 
 ![img_3.png](readme_images/clock.png)
 
-
 ### Air Passengers
 
 Let us check out the famous air passenger example:
-
 
 ```python
 from sktime.datasets import load_airline
@@ -159,6 +156,7 @@ While the index of this series looks fine, it's actually a [PeriodIndex](https:/
 which scikit-bonus cannot deal with so far. Also, it's a series and not a dataframe.
 
 We can address both problems via
+
 ```python
 data = (
     data_raw
