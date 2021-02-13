@@ -1,15 +1,15 @@
 import warnings
 from abc import ABC, abstractmethod
-from typing import Callable, Tuple, Optional
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 from scipy.optimize import minimize
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.utils.validation import (
-    check_X_y,
+    _check_sample_weight,
     check_array,
     check_is_fitted,
-    _check_sample_weight,
+    check_X_y,
 )
 
 

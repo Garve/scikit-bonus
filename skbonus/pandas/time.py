@@ -1,6 +1,7 @@
 """Module for time series utilities with a focus on pandas compatibility."""
 
-from typing import Any, List, Optional, Union, Dict
+
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd

@@ -1,7 +1,7 @@
 from typing import Optional
 
 import numpy as np
-from sklearn.utils.validation import check_consistent_length, _check_sample_weight
+from sklearn.utils.validation import _check_sample_weight, check_consistent_length
 
 
 def mean_absolute_deviation(

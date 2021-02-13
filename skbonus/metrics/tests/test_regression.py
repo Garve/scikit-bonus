@@ -1,11 +1,13 @@
+"""Test regression metrics."""
+
 import numpy as np
 import pytest
 
 from skbonus.metrics import (
-    mean_absolute_percentage_error,
-    symmetric_mean_absolute_percentage_error,
-    mean_directional_accuracy,
     mean_absolute_deviation,
+    mean_absolute_percentage_error,
+    mean_directional_accuracy,
+    symmetric_mean_absolute_percentage_error,
 )
 
 
@@ -19,6 +21,7 @@ from skbonus.metrics import (
     ],
 )
 def test_mape(y_true, y_pred, result):
+    """Test mape."""
     np.testing.assert_almost_equal(
         mean_absolute_percentage_error(y_true, y_pred), result
     )
@@ -34,6 +37,7 @@ def test_mape(y_true, y_pred, result):
     ],
 )
 def test_smape(y_true, y_pred, result):
+    """Test smape."""
     np.testing.assert_almost_equal(
         symmetric_mean_absolute_percentage_error(y_true, y_pred), result
     )
@@ -48,6 +52,7 @@ def test_smape(y_true, y_pred, result):
     ],
 )
 def test_mda(y_true, y_pred, result):
+    """Test mda."""
     np.testing.assert_almost_equal(mean_directional_accuracy(y_true, y_pred), result)
 
 
@@ -60,4 +65,5 @@ def test_mda(y_true, y_pred, result):
     ],
 )
 def test_mad(y_true, y_pred, result):
+    """Test mad."""
     np.testing.assert_almost_equal(mean_absolute_deviation(y_true, y_pred), result)

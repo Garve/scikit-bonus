@@ -1,13 +1,15 @@
+"""Test time classes."""
+
 import numpy as np
 import pandas as pd
 import pytest
 
 from skbonus.exceptions import NoFrequencyError
 from skbonus.pandas.time import (
+    CyclicalEncoder,
+    PowerTrend,
     SimpleTimeFeatures,
     SpecialDayBumps,
-    PowerTrend,
-    CyclicalEncoder,
 )
 
 dfa = SimpleTimeFeatures(
@@ -71,6 +73,7 @@ ce_transformed = ce.fit_transform(minutes)
     ],
 )
 def test_timefeaturesadder(function, column_name, result):
+    """Test SimpleTimeFeatures."""
     assert function(non_continuous_input)[column_name].tolist() == result
 
 
@@ -85,17 +88,20 @@ def test_timefeaturesadder(function, column_name, result):
     ],
 )
 def test_specialeventsadder(date, value):
+    """Test the SpecialDayBumps."""
     np.testing.assert_almost_equal(
         sda_transformed.loc[date, "black_friday_2018"], value
     )
 
 
 def test_powertrendadder_exception():
+    """Test if the PowerTrendAdder throws an error for a malformed index."""
     with pytest.raises(NoFrequencyError):
         pta.fit(non_continuous_input)
 
 
 def test_powertrendadder_fit_transform():
+    """Test the PowerTrendAdder."""
     assert pta.fit_transform(continuous_input).trend.tolist() == list(range(60))
 
 
@@ -110,4 +116,5 @@ def test_powertrendadder_fit_transform():
     ],
 )
 def test_cyclicalencoder(index, value):
+    """Test the CyclicalEncoder."""
     np.testing.assert_almost_equal(ce_transformed.minute_cos.loc[index], value)

@@ -19,4 +19,4 @@ repos:
 -   repo: https://github.com/PyCQA/pydocstyle
     rev: 5.1.1
     hooks:
-        - id: pydocstyle
+    -   id: pydocstyle
