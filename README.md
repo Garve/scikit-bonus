@@ -194,14 +194,14 @@ Before we continue, let us take a look at the time series.
 ![img.png](https://github.com/Garve/scikit-bonus/blob/master/readme_images/original_series.png?raw=true)
 
 We can see that it has
-1.   an increasing amplitude
-2.   a seasonal pattern
-3.   an upward trend
+1. an increasing amplitude
+2. a seasonal pattern
+3. an upward trend
 
 We want to cover these properties with the following approach:
-1.   apply the logarithm on the data
-2.   extract the month from the DatetimeIndex using scikit-bonus' SimpleTimeFeatures
-3.   Add a linear trend using scikit-bonus' PowerTrend
+1. apply the logarithm on the data
+2. extract the month from the DatetimeIndex using scikit-bonus' SimpleTimeFeatures
+3. Add a linear trend using scikit-bonus' PowerTrend
 
 Putting everything together in a pipeline looks like this:
 
