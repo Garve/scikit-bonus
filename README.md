@@ -3,6 +3,7 @@
 [![quality](https://img.shields.io/codacy/grade/726bd54b587e48038e0f0251e3159972?style=for-the-badge)](https://www.codacy.com/gh/Garve/scikit-bonus/dashboard)
 ![loc](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
 ![coding style](https://img.shields.io/badge/coding%20style-black-black?style=for-the-badge)
+![dependencies](https://img.shields.io/badge/standing%20on%20the%20shoulders%20of%20giants-numpy%20%7C%20scikit--learn%20%7C%20pandas%20%7C%20scipy-green?style=for-the-badge)
 
 
 # scikit-bonus
@@ -86,8 +87,9 @@ is
 *   year
 
 You can work with these features directly, but
-of course, you can utilize scikit-learn to further process these features,
-such as with a [OneHotEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html).
+of course, you can utilize scikit-bonus to further process these features,
+such as with a **OneHotEncoderWithNames**, a thin wrapper around
+scikit-learn's [OneHotEncoder](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html).
 Another way to post-process these features is using the **CyclicalEncoder** of
 scikit-bonus.
 
