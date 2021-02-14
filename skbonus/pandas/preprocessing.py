@@ -3,10 +3,11 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
+__all__ = ["OneHotEncoderWithNames"]
+
 
 class OneHotEncoderWithNames(OneHotEncoder):
-    """
-    Razor-thin layer around scikit-learn's OneHotEncoder class to return a pandas dataframe with the appropriate column names.
+    """Razor-thin layer around scikit-learn's OneHotEncoder class to return a pandas dataframe with the appropriate column names.
 
     Description from the maintainers of scikit-learn:
 
@@ -97,8 +98,7 @@ class OneHotEncoderWithNames(OneHotEncoder):
     """
 
     def fit(self, X: pd.DataFrame, y: None = None):
-        """
-        Fits a OneHotEncoder while also storing the dataframe column names that let us check if the columns match when calling the transform method.
+        """Fits a OneHotEncoder while also storing the dataframe column names that let us check if the columns match when calling the transform method.
 
         Parameters
         ----------
@@ -110,8 +110,7 @@ class OneHotEncoderWithNames(OneHotEncoder):
 
         Returns
         -------
-        self
-            Fitted transformer.
+        Fitted transformer.
         """
         self.column_names_ = X.columns
         return super().fit(X, y)
@@ -123,8 +122,7 @@ class OneHotEncoderWithNames(OneHotEncoder):
         return "_".join([self.column_names_[feature_number], feature_value])
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        One hot encode the input dataframe.
+        """One hot encode the input dataframe.
 
         Parameters
         ----------
@@ -134,8 +132,13 @@ class OneHotEncoderWithNames(OneHotEncoder):
 
         Returns
         -------
-        transformed_X : pd.DataFrame
+        pd.DataFrame
             A pandas dataframe containing the one hot encoded data and proper column names.
+
+        Raises
+        ------
+        AssertionError
+            When the column names during training time are not identical to the column names at transformation time.
         """
         if X.columns.tolist() != self.column_names_.tolist():
             raise AssertionError(

@@ -1,4 +1,4 @@
-"""Test LADRegressior."""
+"""Test LADRegression."""
 
 import numpy as np
 import pytest
