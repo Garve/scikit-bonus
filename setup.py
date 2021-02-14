@@ -1,4 +1,7 @@
+"""Setup file."""
+
 import setuptools
+
 import skbonus
 
 base_packages = [
@@ -23,13 +26,13 @@ setuptools.setup(
     version=skbonus.__version__,
     author="Robert Kübler",
     author_email="xgarve@gmail.com",
-    description="Extending scikit-learn with useful things",
+    description="Extending scikit-learn with various useful things.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Garve/scikit-bonus",
     packages=setuptools.find_packages(),
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: BSD 3-Clause",
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
