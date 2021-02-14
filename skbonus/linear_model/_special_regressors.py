@@ -97,8 +97,9 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         X: np.array,
         y: np.array,
         sample_weight: Optional[np.array] = None,
-    ) -> "LADRegression":
-        """Fit the model.
+    ) -> "BaseScipyMinimizeRegressor":
+        """
+        Fit the model.
 
         Parameters
         ----------
@@ -155,7 +156,8 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         return X_, grad_loss, loss
 
     def predict(self, X: np.array) -> np.array:
-        """Predict using the linear model.
+        """
+        Predict using the linear model.
 
         Parameters
         ----------
@@ -174,7 +176,8 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
 
 class LADRegression(BaseScipyMinimizeRegressor):
-    """Least absolute deviation Regression.
+    """
+    Least absolute deviation Regression.
 
     LADRegression fits a linear model to minimize the residual sum of absolute deviations between
     the observed targets in the dataset, and the targets predicted by the linear approximation.
@@ -247,7 +250,8 @@ class LADRegression(BaseScipyMinimizeRegressor):
 
 
 class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
-    """Linear regression where overestimating is "overestimation_punishment_factor" times worse than underestimating.
+    """
+    Linear regression where overestimating is "overestimation_punishment_factor" times worse than underestimating.
 
     A value of overestimation_punishment_factor=5 implies that overestimations by the model are penalized with a factor of 5
     while underestimations have a default factor of 1.
