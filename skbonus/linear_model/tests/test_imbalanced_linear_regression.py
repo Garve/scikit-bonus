@@ -1,3 +1,5 @@
+"""Test the ImbalancedLinearRegression."""
+
 import numpy as np
 import pytest
 
@@ -14,6 +16,7 @@ from skbonus.linear_model import ImbalancedLinearRegression
     ],
 )
 def test_coefs_and_intercept__no_noise(coefs, intercept):
+    """Regression problems without noise."""
     np.random.seed(0)
     X = np.random.randn(100, coefs.shape[0])
     y = X @ coefs + intercept
@@ -34,6 +37,7 @@ def test_coefs_and_intercept__no_noise(coefs, intercept):
     ],
 )
 def test_score(coefs, intercept):
+    """Tests with noise on an easy problem. A good score should be possible."""
     np.random.seed(0)
     X = np.random.randn(10000, coefs.shape[0])
     np.random.seed(0)
@@ -54,6 +58,7 @@ def test_score(coefs, intercept):
     ],
 )
 def test_coefs_and_intercept__no_noise_positive(coefs, intercept):
+    """Test with only positive coefficients."""
     np.random.seed(0)
     X = np.random.randn(100, coefs.shape[0])
     y = X @ coefs + intercept
@@ -66,6 +71,7 @@ def test_coefs_and_intercept__no_noise_positive(coefs, intercept):
 
 
 def test_coefs_and_intercept__no_noise_sample_weight():
+    """Test model with sample weights."""
     X = np.array([[1], [2], [3], [4], [5], [6]])
     y = np.array([2, 4, 6, 20, 25, 30])
 
@@ -84,6 +90,7 @@ def test_coefs_and_intercept__no_noise_sample_weight():
     ],
 )
 def test_under_estimation(coefs, intercept):
+    """Test if the model is able to underestimate."""
     np.random.seed(0)
     X = np.random.randn(100, coefs.shape[0])
     y = X @ coefs + intercept + 2 * np.random.randn(100)
@@ -103,6 +110,7 @@ def test_under_estimation(coefs, intercept):
     ],
 )
 def test_over_estimation(coefs, intercept):
+    """Test if the model is able to overestimate."""
     np.random.seed(0)
     X = np.random.randn(100, coefs.shape[0])
     y = X @ coefs + intercept + 2 * np.random.randn(100)

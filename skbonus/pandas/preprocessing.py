@@ -3,6 +3,8 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
+__all__ = ["OneHotEncoderWithNames"]
+
 
 class OneHotEncoderWithNames(OneHotEncoder):
     """
@@ -110,8 +112,7 @@ class OneHotEncoderWithNames(OneHotEncoder):
 
         Returns
         -------
-        self
-            Fitted transformer.
+        Fitted transformer.
         """
         self.column_names_ = X.columns
         return super().fit(X, y)
@@ -134,8 +135,13 @@ class OneHotEncoderWithNames(OneHotEncoder):
 
         Returns
         -------
-        transformed_X : pd.DataFrame
+        pd.DataFrame
             A pandas dataframe containing the one hot encoded data and proper column names.
+
+        Raises
+        ------
+        AssertionError
+            If the column names during training and transformation time are not identical.
         """
         if X.columns.tolist() != self.column_names_.tolist():
             raise AssertionError(

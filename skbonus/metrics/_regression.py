@@ -25,7 +25,7 @@ def mean_absolute_deviation(
 
     Returns
     -------
-    mad : float
+    float
         MAD value of the input.
 
     Examples
@@ -62,7 +62,7 @@ def mean_absolute_percentage_error(
 
     Returns
     -------
-    mape : float
+    float
         MAPE value of the input.
 
     Examples
@@ -99,7 +99,7 @@ def symmetric_mean_absolute_percentage_error(
 
     Returns
     -------
-    smape : float
+    float
         SMAPE value of the input.
 
     Examples
@@ -140,7 +140,7 @@ def mean_directional_accuracy(
 
     Returns
     -------
-    mda : float
+    float
         MDA value of the input.
 
     Examples

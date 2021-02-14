@@ -1,6 +1,5 @@
 """Module for time series utilities with a focus on pandas compatibility."""
 
-
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
@@ -153,8 +152,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        self
-            Fitted transformer.
+        Fitted transformer.
         """
         return self
 
@@ -169,7 +167,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        transformed_X : pd.DataFrame
+        pd.DataFrame
             A pandas dataframe with additional time feature columns.
         """
         res = (
@@ -224,9 +222,6 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         It assigns value 0 to the first item of the time index and 1 to the second one etc.
         This way, we can get a value for any other date in a linear fashion. These values are later transformed.
 
-        Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
-        TimeSeriesSplit when using cross validation.
-
         Parameters
         ----------
         X : pd.DataFrame
@@ -237,8 +232,12 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        self
-            Fitted transformer.
+        Fitted transformer.
+
+        Raises
+        ------
+        NoFrequencyError
+            If the DatetimeIndex has no frequency. This happens, for example, if you don't use a TimeSeriesSplit when using cross validation.
         """
         self.freq_ = X.index.freq
         if self.freq_ is None:
@@ -260,7 +259,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        transformed_X : pd.DataFrame
+        pd.DataFrame
             The dataframe with an additional trend column.
 
         """
@@ -372,9 +371,6 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         """
         Fit the estimator. The frequency of the DatetimeIndex is extracted.
 
-        Raises a NoFrequencyError if the DatetimeIndex has no frequency. This happens, for example, if you don't use a
-        TimeSeriesSplit when using cross validation.
-
         Parameters
         ----------
         X : pd.DataFrame
@@ -385,8 +381,12 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        self
-            Fitted transformer.
+        Fitted transformer.
+
+        Raises
+        ------
+        NoFrequencyError
+            If the DatetimeIndex has no frequency. This happens, for example, if you don't use a TimeSeriesSplit when using cross validation.
         """
         self.freq_ = X.index.freq
         if self.freq_ is None:
@@ -406,7 +406,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        transformed_X : pd.DataFrame
+        pd.DataFrame
             A pandas dataframe with an additional column for special dates.
         """
         dummy_dates = pd.Series(X.index.isin(self.dates), index=X.index)
@@ -516,8 +516,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        self
-            Fitted transformer.
+        Fitted transformer.
         """
         return self
 
@@ -542,7 +541,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        transformed_X : pd.DataFrame
+        pd.DataFrame
             A pandas dataframe with two additional columns for each original column.
         """
         return X.assign(

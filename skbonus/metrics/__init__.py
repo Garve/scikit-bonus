@@ -1,6 +1,5 @@
 """Various loss functions and metrics."""
 
-
 from ._regression import (
     mean_absolute_deviation,
     mean_absolute_percentage_error,

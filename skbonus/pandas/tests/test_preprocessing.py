@@ -1,3 +1,5 @@
+"""Test preprocessing steps."""
+
 import pandas as pd
 import pytest
 from sklearn.preprocessing import OneHotEncoder
@@ -12,10 +14,12 @@ ohe_skbonus = ohe_with_names.fit_transform(df)
 
 
 def test_one_hot_encoding():
+    """Test if the values of the OneHotEncoderWithNames matches the ones of scikit-learn's OneHotEncoder."""
     assert (ohe_sklearn == ohe_skbonus.values).all()
 
 
 def test_column_names():
+    """Test if the columns names are set properly."""
     assert ohe_skbonus.columns.tolist() == [
         "A_1",
         "A_2",
@@ -29,6 +33,7 @@ def test_column_names():
 
 
 def test_assertion_error():
+    """Test if the encoder notices that the column names differ between training and transformation time."""
     df_new = pd.DataFrame(
         {
             "A": [1, 2, 3, 2],
