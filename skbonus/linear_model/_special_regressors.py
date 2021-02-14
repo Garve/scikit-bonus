@@ -14,8 +14,7 @@ from sklearn.utils.validation import (
 
 
 class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
-    """
-    Base class for regressors relying on scipy's minimze method. Derive a class from this one and give it the function to be minimized.
+    """Base class for regressors relying on scipy's minimze method. Derive a class from this one and give it the function to be minimized.
 
     Parameters
     ----------
@@ -79,8 +78,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     def _get_objective(
         self, *args
     ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
-        """
-        Produce the loss function to be minimized, and its gradient to speed up computations.
+        """Produce the loss function to be minimized, and its gradient to speed up computations.
 
         Returns
         -------
@@ -115,8 +113,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
         Returns
         -------
-        self
-            Fitted regressor.
+        Fitted regressor.
         """
         X_, grad_loss, loss = self._prepare_inputs(X, sample_weight, y)
 
