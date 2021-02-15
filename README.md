@@ -2,7 +2,6 @@
 [![gh](https://img.shields.io/badge/github%20pages-passing-green?style=for-the-badge)](https://garve.github.io/scikit-bonus/index.html)
 [![maintainability](https://img.shields.io/codeclimate/maintainability/Garve/scikit-bonus?style=for-the-badge)](https://codeclimate.com/github/Garve/scikit-bonus)
 [![quality](https://img.shields.io/codacy/grade/726bd54b587e48038e0f0251e3159972?style=for-the-badge)](https://www.codacy.com/gh/Garve/scikit-bonus/dashboard)
-![loc](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
 ![coding style](https://img.shields.io/badge/coding%20style-black-black?style=for-the-badge)
 ![dependencies](https://img.shields.io/badge/standing%20on%20the%20shoulders%20of%20giants-numpy%20%7C%20scikit--learn%20%7C%20pandas%20%7C%20scipy-green?style=for-the-badge)
 
@@ -11,7 +10,7 @@
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
 
-Give it a try with a simple `pip install scikit-bonus`!
+Give it a try with a simple `pip install scikit-bonus`! You can find the documentation on https://garve.github.io/scikit-bonus.
 
 ## Special linear regressors
 This module contains linear regressors for special use-cases, for example
