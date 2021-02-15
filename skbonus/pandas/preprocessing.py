@@ -18,10 +18,12 @@ class OneHotEncoderWithNames(OneHotEncoder):
     The features are encoded using a one-hot (aka 'one-of-K' or 'dummy')
     encoding scheme. This creates a binary column for each category and
     returns a sparse matrix or dense array (depending on the ``sparse``
-    parameter)
+    parameter).
+
     By default, the encoder derives the categories based on the unique values
     in each feature. Alternatively, you can also specify the `categories`
     manually.
+
     This encoding is needed for feeding categorical data to many scikit-learn
     estimators, notably linear models and SVMs with the standard kernels.
     Note: a one-hot encoding of y labels should use a LabelBinarizer
@@ -31,15 +33,16 @@ class OneHotEncoderWithNames(OneHotEncoder):
     ----------
     categories : 'auto' or a list of array-like, default='auto'
         Categories (unique values) per feature:
+
         - 'auto' : Determine categories automatically from the training data.
         - list : ``categories[i]`` holds the categories expected in the ith
           column. The passed categories should not mix strings and numeric
           values within a single feature, and should be sorted in case of
           numeric values.
+
         The used categories can be found in the ``categories_`` attribute.
 
-    drop : {'first', 'if_binary'} or a array-like of shape (n_features,), \
-            default=None
+    drop : {'first', 'if_binary'} or a array-like of shape (n_features,), default=None
         Specifies a methodology to use to drop one of the categories per
         feature. This is useful in situations where perfectly collinear
         features cause problems, such as when feeding the resulting data
@@ -47,6 +50,7 @@ class OneHotEncoderWithNames(OneHotEncoder):
         However, dropping one category breaks the symmetry of the original
         representation and can therefore induce a bias in downstream models,
         for instance for penalized linear classification or regression models.
+
         - None : retain all features (the default).
         - 'first' : drop the first category in each feature. If only one
           category is present, the feature will be dropped entirely.

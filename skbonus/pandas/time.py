@@ -194,7 +194,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     power : float
-        Exponent to use for the trend, i.e. linear (power=1), root (power=0.5), or cube (power=3).
+        Exponent to use for the trend, i.e. linear (power=1.), root (power=0.5), or cube (power=3.).
 
     Examples
     --------
@@ -211,7 +211,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     1988-08-11  d     9.0
     """
 
-    def __init__(self, power: float = 1) -> None:
+    def __init__(self, power: float = 1.0) -> None:
         """Initialize."""
         self.power = power
 
@@ -434,6 +434,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     these features are perfectly aligned on a circle already. You can do the same with days, month, ...
 
     The column names affected by default are
+
         - second
         - minute
         - hour
@@ -458,6 +459,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         Define additional additional_cycles in the form {cycle_name: {"min": min_value, "max": max_value}}, e.g.
         {"day_of_week": {"min": 1, "max": 7}}. Probably you need this only for very specific additional_cycles, as
         these ones are already implemented:
+
             - "second": {"min": 0, "max": 59},
             - "minute": {"min": 0, "max": 59},
             - "hour": {"min": 0, "max": 23},
@@ -529,6 +531,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         X : pd.DataFrame
             A pandas dataframe. The column names should be the one output by the SimpleTimeFeatures or
             as specified in the additional_cycles keyword in this class. The standard names are
+
                 - "second"
                 - "minute"
                 - "hour"
