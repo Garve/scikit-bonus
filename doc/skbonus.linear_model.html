@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>skbonus.linear_model package &#8212; scikit-bonus 2021 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="skbonus.metrics package" href="skbonus.metrics.html" />
+    <link rel="prev" title="skbonus package" href="skbonus.html" />
+
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+
+
+          <div class="body" role="main">
+
+  <div class="section" id="skbonus-linear-model-package">
+<h1>skbonus.linear_model package<a class="headerlink" href="#skbonus-linear-model-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-skbonus.linear_model">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.linear_model" title="Permalink to this headline">¶</a></h2>
+<p>Special linear regressors.</p>
+<dl class="py class">
+<dt id="skbonus.linear_model.ImbalancedLinearRegression">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">ImbalancedLinearRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overestimation_punishment_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
+<p>Linear regression where overestimating is “overestimation_punishment_factor” times worse than underestimating.</p>
+<p>A value of overestimation_punishment_factor=5 implies that overestimations by the model are penalized with a factor of 5
+while underestimations have a default factor of 1.</p>
+<p>ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
+the observed targets in the dataset, and the targets predicted by the linear approximation.
+Compared to normal linear regression, this approach allows for a distinct treatment of over or under estimations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fit_intercept</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to calculate the intercept for this model. If set
+to False, no intercept will be used in calculations
+(i.e. data is expected to be centered).</p></li>
+<li><p><strong>copy_X</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, X will be copied; else, it may be overwritten.</p></li>
+<li><p><strong>positive</strong> (<em>bool</em><em>, </em><em>default=False</em>) – When set to True, forces the coefficients to be positive.</p></li>
+<li><p><strong>overestimation_punishment_factor</strong> (<em>float</em><em>, </em><em>default=1</em>) – Factor to punish overestimations more (if the value is larger than 1) or less (if the value is between 0 and 1).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="skbonus.linear_model.ImbalancedLinearRegression.coef_">
+<code class="sig-name descname"><span class="pre">coef_</span></code><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression.coef_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimated coefficients of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>np.array of shape (n_features,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="skbonus.linear_model.ImbalancedLinearRegression.intercept_">
+<code class="sig-name descname"><span class="pre">intercept_</span></code><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression.intercept_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Independent term in the linear model. Set to 0.0 if fit_intercept = False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>This implementation uses scipy.optimize.minimize, see
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html</a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span> <span class="o">=</span> <span class="n">ImbalancedLinearRegression</span><span class="p">(</span><span class="n">overestimation_punishment_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">ImbalancedLinearRegression(overestimation_punishment_factor=50)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span><span class="o">.</span><span class="n">coef_</span>
+<span class="go">array([0.36267036, 1.39526844, 3.4247146 , 3.93679175])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span> <span class="o">=</span> <span class="n">ImbalancedLinearRegression</span><span class="p">(</span><span class="n">overestimation_punishment_factor</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">ImbalancedLinearRegression(overestimation_punishment_factor=0.01)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span><span class="o">.</span><span class="n">coef_</span>
+<span class="go">array([0.73519586, 1.28698197, 2.61362614, 4.35989806])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.linear_model.LADRegression">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">LADRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.LADRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
+<p>Least absolute deviation Regression.</p>
+<p>LADRegression fits a linear model to minimize the residual sum of absolute deviations between
+the observed targets in the dataset, and the targets predicted by the linear approximation.</p>
+<p>Compared to linear regression, this approach is robust to outliers. You can even
+optimize for the lowest MAPE (Mean Average Percentage Error), if you pass in np.abs(1/y_train) for the
+sample_weight keyword when fitting the regressor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fit_intercept</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to calculate the intercept for this model. If set
+to False, no intercept will be used in calculations
+(i.e. data is expected to be centered).</p></li>
+<li><p><strong>copy_X</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, X will be copied; else, it may be overwritten.</p></li>
+<li><p><strong>positive</strong> (<em>bool</em><em>, </em><em>default=False</em>) – When set to True, forces the coefficients to be positive.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="skbonus.linear_model.LADRegression.coef_">
+<code class="sig-name descname"><span class="pre">coef_</span></code><a class="headerlink" href="#skbonus.linear_model.LADRegression.coef_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimated coefficients of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>np.array of shape (n_features,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="skbonus.linear_model.LADRegression.intercept_">
+<code class="sig-name descname"><span class="pre">intercept_</span></code><a class="headerlink" href="#skbonus.linear_model.LADRegression.intercept_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Independent term in the linear model. Set to 0.0 if fit_intercept = False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>This implementation uses scipy.optimize.minimize, see
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html</a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">LADRegression</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">LADRegression()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">coef_</span>
+<span class="go">array([1., 2., 3., 4.])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">LADRegression</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">LADRegression(positive=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">coef_</span>
+<span class="go">array([0.        , 1.42423304, 0.        , 4.29789588])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">scikit-bonus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">skbonus</a><ul>
+  <li><a href="skbonus.html">skbonus package</a><ul>
+      <li>Previous: <a href="skbonus.html" title="previous chapter">skbonus package</a></li>
+      <li>Next: <a href="skbonus.metrics.html" title="next chapter">skbonus.metrics package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Robert Kübler.
+
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+
+      |
+      <a href="_sources/skbonus.linear_model.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+
+
+
+  </body>
+</html>
