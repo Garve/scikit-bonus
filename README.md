@@ -1,4 +1,5 @@
 [![pypi](https://img.shields.io/pypi/v/scikit-bonus?style=for-the-badge)](https://pypi.org/project/scikit-bonus/)
+[![gh](https://img.shields.io/badge/github%20pages-passing-green?style=for-the-badge)](https://garve.github.io/scikit-bonus/index.html)
 [![maintainability](https://img.shields.io/codeclimate/maintainability/Garve/scikit-bonus?style=for-the-badge)](https://codeclimate.com/github/Garve/scikit-bonus)
 [![quality](https://img.shields.io/codacy/grade/726bd54b587e48038e0f0251e3159972?style=for-the-badge)](https://www.codacy.com/gh/Garve/scikit-bonus/dashboard)
 ![loc](https://img.shields.io/tokei/lines/github/garve/scikit-bonus?style=for-the-badge)
