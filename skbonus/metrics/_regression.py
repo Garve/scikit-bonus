@@ -10,7 +10,7 @@ def mean_absolute_deviation(
     """
     Return the MAD (Mean Absolute Deviation) of a prediction.
 
-    This is the mean of the vector |y_true - y_pred|.
+    The formula is np.mean(np.abs(y_true - y_pred)).
 
     Parameters
     ----------
@@ -47,7 +47,7 @@ def mean_absolute_percentage_error(
     """
     Return the MAPE (Mean Absolute Percentage Error) of a prediction.
 
-    This is the mean of the vector |(y_true - y_pred) / y_true|.
+    The formula is np.mean(np.abs((y_true - y_pred) / y_true)).
 
     Parameters
     ----------
@@ -84,7 +84,7 @@ def symmetric_mean_absolute_percentage_error(
     """
     Return the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction.
 
-    This is the mean of the vector 2 * |(y_true - y_pred)| / (|y_true| + |y_pred|).
+    The formula is 2 * np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))).
 
     Parameters
     ----------
