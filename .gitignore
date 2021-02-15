@@ -3,4 +3,4 @@ dist
 *.egg-info
 .pytest_cache
 venv
-doc/build
+docs/build
