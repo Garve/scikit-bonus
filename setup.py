@@ -16,6 +16,7 @@ test_packages = [
     "pytest>=6.2.2",
     "black>=20.8b1",
     "pre-commit>=2.10.0",
+    "pydocstyle>=5.1.1",
 ]
 
 with open("README.md", "r", encoding="utf-8") as fh:
