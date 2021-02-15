@@ -10,7 +10,7 @@
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
 
-Give it a try with a simple `pip install scikit-bonus`!
+Give it a try with a simple `pip install scikit-bonus`! You can find the documentation on https://garve.github.io/scikit-bonus.
 
 ## Special linear regressors
 This module contains linear regressors for special use-cases, for example
