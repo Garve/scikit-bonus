@@ -157,9 +157,3 @@ def mean_directional_accuracy(
         sample_weight[1:] * np.sign(np.diff(y_true))
         == np.sign(y_pred[1:] - y_true[:-1])
     )
-
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)

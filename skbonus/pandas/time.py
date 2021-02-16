@@ -55,10 +55,10 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     ...         pd.Timestamp("1950-12-31"),
     ...     ])
     >>> SimpleTimeFeatures(day_of_month=True, month=True, year=True).fit_transform(df)
-                A   day_of_month    month    year
-    1988-08-08  a              8        8    1988
-    2000-01-01  b              1        1    2000
-    1950-12-31  c             31       12    1950
+                A  day_of_month  month  year
+    1988-08-08  a             8      8  1988
+    2000-01-01  b             1      1  2000
+    1950-12-31  c            31     12  1950
     """
 
     def __init__(
@@ -211,11 +211,11 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     ...     index=pd.date_range(start="1988-08-08", periods=4)
     ... )
     >>> PowerTrend(frequency="d", origin_date="1988-08-06", power=2.).fit_transform(df)
-                A   trend
-    1988-08-08  a     4.0
-    1988-08-09  b     9.0
-    1988-08-10  c    16.0
-    1988-08-11  d    25.0
+                A  trend
+    1988-08-08  a    4.0
+    1988-08-09  b    9.0
+    1988-08-10  c   16.0
+    1988-08-11  d   25.0
     """
 
     def __init__(self, frequency: str, origin_date: str, power: float = 1.0) -> None:
@@ -306,24 +306,26 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
     >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d").fit_transform(df)
-                A   new_year_2020
-    2019-12-29  0             0.0
-    2019-12-30  1             0.0
-    2019-12-31  2             0.0
-    2020-01-01  3             1.0
-    2020-01-02  4             0.0
-    2020-01-03  5             0.0
-    2020-01-04  6             0.0
+                A  new_year_2020
+    2019-12-29  0            0.0
+    2019-12-30  1            0.0
+    2019-12-31  2            0.0
+    2020-01-01  3            1.0
+    2020-01-02  4            0.0
+    2020-01-03  5            0.0
+    2020-01-04  6            0.0
+
 
     >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d", window=5, p=1, sig=1).fit_transform(df)
-                A   new_year_2020
-    2019-12-29  0        0.000000
-    2019-12-30  1        0.135335
-    2019-12-31  2        0.606531
-    2020-01-01  3        1.000000
-    2020-01-02  4        0.606531
-    2020-01-03  5        0.135335
-    2020-01-04  6        0.000000
+                A  new_year_2020
+    2019-12-29  0       0.000000
+    2019-12-30  1       0.135335
+    2019-12-31  2       0.606531
+    2020-01-01  3       1.000000
+    2020-01-02  4       0.606531
+    2020-01-03  5       0.135335
+    2020-01-04  6       0.000000
+
     """
 
     def __init__(
@@ -452,12 +454,12 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> df = pd.DataFrame({"hour": [22, 23, 0, 1, 2]})
     >>> CyclicalEncoder().fit_transform(df)
-        hour        hour_cos         hour_sin
-    0     22        0.866025       -0.500000
-    1     23        0.965926       -0.258819
-    2      0        1.000000        0.000000
-    3      1        0.965926        0.258819
-    4      2        0.866025        0.500000
+       hour  hour_cos  hour_sin
+    0    22  0.866025 -0.500000
+    1    23  0.965926 -0.258819
+    2     0  1.000000  0.000000
+    3     1  0.965926  0.258819
+    4     2  0.866025  0.500000
     """
 
     def __init__(
@@ -525,37 +527,26 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         pd.DataFrame
             The input dataframe with two additional columns for each original column.
         """
+
+        def min_max(col):
+            return (
+                (X[col] - self.additional_cycles[col]["min"])
+                / (
+                    self.additional_cycles[col]["max"]
+                    + 1
+                    - self.additional_cycles[col]["min"]
+                )
+                * 2
+                * np.pi
+            )
+
         return X.assign(
             **{
-                f"{col}_cos": np.cos(
-                    (X[col] - self.additional_cycles[col]["min"])
-                    / (
-                        self.additional_cycles[col]["max"]
-                        + 1
-                        - self.additional_cycles[col]["min"]
-                    )
-                    * 2
-                    * np.pi
-                )
+                f"{col}_cos": np.cos(min_max(col))
                 for col in X.columns.intersection(self.additional_cycles.keys())
             },
             **{
-                f"{col}_sin": np.sin(
-                    (X[col] - self.additional_cycles[col]["min"])
-                    / (
-                        self.additional_cycles[col]["max"]
-                        + 1
-                        - self.additional_cycles[col]["min"]
-                    )
-                    * 2
-                    * np.pi
-                )
+                f"{col}_sin": np.sin(min_max(col))
                 for col in X.columns.intersection(self.additional_cycles.keys())
             },
         )
-
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)

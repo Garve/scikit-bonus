@@ -349,9 +349,3 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
             )
 
         return imbalanced_loss, grad_imbalanced_loss
-
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
