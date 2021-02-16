@@ -28,13 +28,13 @@ dfa = SimpleTimeFeatures(
 sda = SpecialDayBumps(
     "black_friday_2018",
     ["2018-11-23"],
+    frequency="d",
     window=15,
-    win_type="general_gaussian",
     p=1,
     sig=1,
 )
 
-pta = PowerTrend()
+pta = PowerTrend(frequency="d", origin_date="2018-11-01")
 
 ce = CyclicalEncoder()
 
@@ -92,12 +92,6 @@ def test_specialeventsadder(date, value):
     np.testing.assert_almost_equal(
         sda_transformed.loc[date, "black_friday_2018"], value
     )
-
-
-def test_powertrendadder_exception():
-    """Test if the PowerTrendAdder throws an error for a malformed index."""
-    with pytest.raises(NoFrequencyError):
-        pta.fit(non_continuous_input)
 
 
 def test_powertrendadder_fit_transform():

@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.utils.validation import check_is_fitted
 
 from skbonus.exceptions import NoFrequencyError
 
@@ -171,10 +172,11 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
             A pandas dataframe with additional time feature columns.
         """
         res = (
-            X.pipe(self._add_day_of_week)
+            X
             .pipe(self._add_second)
             .pipe(self._add_minute)
             .pipe(self._add_hour)
+            .pipe(self._add_day_of_week)
             .pipe(self._add_day_of_month)
             .pipe(self._add_day_of_year)
             .pipe(self._add_week_of_month)
@@ -193,6 +195,14 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
+    frequency : str
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+
+    origin_date : str
+        A date the trend originates in, i.e. the value of the trend column is zero for this date.
+        If unsure, just use the minimum date found in the index of your dataset.
+
     power : float
         Exponent to use for the trend, i.e. linear (power=1.), root (power=0.5), or cube (power=3.).
 
@@ -203,24 +213,25 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     ...     {"A": ["a", "b", "c", "d"]},
     ...     index=pd.date_range(start="1988-08-08", periods=4)
     ... )
-    >>> PowerTrend(power=2).fit_transform(df)
+    >>> PowerTrend(frequency="d", origin_date="1988-08-06", power=2.).fit_transform(df)
                 A   trend
-    1988-08-08  a     0.0
-    1988-08-09  b     1.0
-    1988-08-10  c     4.0
-    1988-08-11  d     9.0
+    1988-08-08  a     4.0
+    1988-08-09  b     9.0
+    1988-08-10  c    16.0
+    1988-08-11  d    25.0
     """
 
-    def __init__(self, power: float = 1.0) -> None:
+    def __init__(self, frequency: str, origin_date: str, power: float = 1.0) -> None:
         """Initialize."""
+        self.origin_date = origin_date
+        self.frequency = frequency
         self.power = power
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
         """
         Fit the model.
 
-        It assigns value 0 to the first item of the time index and 1 to the second one etc.
-        This way, we can get a value for any other date in a linear fashion. These values are later transformed.
+        The point of origin with a proper frequency is constructed here.
 
         Parameters
         ----------
@@ -233,18 +244,8 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         Returns
         -------
         Fitted transformer.
-
-        Raises
-        ------
-        NoFrequencyError
-            If the DatetimeIndex has no frequency. This happens, for example, if you don't use a TimeSeriesSplit when using cross validation.
         """
-        self.freq_ = X.index.freq
-        if self.freq_ is None:
-            raise NoFrequencyError(
-                "DatetimeIndex has no frequency. This can happen when doing cross validation without using a TimeSeriesSplit."
-            )
-        self.t0 = X.index.min()
+        self.origin_ = pd.Timestamp(self.origin_date, freq=self.frequency)
 
         return self
 
@@ -263,7 +264,9 @@ class PowerTrend(BaseEstimator, TransformerMixin):
             The dataframe with an additional trend column.
 
         """
-        index_as_int = (X.index - self.t0) / self.freq_
+        check_is_fitted(self)
+
+        index_as_int = (X.index - self.origin_) / self.origin_.freq
         return X.assign(trend=index_as_int ** self.power)
 
 
@@ -289,14 +292,13 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
         Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
 
+    frequency : str
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+
     window : int, default=1
         Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
         it to something larger than 1 only makes sense for a DatetimeIndex with equidistant dates.
-
-    win_type : Optional[str], default=None
-        Type of smoothing. A value of None leaves the default one hot encoding, i.e. the output column
-        contains 0 and 1 only. Another interesting window is "general_gaussian", which also requires the parameters
-        p and sig. See the notes below for further information.
 
     p : float, default=1
         Only used if win_type="general_gaussian". Determines the shape of the rolling curve. p=1 yields a typical
@@ -305,16 +307,11 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     sig : float, default=1
         Only used if win_type="general_gaussian". Determines the standard deviation of the rolling curve.
 
-    pad_value : Union[float, np.nan], default=0
-        When using sliding windows of length > 1, the time series has to be extended to prevent NaNs at
-        the start or end of the smoothed time series. If you wish for these NaNs, pad_value=input np.nan.
-        See the examples below for further information.
-
     Examples
     --------
     >>> import pandas as pd
     >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"]).fit_transform(df)
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d").fit_transform(df)
                 A   new_year_2020
     2019-12-29  0             0.0
     2019-12-30  1             0.0
@@ -324,8 +321,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     2020-01-03  5             0.0
     2020-01-04  6             0.0
 
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"],
-    ... window=5, win_type="general_gaussian", p=1, sig=1).fit_transform(df)
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], "d", window=5, p=1, sig=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0        0.000000
     2019-12-30  1        0.135335
@@ -334,42 +330,30 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     2020-01-02  4        0.606531
     2020-01-03  5        0.135335
     2020-01-04  6        0.000000
-
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"],
-    ... window=5, win_type="general_gaussian", pad_value=np.nan,
-    ... p=1, sig=1).fit_transform(df)
-                A   new_year_2020
-    2019-12-29  0             NaN
-    2019-12-30  1             NaN
-    2019-12-31  2        0.606531
-    2020-01-01  3        1.000000
-    2020-01-02  4        0.606531
-    2020-01-03  5             NaN
-    2020-01-04  6             NaN
     """
 
     def __init__(
         self,
         name: str,
         dates: List[Union[pd.Timestamp, str]],
+        frequency: str,
         window: int = 1,
-        win_type: Optional[str] = None,
         p: float = 1,
         sig: float = 1,
-        pad_value: Union[float, "np.nan"] = 0,
     ) -> None:
         """Initialize."""
         self.name = name
         self.dates = dates
+        self.frequency = frequency
         self.window = window
-        self.win_type = win_type
         self.p = p
         self.sig = sig
-        self.pad_value = pad_value
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
         """
-        Fit the estimator. The frequency of the DatetimeIndex is extracted.
+        Fit the estimator.
+
+        Creates a pandas offset object.
 
         Parameters
         ----------
@@ -382,17 +366,9 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         Returns
         -------
         Fitted transformer.
-
-        Raises
-        ------
-        NoFrequencyError
-            If the DatetimeIndex has no frequency. This happens, for example, if you don't use a TimeSeriesSplit when using cross validation.
         """
-        self.freq_ = X.index.freq
-        if self.freq_ is None:
-            raise NoFrequencyError(
-                "DatetimeIndex has no frequency. This can happen when doing cross validation without using a TimeSeriesSplit."
-            )
+        self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -409,15 +385,19 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         pd.DataFrame
             A pandas dataframe with an additional column for special dates.
         """
-        dummy_dates = pd.Series(X.index.isin(self.dates), index=X.index)
-        extended_index = extended_index = X.index.union(
-            [X.index.min() - i * self.freq_ for i in range(1, self.window + 1)]
-        ).union([X.index.max() + i * self.freq_ for i in range(1, self.window + 1)])
+        check_is_fitted(self)
+
+        extended_index = pd.date_range(
+            start=X.index.min() - self.window * self.freq_,
+            end=X.index.max() + self.window*self.freq_
+        )
+
+        dummy_dates = pd.Series(extended_index.isin(self.dates), index=extended_index)
+
 
         smoothed_dates = (
-            dummy_dates.reindex(extended_index)
-            .fillna(self.pad_value)
-            .rolling(window=self.window, center=True, win_type=self.win_type)
+            dummy_dates
+            .rolling(window=self.window, center=True, win_type='general_gaussian')
             .sum(p=self.p, sig=self.sig)
             .reindex(X.index)
             .values
