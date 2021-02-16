@@ -11,17 +11,6 @@ Subpackages
    skbonus.metrics
    skbonus.pandas
 
-Submodules
-----------
-
-skbonus.exceptions module
--------------------------
-
-.. automodule:: skbonus.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

@@ -94,8 +94,6 @@
 <li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="skbonus.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus.exceptions">skbonus.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
 </ul>
 </li>
@@ -182,12 +180,12 @@
 <dt id="skbonus.linear_model.ImbalancedLinearRegression">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">ImbalancedLinearRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overestimation_punishment_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
-<p>Linear regression where overestimating is “overestimation_punishment_factor” times worse than underestimating.</p>
-<p>A value of overestimation_punishment_factor=5 implies that overestimations by the model are penalized with a factor of 5
+<p>Linear regression where overestimating is <cite>overestimation_punishment_factor</cite> times worse than underestimating.</p>
+<p>A value of <cite>overestimation_punishment_factor=5</cite> implies that overestimations by the model are penalized with a factor of 5
 while underestimations have a default factor of 1.</p>
 <p>ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
 the observed targets in the dataset, and the targets predicted by the linear approximation.
-Compared to normal linear regression, this approach allows for a distinct treatment of over or under estimations.</p>
+Compared to normal linear regression, this approach allows for a different treatment of over or under estimations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

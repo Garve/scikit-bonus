@@ -153,6 +153,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         SimpleTimeFeatures
             Fitted transformer.
         """
+        self.fitted_ = True
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -169,6 +170,8 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         pd.DataFrame
             The input dataframe with additional time feature columns.
         """
+        check_is_fitted(self)
+
         res = (
             X.pipe(self._add_second)
             .pipe(self._add_minute)
@@ -500,6 +503,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         CyclicalEncoder
             Fitted transformer.
         """
+        self.fitted_ = True
         return self
 
     def transform(self, X):
@@ -527,6 +531,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         pd.DataFrame
             The input dataframe with two additional columns for each original column.
         """
+        check_is_fitted(self)
 
         def min_max(col):
             return (
