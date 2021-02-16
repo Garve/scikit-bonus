@@ -7,8 +7,6 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-from skbonus.exceptions import NoFrequencyError
-
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     """
