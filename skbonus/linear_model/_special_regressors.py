@@ -77,10 +77,21 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
     @abstractmethod
     def _get_objective(
-        self, *args
+        self, X: np.array, y: np.array, sample_weight: np.array
     ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
         """
         Produce the loss function to be minimized, and its gradient to speed up computations.
+
+        Parameters
+        ----------
+        X : np.array of shape (n_samples, n_features)
+            The training data.
+
+        y : np.array, 1-dimensional
+            The target values.
+
+        sample_weight : Optional[np.array], default=None
+            Individual weights for each sample.
 
         Returns
         -------
@@ -99,7 +110,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         sample_weight: Optional[np.array] = None,
     ) -> "BaseScipyMinimizeRegressor":
         """
-        Fit the model.
+        Fit the model using the L-BFGS-B algorithm.
 
         Parameters
         ----------
@@ -129,8 +140,6 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
             tol=1e-20,
         )
         self.convergence_status_ = minimize_result.message
-        if minimize_result.status != 0:
-            warnings.warn(str(self.convergence_status_))
 
         if self.fit_intercept:
             *self.coef_, self.intercept_ = minimize_result.x
@@ -236,9 +245,8 @@ class LADRegression(BaseScipyMinimizeRegressor):
 
     """
 
-    @staticmethod
     def _get_objective(
-        X: np.array, y: np.array, sample_weight: np.array
+        self, X: np.array, y: np.array, sample_weight: np.array
     ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
         def mae_loss(params):
             return np.mean(sample_weight * np.abs(y - X @ params))
@@ -251,14 +259,14 @@ class LADRegression(BaseScipyMinimizeRegressor):
 
 class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     """
-    Linear regression where overestimating is "overestimation_punishment_factor" times worse than underestimating.
+    Linear regression where overestimating is `overestimation_punishment_factor` times worse than underestimating.
 
-    A value of overestimation_punishment_factor=5 implies that overestimations by the model are penalized with a factor of 5
+    A value of `overestimation_punishment_factor=5` implies that overestimations by the model are penalized with a factor of 5
     while underestimations have a default factor of 1.
 
     ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
     the observed targets in the dataset, and the targets predicted by the linear approximation.
-    Compared to normal linear regression, this approach allows for a distinct treatment of over or under estimations.
+    Compared to normal linear regression, this approach allows for a different treatment of over or under estimations.
 
     Parameters
     ----------

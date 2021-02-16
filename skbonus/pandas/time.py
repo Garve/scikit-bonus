@@ -10,10 +10,7 @@ from sklearn.utils.validation import check_is_fitted
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     """
-    This class enriches pandas dataframes with a DatetimeIndex with new columns.
-
-    These new columns are easy derivations from the index, such as the day of week or month.
-    This is especially useful when dealing with time series regressions or classifications.
+    Enrich pandas dataframes with new columns which are easy derivations from its DatetimeIndex, such as the day of week or the month.
 
     Parameters
     ----------
@@ -139,25 +136,28 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
 
     def fit(self, X: pd.DataFrame, y: Any = None) -> "SimpleTimeFeatures":
         """
-        Fit the estimator. In this special case, nothing is done.
+        Fit the estimator.
+
+        In this special case, nothing is done.
 
         Parameters
         ----------
-        X : pd.DataFrame
-            A pandas dataframe with a DatetimeIndex.
+        X : Ignored
+            Not used, present here for API consistency by convention.
 
         y : Ignored
             Not used, present here for API consistency by convention.
 
         Returns
         -------
-        Fitted transformer.
+        SimpleTimeFeatures
+            Fitted transformer.
         """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Insert all chosen time features as new columns into the dataframe and outputs it.
+        Insert all chosen time features as new columns into the dataframe and output it.
 
         Parameters
         ----------
@@ -167,7 +167,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         Returns
         -------
         pd.DataFrame
-            A pandas dataframe with additional time feature columns.
+            The input dataframe with additional time feature columns.
         """
         res = (
             X
@@ -187,7 +187,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
 
 class PowerTrend(BaseEstimator, TransformerMixin):
     """
-    Adds a power trend to a pandas dataframe with a continous DatetimeIndex.
+    Add a power trend column to a pandas dataframe.
 
     For example, it can create a new column with numbers increasing quadratically in the index.
 
@@ -198,7 +198,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
 
     origin_date : str
-        A date the trend originates in, i.e. the value of the trend column is zero for this date.
+        A date the trend originates from, i.e. the value of the trend column is zero for this date.
         If unsure, just use the minimum date found in the index of your dataset.
 
     power : float
@@ -233,15 +233,16 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : pd.DataFrame
-            A pandas dataframe with a DatetimeIndex.
+        X : Ignored
+            Not used, present here for API consistency by convention.
 
         y : Ignored
             Not used, present here for API consistency by convention.
 
         Returns
         -------
-        Fitted transformer.
+        PowerTrend
+            Fitted transformer.
         """
         self.origin_ = pd.Timestamp(self.origin_date, freq=self.frequency)
 
@@ -259,7 +260,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         Returns
         -------
         pd.DataFrame
-            The dataframe with an additional trend column.
+            The input dataframe with an additional trend column.
 
         """
         check_is_fitted(self)
@@ -270,16 +271,13 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
 class SpecialDayBumps(BaseEstimator, TransformerMixin):
     """
-    This class enriches pandas dataframes with a DatetimeIndex with new columns specified in the "dates" keyword.
+    Enrich a pandas dataframes with a new column that indicate the presense of special days.
 
-    These new columns contain whether the index lies within a time interval. For example, the output can be
-    a one hot encoded column containing a 1 if the corresponding date from the index is within the given date range, and 0 otherwise.
+    This new column will contain a one for each date specified in the `dates` keyword. The other entries
+    of the column can
 
-    The output can also be a smoothed via a general Gaussian sliding window over the one hot encoded column as
-    a next step. This makes sense when, for example, a certain holiday has effects on the next days or the days
-    before, too. See the examples to get a better understanding.
-
-    This is especially useful when dealing with time series regressions or classifications.
+    - be zero, yielding a one hot encoded column for these dates, or
+    - flatten when going further away from the date in a bell-shaped curve fashion.
 
     Parameters
     ----------
@@ -295,15 +293,14 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
 
     window : int, default=1
-        Size of the sliding window. Used for smoothing the simple one hot encoded output. Increasing
-        it to something larger than 1 only makes sense for a DatetimeIndex with equidistant dates.
+        Size of the sliding window. The effect of a holiday will reach from approximately
+        date - `window/2 * frequency` to date + `window/2 * frequency`, i.e. it is centered around the dates in `dates`.
 
     p : float, default=1
-        Only used if win_type="general_gaussian". Determines the shape of the rolling curve. p=1 yields a typical
-        Gaussian curve while p=0.5 yields a Laplace curve, for example.
+        Parameter for the shape of the curve. p=1 yields a typical Gaussian curve while p=0.5 yields a Laplace curve, for example.
 
     sig : float, default=1
-        Only used if win_type="general_gaussian". Determines the standard deviation of the rolling curve.
+        Parameter for the standard deviation of the bell-shaped curve.
 
     Examples
     --------
@@ -319,7 +316,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     2020-01-03  5             0.0
     2020-01-04  6             0.0
 
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], "d", window=5, p=1, sig=1).fit_transform(df)
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d", window=5, p=1, sig=1).fit_transform(df)
                 A   new_year_2020
     2019-12-29  0        0.000000
     2019-12-30  1        0.135335
@@ -355,15 +352,16 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : pd.DataFrame
-            A pandas dataframe with a DatetimeIndex.
+        X : Ignored
+            Not used, present here for API consistency by convention.
 
         y : Ignored
             Not used, present here for API consistency by convention.
 
         Returns
         -------
-        Fitted transformer.
+        SpecialDayBumps
+            Fitted transformer.
         """
         self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
 
@@ -381,7 +379,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         Returns
         -------
         pd.DataFrame
-            A pandas dataframe with an additional column for special dates.
+            The input dataframe with an additional column for special dates.
         """
         check_is_fitted(self)
 
@@ -406,7 +404,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
 class CyclicalEncoder(BaseEstimator, TransformerMixin):
     """
-    This class breaks each cyclic feature into two new features, corresponding to the representation of this feature on a circle.
+    Break each cyclic feature into two new features, corresponding to the representation of this feature on a circle.
 
     For example, take the hours from 0 to 23. On a normal, round  analog clock,
     these features are perfectly aligned on a circle already. You can do the same with days, month, ...
@@ -425,6 +423,8 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
     You can add more with the additional_cycles parameter.
 
+    Notes
+    -----
     This method has the advantage that close points in time stay close together. See the examples below.
 
     Otherwise, if algorithms deal with the raw value for hour they cannot know that 0 and 23 are actually close.
@@ -488,15 +488,16 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : pd.DataFrame
-            A pandas dataframe with a DatetimeIndex.
+        X : Ignored
+            Not used, present here for API consistency by convention.
 
         y : Ignored
             Not used, present here for API consistency by convention.
 
         Returns
         -------
-        Fitted transformer.
+        CyclicalEncoder
+            Fitted transformer.
         """
         return self
 
@@ -507,8 +508,8 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : pd.DataFrame
-            A pandas dataframe. The column names should be the one output by the SimpleTimeFeatures or
-            as specified in the additional_cycles keyword in this class. The standard names are
+            A pandas dataframe. The column names should be key in the `additional_cycles` keyword in this class
+            or some of
 
                 - "second"
                 - "minute"
@@ -523,7 +524,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         Returns
         -------
         pd.DataFrame
-            A pandas dataframe with two additional columns for each original column.
+            The input dataframe with two additional columns for each original column.
         """
         return X.assign(
             **{
