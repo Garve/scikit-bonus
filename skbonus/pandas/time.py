@@ -170,8 +170,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
             The input dataframe with additional time feature columns.
         """
         res = (
-            X
-            .pipe(self._add_second)
+            X.pipe(self._add_second)
             .pipe(self._add_minute)
             .pipe(self._add_hour)
             .pipe(self._add_day_of_week)
@@ -385,15 +384,15 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
         extended_index = pd.date_range(
             start=X.index.min() - self.window * self.freq_,
-            end=X.index.max() + self.window*self.freq_
+            end=X.index.max() + self.window * self.freq_,
         )
 
         dummy_dates = pd.Series(extended_index.isin(self.dates), index=extended_index)
 
-
         smoothed_dates = (
-            dummy_dates
-            .rolling(window=self.window, center=True, win_type='general_gaussian')
+            dummy_dates.rolling(
+                window=self.window, center=True, win_type="general_gaussian"
+            )
             .sum(p=self.p, sig=self.sig)
             .reindex(X.index)
             .values
