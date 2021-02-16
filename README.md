@@ -6,6 +6,7 @@
 ![dependencies](https://img.shields.io/badge/standing%20on%20the%20shoulders%20of%20giants-numpy%20%7C%20scikit--learn%20%7C%20pandas%20%7C%20scipy-green?style=for-the-badge)
 
 
+
 # scikit-bonus
 This is a package with [scikit-learn](https://scikit-learn.org/stable/) - compatible transformers,
 classifiers and regressors that I find useful.
