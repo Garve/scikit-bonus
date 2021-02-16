@@ -5,16 +5,15 @@ import pytest
 
 from skbonus.linear_model import ImbalancedLinearRegression
 
+test_batch = [
+    (np.array([0, 0, 3, 0, 6]), 3),
+    (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
+    (np.array([4, -4]), 0),
+    (np.array([0]), 0),
+]
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_coefs_and_intercept__no_noise(coefs, intercept):
     """Regression problems without noise."""
     np.random.seed(0)
@@ -27,15 +26,7 @@ def test_coefs_and_intercept__no_noise(coefs, intercept):
     np.testing.assert_almost_equal(intercept, imb.intercept_)
 
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_score(coefs, intercept):
     """Tests with noise on an easy problem. A good score should be possible."""
     np.random.seed(0)
@@ -48,15 +39,7 @@ def test_score(coefs, intercept):
     assert imb.score(X, y) > 0.9
 
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_coefs_and_intercept__no_noise_positive(coefs, intercept):
     """Test with only positive coefficients."""
     np.random.seed(0)
@@ -80,15 +63,7 @@ def test_coefs_and_intercept__no_noise_sample_weight():
     np.testing.assert_almost_equal(5, imb.coef_[0], decimal=5)
 
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_under_estimation(coefs, intercept):
     """Test if the model is able to underestimate."""
     np.random.seed(0)
@@ -100,15 +75,7 @@ def test_under_estimation(coefs, intercept):
     assert (imb.predict(X) < y).mean() > 0.8
 
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_over_estimation(coefs, intercept):
     """Test if the model is able to overestimate."""
     np.random.seed(0)

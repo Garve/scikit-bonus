@@ -25,8 +25,8 @@ dfa = SimpleTimeFeatures(
 )
 
 sda = SpecialDayBumps(
-    "black_friday_2018",
-    ["2018-11-23"],
+    name="black_friday_2018",
+    dates=["2018-11-23"],
     frequency="d",
     window=15,
     p=1,

@@ -5,16 +5,15 @@ import pytest
 
 from skbonus.linear_model import LADRegression
 
+test_batch = [
+    (np.array([0, 0, 3, 0, 6]), 3),
+    (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
+    (np.array([4, -4]), 0),
+    (np.array([0]), 0),
+]
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_coefs_and_intercept__no_noise(coefs, intercept):
     """Regression problems without noise."""
     np.random.seed(0)
@@ -27,15 +26,7 @@ def test_coefs_and_intercept__no_noise(coefs, intercept):
     np.testing.assert_almost_equal(intercept, lad.intercept_)
 
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_score(coefs, intercept):
     """Tests with noise on an easy problem. A good score should be possible."""
     np.random.seed(0)
@@ -48,15 +39,7 @@ def test_score(coefs, intercept):
     assert lad.score(X, y) > 0.9
 
 
-@pytest.mark.parametrize(
-    "coefs, intercept",
-    [
-        (np.array([0, 0, 3, 0, 6]), 3),
-        (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-        (np.array([4, -4]), 0),
-        (np.array([0]), 0),
-    ],
-)
+@pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_coefs_and_intercept__no_noise_positive(coefs, intercept):
     """Test with only positive coefficients."""
     np.random.seed(0)
