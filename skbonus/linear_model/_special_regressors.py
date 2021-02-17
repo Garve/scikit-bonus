@@ -41,29 +41,6 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     -----
     This implementation uses scipy.optimize.minimize, see
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> np.random.seed(0)
-    >>> X = np.random.randn(100, 4)
-    >>> y = X @ np.array([1, 2, 3, 4])
-    >>> l = LADRegression()
-    >>> l.fit(X, y)
-    LADRegression()
-    >>> l.coef_
-    array([1., 2., 3., 4.])
-
-    >>> import numpy as np
-    >>> np.random.seed(0)
-    >>> X = np.random.randn(100, 4)
-    >>> y = X @ np.array([-1, 2, -3, 4])
-    >>> l = LADRegression(positive=True)
-    >>> l.fit(X, y)
-    LADRegression(positive=True)
-    >>> l.coef_
-    array([0.        , 1.42423304, 0.        , 4.29789588])
-
     """
 
     def __init__(
@@ -109,7 +86,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         sample_weight: Optional[np.array] = None,
     ) -> "BaseScipyMinimizeRegressor":
         """
-        Fit the model using the L-BFGS-B algorithm.
+        Fit the model using the SLSQP algorithm.
 
         Parameters
         ----------
@@ -134,7 +111,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
             loss,
             x0=np.zeros(d),
             bounds=bounds,
-            method="L-BFGS-B",
+            method="SLSQP",
             jac=grad_loss,
             tol=1e-20,
         )
@@ -153,6 +130,8 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     def _prepare_inputs(self, X, sample_weight, y):
         X, y = check_X_y(X, y)
         sample_weight = _check_sample_weight(sample_weight, X)
+        self.n_features_in_ = X.shape[1]
+
         n = X.shape[0]
         if self.copy_X:
             X_ = X.copy()
@@ -240,7 +219,7 @@ class LADRegression(BaseScipyMinimizeRegressor):
     >>> l.fit(X, y)
     LADRegression(positive=True)
     >>> l.coef_
-    array([0.        , 1.42423304, 0.        , 4.29789588])
+    array([7.39575926e-18, 1.42423304e+00, 2.80467827e-17, 4.29789588e+00])
 
     """
 
