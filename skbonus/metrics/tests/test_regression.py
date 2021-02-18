@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from skbonus.metrics import (
+from .. import (
     mean_absolute_deviation,
     mean_absolute_percentage_error,
     mean_directional_accuracy,

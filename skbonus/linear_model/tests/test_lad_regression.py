@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from sklearn.utils.estimator_checks import check_estimator
 
-from skbonus.linear_model import LADRegression
+from .. import LADRegression
 
 test_batch = [
     (np.array([0, 0, 3, 0, 6]), 3),
@@ -62,6 +62,7 @@ def test_coefs_and_intercept__no_noise_sample_weight():
     lad = LADRegression()
     lad.fit(X, y, sample_weight=np.array([0.0, 0.0, 0.0, 1.0, 1.0, 1.0]))
     np.testing.assert_almost_equal(5, lad.coef_[0], decimal=5)
+
 
 def test_check_estimator():
     l = LADRegression()

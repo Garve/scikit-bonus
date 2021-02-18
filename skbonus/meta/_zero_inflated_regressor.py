@@ -1,7 +1,8 @@
 from typing import Any
 
-from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.utils.validation import check_is_fitted, check_X_y, check_array
+from sklearn.linear_model import LogisticRegression, LinearRegression
 import numpy as np
 
 
@@ -26,16 +27,12 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
 
     regressor : Any, scikit-learn regressor
         A regressor for predicting the target. Its prediction is only used if `classifier` says that the output is non-zero.
-
-    threshold : float, default=0.5
-        Threshold for the classifier.
     """
 
-    def __init__(self, classifier: Any, regressor: Any, threshold: float = 0.5) -> None:
+    def __init__(self, classifier: Any = None, regressor: Any = None) -> None:
         """Initialize."""
         self.classifier = classifier
         self.regressor = regressor
-        self.threshold = threshold
 
     def fit(self, X: np.array, y: np.array):
         """
@@ -55,11 +52,25 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
             Fitted regressor.
         """
         X, y = check_X_y(X, y)
+        self.n_features_in_ = X.shape[1]
 
-        self.classifier.fit(X, y > 0)
-        positive_indices = self.classifier.predict_proba(X)[:, 1] > self.threshold
+        self.classifier_ = (
+            clone(self.classifier)
+            if self.classifier is not None
+            else LogisticRegression()
+        )
+        self.classifier_.fit(X, y > 0)
 
-        self.regressor.fit(X[positive_indices], y[positive_indices])
+        positive_indices = self.classifier_.predict(X) == 1
+        X_pos = X[positive_indices]
+        y_pos = y[positive_indices]
+
+        self.regressor_ = (
+            clone(self.regressor) if self.regressor is not None else LinearRegression()
+        )
+        self.regressor_.fit(X_pos, y_pos)
+
+        return self
 
     def predict(self, X: np.array):
         """
@@ -78,4 +89,4 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         check_is_fitted(self)
         X = check_array(X)
 
-        return (self.classifier.predict_proba(X)[:, 1] > self.threshold) * self.regressor.predict(X)
+        return self.classifier_.predict(X) * self.regressor_.predict(X)

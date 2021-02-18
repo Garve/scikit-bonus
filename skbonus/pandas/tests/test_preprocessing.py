@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from sklearn.preprocessing import OneHotEncoder
 
-from skbonus.pandas.preprocessing import OneHotEncoderWithNames
+from ..preprocessing import OneHotEncoderWithNames
 
 df = pd.DataFrame({"A": [1, 2, 3, 2], "B": [0, 0, 0, 1], "C": ["a", "c", "b", "c"]})
 ohe_sklearn = OneHotEncoder().fit_transform(df)

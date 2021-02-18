@@ -2,9 +2,9 @@
 
 import numpy as np
 import pytest
-from sklearn.utils.estimator_checks import check_estimator, che
+from sklearn.utils.estimator_checks import check_estimator
 
-from skbonus.linear_model import ImbalancedLinearRegression
+from .. import ImbalancedLinearRegression
 
 test_batch = [
     (np.array([0, 0, 3, 0, 6]), 3),
