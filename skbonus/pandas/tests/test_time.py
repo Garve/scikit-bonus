@@ -24,19 +24,6 @@ dfa = SimpleTimeFeatures(
     year=True,
 )
 
-sda = SpecialDayBumps(
-    name="black_friday_2018",
-    dates=["2018-11-23"],
-    frequency="d",
-    window=15,
-    p=1,
-    sig=1,
-)
-
-pta = PowerTrend(frequency="d", origin_date="2018-11-01")
-
-ce = CyclicalEncoder()
-
 non_continuous_input = pd.DataFrame(
     {"A": ["a", "b", "c"], "B": [1, 2, 2], "C": [0, 1, 0]},
     index=[
@@ -49,11 +36,6 @@ non_continuous_input = pd.DataFrame(
 continuous_input = pd.DataFrame(
     {"data": range(60)}, index=pd.date_range(start="2018-11-01", periods=60)
 )
-
-minutes = pd.DataFrame({"minute": range(60)})
-
-sda_transformed = sda.fit_transform(continuous_input)
-ce_transformed = ce.fit_transform(minutes)
 
 
 @pytest.mark.parametrize(
@@ -72,8 +54,27 @@ ce_transformed = ce.fit_transform(minutes)
     ],
 )
 def test_timefeaturesadder(function, column_name, result):
-    """Test SimpleTimeFeatures."""
+    """Test SimpleTimeFeatures' methods."""
     assert function(non_continuous_input)[column_name].tolist() == result
+
+
+def test_simple_time_features_fit():
+    """Test if fit / transform in SimpleTimeFeatuters work."""
+    assert dfa.fit_transform(non_continuous_input).columns.tolist() == [
+        "A",
+        "B",
+        "C",
+        "second",
+        "minute",
+        "hour",
+        "day_of_week",
+        "day_of_month",
+        "day_of_year",
+        "week_of_month",
+        "week_of_year",
+        "month",
+        "year",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -88,6 +89,17 @@ def test_timefeaturesadder(function, column_name, result):
 )
 def test_specialeventsadder(date, value):
     """Test the SpecialDayBumps."""
+    sda = SpecialDayBumps(
+        name="black_friday_2018",
+        dates=["2018-11-23"],
+        frequency="d",
+        window=15,
+        p=1,
+        sig=1,
+    )
+
+    sda_transformed = sda.fit_transform(continuous_input)
+
     np.testing.assert_almost_equal(
         sda_transformed.loc[date, "black_friday_2018"], value
     )
@@ -95,6 +107,7 @@ def test_specialeventsadder(date, value):
 
 def test_powertrendadder_fit_transform():
     """Test the PowerTrendAdder."""
+    pta = PowerTrend(frequency="d", origin_date="2018-11-01")
     assert pta.fit_transform(continuous_input).trend.tolist() == list(range(60))
 
 
@@ -110,4 +123,15 @@ def test_powertrendadder_fit_transform():
 )
 def test_cyclicalencoder(index, value):
     """Test the CyclicalEncoder."""
+    ce = CyclicalEncoder()
+    minutes = pd.DataFrame({"minute": range(60)})
+    ce_transformed = ce.fit_transform(minutes)
+
     np.testing.assert_almost_equal(ce_transformed.minute_cos.loc[index], value)
+
+
+def test_cyclicalencoder_additional_cycles():
+    """Test if the additional_cyclces."""
+    ce = CyclicalEncoder(additional_cycles={"TEST": {"min": 0, "max": 99}})
+    test = pd.DataFrame({"TEST": range(10)})
+    assert ce.fit_transform(test).columns.tolist() == ["TEST", "TEST_cos", "TEST_sin"]

@@ -437,7 +437,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    additional_cycles : Optional[Dict[str, Dict[str, str]]], default=None
+    additional_cycles : Optional[Dict[str, Dict[str, int]]], default=None
         Define additional additional_cycles in the form {cycle_name: {"min": min_value, "max": max_value}}, e.g.
         {"day_of_week": {"min": 1, "max": 7}}. Probably you need this only for very specific additional_cycles, as
         these ones are already implemented:
@@ -466,7 +466,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(
-        self, additional_cycles: Optional[Dict[str, Dict[str, str]]] = None
+        self, additional_cycles: Optional[Dict[str, Dict[str, int]]] = None
     ) -> None:
         """Initialize."""
         DEFAULT_CYCLES = {
