@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+from sklearn.utils.estimator_checks import check_estimator, che
 
 from skbonus.linear_model import ImbalancedLinearRegression
 
@@ -85,3 +86,8 @@ def test_over_estimation(coefs, intercept):
     imb = ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
     imb.fit(X, y)
     assert (imb.predict(X) < y).mean() < 0.15
+
+
+def test_check_estimator():
+    l = ImbalancedLinearRegression()
+    check_estimator(l)
