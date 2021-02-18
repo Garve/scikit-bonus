@@ -18,6 +18,15 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
     Parameters
     ----------
+    alpha : float, default=0.0
+        Constant that multiplies the penalty terms. Defaults to 1.0.
+
+    l1_ratio : float, default=0.0
+        The ElasticNet mixing parameter, with ``0 <= l1_ratio <= 1``. For
+        ``l1_ratio = 0`` the penalty is an L2 penalty. ``For l1_ratio = 1`` it
+        is an L1 penalty.  For ``0 < l1_ratio < 1``, the penalty is a
+        combination of L1 and L2.
+
     fit_intercept : bool, default=True
         Whether to calculate the intercept for this model. If set
         to False, no intercept will be used in calculations
@@ -196,7 +205,11 @@ class LADRegression(BaseScipyMinimizeRegressor):
     Least absolute deviation Regression.
 
     LADRegression fits a linear model to minimize the residual sum of absolute deviations between
-    the observed targets in the dataset, and the targets predicted by the linear approximation.
+    the observed targets in the dataset, and the targets predicted by the linear approximation, i.e.
+
+        1 / (2 * n_samples) * ||y - Xw||_1
+        + alpha * l1_ratio * ||w||_1
+        + 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2
 
     Compared to linear regression, this approach is robust to outliers. You can even
     optimize for the lowest MAPE (Mean Average Percentage Error), if you pass in np.abs(1/y_train) for the
@@ -204,6 +217,15 @@ class LADRegression(BaseScipyMinimizeRegressor):
 
     Parameters
     ----------
+    alpha : float, default=0.0
+        Constant that multiplies the penalty terms. Defaults to 1.0.
+
+    l1_ratio : float, default=0.0
+        The ElasticNet mixing parameter, with ``0 <= l1_ratio <= 1``. For
+        ``l1_ratio = 0`` the penalty is an L2 penalty. ``For l1_ratio = 1`` it
+        is an L1 penalty.  For ``0 < l1_ratio < 1``, the penalty is a
+        combination of L1 and L2.
+
     fit_intercept : bool, default=True
         Whether to calculate the intercept for this model. If set
         to False, no intercept will be used in calculations
@@ -267,7 +289,13 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     Linear regression where overestimating is `overestimation_punishment_factor` times worse than underestimating.
 
     A value of `overestimation_punishment_factor=5` implies that overestimations by the model are penalized with a factor of 5
-    while underestimations have a default factor of 1.
+    while underestimations have a default factor of 1. The formula optimized for is
+
+        1 / (2 * n_samples) * switch^T * ||y - Xw||_2 ** 2
+        + alpha * l1_ratio * ||w||_1
+        + 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2
+
+    where switch is a vector with value overestimation_punishment_factor if y - Xw < 0, else 1.
 
     ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
     the observed targets in the dataset, and the targets predicted by the linear approximation.
@@ -275,6 +303,15 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
 
     Parameters
     ----------
+    alpha : float, default=0.0
+        Constant that multiplies the penalty terms. Defaults to 1.0.
+
+    l1_ratio : float, default=0.0
+        The ElasticNet mixing parameter, with ``0 <= l1_ratio <= 1``. For
+        ``l1_ratio = 0`` the penalty is an L2 penalty. ``For l1_ratio = 1`` it
+        is an L1 penalty.  For ``0 < l1_ratio < 1``, the penalty is a
+        combination of L1 and L2.
+
     fit_intercept : bool, default=True
         Whether to calculate the intercept for this model. If set
         to False, no intercept will be used in calculations
