@@ -44,9 +44,16 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     """
 
     def __init__(
-        self, fit_intercept: bool = True, copy_X: bool = True, positive: bool = False
+        self,
+        alpha: float = 0.0,
+        l1_ratio: float = 0.0,
+        fit_intercept: bool = True,
+        copy_X: bool = True,
+        positive: bool = False,
     ) -> None:
         """Initialize."""
+        self.alpha = alpha
+        self.l1_ratio = l1_ratio
         self.fit_intercept = fit_intercept
         self.copy_X = copy_X
         self.positive = positive
@@ -78,6 +85,26 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
             The gradient of the loss function. Speeds up finding the minimum.
         """
         pass
+
+    def _loss_regularize(self, loss):
+        def regularized_loss(params):
+            return (
+                loss(params)
+                + self.alpha * self.l1_ratio * np.sum(np.abs(params))
+                + 0.5 * self.alpha * (1 - self.l1_ratio) * np.sum(params ** 2)
+            )
+
+        return regularized_loss
+
+    def _grad_loss_regularize(self, grad_loss):
+        def regularized_grad_loss(params):
+            return (
+                grad_loss(params)
+                + self.alpha * self.l1_ratio * np.sign(params)
+                + self.alpha * (1 - self.l1_ratio) * params
+            )
+
+        return regularized_grad_loss
 
     def fit(
         self,
@@ -139,7 +166,9 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
             X_ = X
         if self.fit_intercept:
             X_ = np.hstack([X_, np.ones(shape=(n, 1))])
+
         loss, grad_loss = self._get_objective(X_, y, sample_weight)
+
         return X_, grad_loss, loss
 
     def predict(self, X: np.array) -> np.array:
@@ -205,9 +234,7 @@ class LADRegression(BaseScipyMinimizeRegressor):
     >>> np.random.seed(0)
     >>> X = np.random.randn(100, 4)
     >>> y = X @ np.array([1, 2, 3, 4])
-    >>> l = LADRegression()
-    >>> l.fit(X, y)
-    LADRegression()
+    >>> l = LADRegression().fit(X, y)
     >>> l.coef_
     array([1., 2., 3., 4.])
 
@@ -215,9 +242,7 @@ class LADRegression(BaseScipyMinimizeRegressor):
     >>> np.random.seed(0)
     >>> X = np.random.randn(100, 4)
     >>> y = X @ np.array([-1, 2, -3, 4])
-    >>> l = LADRegression(positive=True)
-    >>> l.fit(X, y)
-    LADRegression(positive=True)
+    >>> l = LADRegression(positive=True).fit(X, y)
     >>> l.coef_
     array([7.39575926e-18, 1.42423304e+00, 2.80467827e-17, 4.29789588e+00])
 
@@ -226,9 +251,11 @@ class LADRegression(BaseScipyMinimizeRegressor):
     def _get_objective(
         self, X: np.array, y: np.array, sample_weight: np.array
     ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        @self._loss_regularize
         def mae_loss(params):
             return np.mean(sample_weight * np.abs(y - X @ params))
 
+        @self._grad_loss_regularize
         def grad_mae_loss(params):
             return -(sample_weight * np.sign(y - X @ params)) @ X / X.shape[0]
 
@@ -281,15 +308,11 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     >>> np.random.seed(0)
     >>> X = np.random.randn(100, 4)
     >>> y = X @ np.array([1, 2, 3, 4]) + 2*np.random.randn(100)
-    >>> over_bad = ImbalancedLinearRegression(overestimation_punishment_factor=50)
-    >>> over_bad.fit(X, y)
-    ImbalancedLinearRegression(overestimation_punishment_factor=50)
+    >>> over_bad = ImbalancedLinearRegression(overestimation_punishment_factor=50).fit(X, y)
     >>> over_bad.coef_
     array([0.36267036, 1.39526844, 3.4247146 , 3.93679175])
 
-    >>> under_bad = ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
-    >>> under_bad.fit(X, y)
-    ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
+    >>> under_bad = ImbalancedLinearRegression(overestimation_punishment_factor=0.01).fit(X, y)
     >>> under_bad.coef_
     array([0.73519586, 1.28698197, 2.61362614, 4.35989806])
 
@@ -297,18 +320,21 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
 
     def __init__(
         self,
+        alpha: float = 0.0,
+        l1_ratio: float = 0.0,
         fit_intercept: bool = True,
         copy_X: bool = True,
         positive: bool = False,
         overestimation_punishment_factor: float = 1.0,
     ) -> None:
         """Initialize."""
-        super().__init__(fit_intercept, copy_X, positive)
+        super().__init__(alpha, l1_ratio, fit_intercept, copy_X, positive)
         self.overestimation_punishment_factor = overestimation_punishment_factor
 
     def _get_objective(
         self, X: np.array, y: np.array, sample_weight: np.array
     ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        @self._loss_regularize
         def imbalanced_loss(params):
             return 0.5 * np.mean(
                 sample_weight
@@ -316,6 +342,7 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
                 * np.square(y - X @ params)
             )
 
+        @self._grad_loss_regularize
         def grad_imbalanced_loss(params):
             return (
                 -(

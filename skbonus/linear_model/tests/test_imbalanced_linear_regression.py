@@ -61,7 +61,22 @@ def test_coefs_and_intercept__no_noise_sample_weight():
 
     imb = ImbalancedLinearRegression()
     imb.fit(X, y, sample_weight=np.array([0.0, 0.0, 0.0, 1.0, 1.0, 1.0]))
-    np.testing.assert_almost_equal(5, imb.coef_[0], decimal=5)
+    np.testing.assert_almost_equal(5, imb.coef_[0])
+
+
+def test_coefs_and_intercept__no_noise_regularization():
+    """Test model with sample weights."""
+    X = np.array([[1], [2], [3], [4], [5], [6]])
+    y = np.array([2, 4, 6, 8, 10, 12])
+
+    imbs = [
+        ImbalancedLinearRegression(alpha=alpha, l1_ratio=0.5).fit(X, y)
+        for alpha in range(5)
+    ]
+    coefs = np.array([imb.coef_[0] for imb in imbs])
+    np.testing.assert_almost_equal(2, coefs[0])
+    for i in range(4):
+        assert coefs[i] > coefs[i + 1]
 
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
