@@ -33,7 +33,7 @@ setuptools.setup(
     url="https://github.com/Garve/scikit-bonus",
     packages=setuptools.find_packages(),
     classifiers=[
-        "License :: OSI Approved :: BSD wLicense",
+        "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
