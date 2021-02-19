@@ -10,7 +10,7 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
     """
     A meta regressor for zero-inflated datasets, i.e. the targets contain a lot of zeroes.
 
-    ZeroInflatedRegressor consists of a classifier and a regressor.
+    `ZeroInflatedRegressor` consists of a classifier and a regressor.
 
         - The classifier's task is to find of if the target is zero or not.
         - The regressor's task is to output a (usually positive) prediction whenever the classifier indicates that the there should be a non-zero prediction.
@@ -22,10 +22,10 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
 
     Parameters
     ----------
-    classifier : Any, scikit-learn classifier
-        A classifier that answers the question "Should the output be zero?". A threshold can be passed with the `threshold` keyword.
+    classifier : Any, scikit-learn classifier, default=`LogisticRegression()`
+        A classifier that answers the question "Should the output be zero?".
 
-    regressor : Any, scikit-learn regressor
+    regressor : Any, scikit-learn regressor, default=`LinearRegression()`
         A regressor for predicting the target. Its prediction is only used if `classifier` says that the output is non-zero.
     """
 
@@ -34,7 +34,7 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         self.classifier = classifier
         self.regressor = regressor
 
-    def fit(self, X: np.array, y: np.array):
+    def fit(self, X: np.array, y: np.array) -> "ZeroInflatedRegressor":
         """
         Fit the model.
 
@@ -72,7 +72,7 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
 
         return self
 
-    def predict(self, X: np.array):
+    def predict(self, X: np.array) -> np.array:
         """
         Get predictions.
 
