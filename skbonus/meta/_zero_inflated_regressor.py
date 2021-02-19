@@ -27,6 +27,21 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
 
     regressor : Any, scikit-learn regressor, default=`LinearRegression()`
         A regressor for predicting the target. Its prediction is only used if `classifier` says that the output is non-zero.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from sklearn.ensemble import ExtraTreesClassifier
+    >>> np.random.seed(0)
+    >>> X = np.random.randn(10000, 4)
+    >>> y = ((X[:, 0]>0) & (X[:, 1]>0)) * np.abs(X[:, 2] * X[:, 3]**2)
+    >>> z = ZeroInflatedRegressor(classifier=ExtraTreesClassifier(random_state=0))
+    >>> z.fit(X, y)
+    ZeroInflatedRegressor(classifier=ExtraTreesClassifier(random_state=0))
+    >>> z.predict(X)[:5]
+    array([0.52977797, 0.        , 0.        , 0.73678052, 0.        ])
+
+
     """
 
     def __init__(self, classifier: Any = None, regressor: Any = None) -> None:
