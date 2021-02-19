@@ -140,15 +140,15 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         """
         X_, grad_loss, loss = self._prepare_inputs(X, sample_weight, y)
 
-        d = X_.shape[1]
+        d = X_.shape[1] - self.n_features_in_  # This is either zero or one.
         bounds = (
-            [(0, np.inf) for _ in range(self.n_features_in_)] + [(-np.inf, np.inf)]
+            self.n_features_in_ * [(0, np.inf)] + d * [(-np.inf, np.inf)]
             if self.positive
             else None
         )
         minimize_result = minimize(
             loss,
-            x0=np.zeros(d),
+            x0=np.zeros(self.n_features_in_ + d),
             bounds=bounds,
             method="SLSQP",
             jac=grad_loss,
@@ -169,9 +169,8 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     def _prepare_inputs(self, X, sample_weight, y):
         X, y = check_X_y(X, y)
         sample_weight = _check_sample_weight(sample_weight, X)
-        self.n_features_in_ = X.shape[1]
+        n, self.n_features_in_ = X.shape
 
-        n = X.shape[0]
         if self.copy_X:
             X_ = X.copy()
         else:
