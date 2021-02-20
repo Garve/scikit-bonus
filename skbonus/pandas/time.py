@@ -333,6 +333,13 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     sig : float, default=1
         Parameter for the standard deviation of the bell-shaped curve.
 
+    tails : str, default="both"
+        Which tails to use. Can be one of
+
+            - "left"
+            - "right"
+            - "both"
+
     Examples
     --------
     >>> import pandas as pd
@@ -347,7 +354,6 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     2020-01-03  5            0.0
     2020-01-04  6            0.0
 
-
     >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d", window=5, p=1, sig=1).fit_transform(df)
                 A  new_year_2020
     2019-12-29  0       0.000000
@@ -358,6 +364,15 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     2020-01-03  5       0.135335
     2020-01-04  6       0.000000
 
+    >>> SpecialDayBumps("after_new_year_2020", ["2020-01-01"], window=7, tails="right").fit_transform(df)
+                A  after_new_year_2020
+    2019-12-29  0             0.000000
+    2019-12-30  1             0.000000
+    2019-12-31  2             0.000000
+    2020-01-01  3             1.000000
+    2020-01-02  4             0.606531
+    2020-01-03  5             0.135335
+    2020-01-04  6             0.011109
     """
 
     def __init__(
@@ -368,6 +383,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         window: int = 1,
         p: float = 1,
         sig: float = 1,
+        tails: str = "both",
     ) -> None:
         """Initialize."""
         self.name = name
@@ -376,6 +392,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         self.window = window
         self.p = p
         self.sig = sig
+        self.tails = tails
 
     def _make_continuous_time_index(self, X: pd.DataFrame) -> pd.DatetimeIndex:
         """
@@ -437,6 +454,16 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
             * np.abs(np.arange(-self.window // 2 + 1, self.window // 2 + 1) / self.sig)
             ** (2 * self.p)
         )
+
+        if self.tails == "left":
+            self.sliding_window_[self.window // 2 + 1 :] = 0
+        elif self.tails == "right":
+            self.sliding_window_[: self.window // 2] = 0
+        elif self.tails != "both":
+            raise ValueError(
+                "tails keyword has to be one of 'both', 'left' or 'right'."
+            )
+
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
