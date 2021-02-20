@@ -233,6 +233,34 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         self.frequency = frequency
         self.origin_date = origin_date
 
+    def _set_frequency(self, X: pd.DataFrame) -> None:
+        """
+        Infer the frequency.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input fataframe
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
+
+        """
+        if self.frequency is None:
+            self.freq_ = X.index.freq
+            if self.freq_ is None:
+                raise ValueError(
+                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
+                )
+        else:
+            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+
     def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
         """
         Fit the model.
@@ -257,14 +285,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         ValueError
             If no frequency was provided during initialization and also cannot be inferred.
         """
-        if self.frequency is None:
-            self.freq_ = X.index.freq
-            if self.freq_ is None:
-                raise ValueError(
-                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
-                )
-        else:
-            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+        self._set_frequency(X)
 
         if self.origin_date is None:
             self.origin_ = X.index.min()
@@ -415,11 +436,66 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         )
         return extended_index
 
+    def _set_sliding_window(self) -> None:
+        """
+        Calculate the sliding window.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the provided value for `tails` is not "left", "right" or "both".
+        """
+        self.sliding_window_ = np.exp(
+            -0.5
+            * np.abs(np.arange(-self.window // 2 + 1, self.window // 2 + 1) / self.sig)
+            ** (2 * self.p)
+        )
+        if self.tails == "left":
+            self.sliding_window_[self.window // 2 + 1 :] = 0
+        elif self.tails == "right":
+            self.sliding_window_[: self.window // 2] = 0
+        elif self.tails != "both":
+            raise ValueError(
+                "tails keyword has to be one of 'both', 'left' or 'right'."
+            )
+
+    def _set_frequency(self, X: pd.DataFrame) -> None:
+        """
+        Infer the frequency.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input fataframe
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
+
+        """
+        if self.frequency is None:
+            self.freq_ = X.index.freq
+            if self.freq_ is None:
+                raise ValueError(
+                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
+                )
+        else:
+            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+
     def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
         """
         Fit the estimator.
 
-        Creates a pandas offset object.
+        The frequency is computed and the sliding window is created.
 
         Parameters
         ----------
@@ -440,29 +516,8 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
             If no frequency was provided during initialization and also cannot be inferred.
 
         """
-        if self.frequency is None:
-            self.freq_ = X.index.freq
-            if self.freq_ is None:
-                raise ValueError(
-                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
-                )
-        else:
-            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
-
-        self.sliding_window_ = np.exp(
-            -0.5
-            * np.abs(np.arange(-self.window // 2 + 1, self.window // 2 + 1) / self.sig)
-            ** (2 * self.p)
-        )
-
-        if self.tails == "left":
-            self.sliding_window_[self.window // 2 + 1 :] = 0
-        elif self.tails == "right":
-            self.sliding_window_[: self.window // 2] = 0
-        elif self.tails != "both":
-            raise ValueError(
-                "tails keyword has to be one of 'both', 'left' or 'right'."
-            )
+        self._set_frequency(X)
+        self._set_sliding_window()
 
         return self
 
