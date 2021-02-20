@@ -105,10 +105,66 @@ def test_specialeventsadder(date, value):
     )
 
 
+@pytest.mark.parametrize(
+    "date, value",
+    [
+        ("2018-11-23", 1.0),
+        ("2018-11-22", 6.065307e-01),
+        ("2018-11-24", 6.065307e-01),
+        ("2018-11-21", 0.1353352832366127),
+        ("2018-11-25", 0.1353352832366127),
+    ],
+)
+def test_specialeventsadder_no_freq(date, value):
+    """Test the SpecialDayBumps with the frequency inferred."""
+    sda = SpecialDayBumps(
+        name="black_friday_2018",
+        dates=["2018-11-23"],
+        window=15,
+        p=1,
+        sig=1,
+    )
+
+    sda_transformed = sda.fit_transform(continuous_input)
+
+    np.testing.assert_almost_equal(
+        sda_transformed.loc[date, "black_friday_2018"], value
+    )
+
+
+def test_specialeventsadder_no_freq_error():
+    """Test the SpecialDayBumps without frequency provided, and where it cannot be inferred during fit time."""
+    sda = SpecialDayBumps(
+        name="black_friday_2018",
+        dates=["2018-11-23"],
+        window=15,
+        p=1,
+        sig=1,
+    )
+
+    with pytest.raises(ValueError):
+        sda.fit(non_continuous_input)
+
+
 def test_powertrendadder_fit_transform():
     """Test the PowerTrendAdder."""
     pta = PowerTrend(frequency="d", origin_date="2018-11-01")
     assert pta.fit_transform(continuous_input).trend.tolist() == list(range(60))
+
+
+def test_powertrendadder_fit_transform_defaults():
+    """Test the PowerTrendAdder without provided frequency and origin_date."""
+    pta = PowerTrend()
+    assert pta.fit_transform(continuous_input).trend.tolist() == list(range(60))
+    assert pta.freq_ == "D"
+    assert pta.origin_ == pd.Timestamp("2018-11-01", freq="D")
+
+
+def test_powertrendadder_fit_transform_defaults_error():
+    """Test the PowerTrendAdder without provided frequency and origin_date, and without the possibility to extract it during fit time."""
+    pta = PowerTrend()
+    with pytest.raises(ValueError):
+        pta.fit(non_continuous_input)
 
 
 @pytest.mark.parametrize(

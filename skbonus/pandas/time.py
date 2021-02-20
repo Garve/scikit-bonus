@@ -195,16 +195,17 @@ class PowerTrend(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    frequency : str
+    power : float, default=1.0
+        Exponent to use for the trend, i.e. linear (power=1.), root (power=0.5), or cube (power=3.).
+
+    frequency : Optional[str], default=None
         A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
 
-    origin_date : str
+    origin_date : Optional[Union[str, pd.Timestamp]], default=None
         A date the trend originates from, i.e. the value of the trend column is zero for this date.
-        If unsure, just use the minimum date found in the index of your dataset.
-
-    power : float
-        Exponent to use for the trend, i.e. linear (power=1.), root (power=0.5), or cube (power=3.).
+        If None, the transformer uses the smallest date of the training set during fit time.
 
     Examples
     --------
@@ -213,7 +214,7 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     ...     {"A": ["a", "b", "c", "d"]},
     ...     index=pd.date_range(start="1988-08-08", periods=4)
     ... )
-    >>> PowerTrend(frequency="d", origin_date="1988-08-06", power=2.).fit_transform(df)
+    >>> PowerTrend(power=2., frequency="d", origin_date="1988-08-06").fit_transform(df)
                 A  trend
     1988-08-08  a    4.0
     1988-08-09  b    9.0
@@ -221,22 +222,27 @@ class PowerTrend(BaseEstimator, TransformerMixin):
     1988-08-11  d   25.0
     """
 
-    def __init__(self, frequency: str, origin_date: str, power: float = 1.0) -> None:
+    def __init__(
+        self,
+        power: float = 1.0,
+        frequency: Optional[str] = None,
+        origin_date: Optional[Union[str, pd.Timestamp]] = None,
+    ) -> None:
         """Initialize."""
-        self.origin_date = origin_date
-        self.frequency = frequency
         self.power = power
+        self.frequency = frequency
+        self.origin_date = origin_date
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
         """
         Fit the model.
 
-        The point of origin with a proper frequency is constructed here.
+        The point of origin and the frequency is constructed here, if not provided during initialization.
 
         Parameters
         ----------
-        X : Ignored
-            Not used, present here for API consistency by convention.
+        X : pd.DataFrame
+            Used for inferring the frequency and the origin date, if not provided during initialization.
 
         y : Ignored
             Not used, present here for API consistency by convention.
@@ -245,8 +251,25 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         -------
         PowerTrend
             Fitted transformer.
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
         """
-        self.origin_ = pd.Timestamp(self.origin_date, freq=self.frequency)
+        if self.frequency is None:
+            self.freq_ = X.index.freq
+            if self.freq_ is None:
+                raise ValueError(
+                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
+                )
+        else:
+            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+
+        if self.origin_date is None:
+            self.origin_ = X.index.min()
+        else:
+            self.origin_ = pd.Timestamp(self.origin_date, freq=self.freq_)
 
         return self
 
@@ -267,8 +290,13 @@ class PowerTrend(BaseEstimator, TransformerMixin):
         """
         check_is_fitted(self)
 
-        index_as_int = (X.index - self.origin_) / self.origin_.freq
-        return X.assign(trend=index_as_int ** self.power)
+        extended_index = pd.date_range(
+            start=self.origin_, end=X.index.max(), freq=self.freq_
+        )
+
+        dummy_dates = pd.Series(np.arange(len(extended_index)), index=extended_index)
+
+        return X.assign(trend=dummy_dates.reindex(X.index) ** self.power)
 
 
 class SpecialDayBumps(BaseEstimator, TransformerMixin):
@@ -290,9 +318,10 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
         Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
 
-    frequency : str
+    frequency : Optional[str], default=None
         A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
 
     window : int, default=1
         Size of the sliding window. The effect of a holiday will reach from approximately
@@ -308,7 +337,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
     --------
     >>> import pandas as pd
     >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d").fit_transform(df)
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"]).fit_transform(df)
                 A  new_year_2020
     2019-12-29  0            0.0
     2019-12-30  1            0.0
@@ -335,7 +364,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         self,
         name: str,
         dates: List[Union[pd.Timestamp, str]],
-        frequency: str,
+        frequency: Optional[str] = None,
         window: int = 1,
         p: float = 1,
         sig: float = 1,
@@ -356,8 +385,8 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : Ignored
-            Not used, present here for API consistency by convention.
+        X : pd.DataFrame
+            Used for inferring the frequency, if not provided during initialization.
 
         y : Ignored
             Not used, present here for API consistency by convention.
@@ -366,8 +395,21 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         -------
         SpecialDayBumps
             Fitted transformer.
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
+
         """
-        self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+        if self.frequency is None:
+            self.freq_ = X.index.freq
+            if self.freq_ is None:
+                raise ValueError(
+                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
+                )
+        else:
+            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
 
         return self
 
@@ -390,6 +432,7 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         extended_index = pd.date_range(
             start=X.index.min() - self.window * self.freq_,
             end=X.index.max() + self.window * self.freq_,
+            freq=self.freq_,
         )
 
         dummy_dates = pd.Series(extended_index.isin(self.dates), index=extended_index)
