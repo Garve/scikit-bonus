@@ -377,6 +377,27 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         self.p = p
         self.sig = sig
 
+    def _make_continuous_time_index(self, X: pd.DataFrame) -> pd.DatetimeIndex:
+        """
+        Sometimes, the input data has missing time periods. As this is bad for time difference based calculations, create a continuous DatetimeIndex first.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input dataframe with a DatetimeIndex, potentially with gaps.
+
+        Returns
+        -------
+        pd.DatetimeIndex
+            A continuous time range.
+        """
+        extended_index = pd.date_range(
+            start=X.index.min(),
+            end=X.index.max(),
+            freq=self.freq_,
+        )
+        return extended_index
+
     def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
         """
         Fit the estimator.
@@ -411,6 +432,11 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         else:
             self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
 
+        self.sliding_window_ = np.exp(
+            -0.5
+            * np.abs(np.arange(-self.window // 2 + 1, self.window // 2 + 1) / self.sig)
+            ** (2 * self.p)
+        )
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -429,22 +455,10 @@ class SpecialDayBumps(BaseEstimator, TransformerMixin):
         """
         check_is_fitted(self)
 
-        extended_index = pd.date_range(
-            start=X.index.min() - self.window * self.freq_,
-            end=X.index.max() + self.window * self.freq_,
-            freq=self.freq_,
-        )
-
-        dummy_dates = pd.Series(extended_index.isin(self.dates), index=extended_index)
-
-        smoothed_dates = (
-            dummy_dates.rolling(
-                window=self.window, center=True, win_type="general_gaussian"
-            )
-            .sum(p=self.p, sig=self.sig)
-            .reindex(X.index)
-            .values
-        )
+        extended_index = self._make_continuous_time_index(X)
+        date_booleans = extended_index.isin(self.dates)
+        convolution = np.convolve(date_booleans, self.sliding_window_, mode="same")
+        smoothed_dates = pd.Series(convolution, index=extended_index).reindex(X.index)
 
         return X.assign(**{self.name: smoothed_dates})
 
