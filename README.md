@@ -210,13 +210,15 @@ We want to cover these properties with the following approach:
 Putting everything together in a pipeline looks like this:
 
 ```python
+from skbonus.pandas.time import SimpleTimeFeatures, PowerTrend
+from skbonus.pandas.preprocessing import OneHotEncoderWithNames
+
 from sklearn.linear_model import LinearRegression
 from sklearn.compose import TransformedTargetRegressor, make_column_transformer
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import OneHotEncoder
 
 ct = make_column_transformer(
-    (OneHotEncoder(), ["month"]),
+    (OneHotEncoderWithNames(), ["month"]),
     remainder="passthrough"
 )
 
