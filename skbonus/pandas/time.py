@@ -187,364 +187,6 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         return res
 
 
-class PowerTrend(BaseEstimator, TransformerMixin):
-    """
-    Add a power trend column to a pandas dataframe.
-
-    For example, it can create a new column with numbers increasing quadratically in the index.
-
-    Parameters
-    ----------
-    power : float, default=1.0
-        Exponent to use for the trend, i.e. linear (power=1.), root (power=0.5), or cube (power=3.).
-
-    frequency : Optional[str], default=None
-        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
-        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
-        If None, the transformer tries to infer it during fit time.
-
-    origin_date : Optional[Union[str, pd.Timestamp]], default=None
-        A date the trend originates from, i.e. the value of the trend column is zero for this date.
-        If None, the transformer uses the smallest date of the training set during fit time.
-
-    Examples
-    --------
-    >>> import pandas as pd
-    >>> df = pd.DataFrame(
-    ...     {"A": ["a", "b", "c", "d"]},
-    ...     index=pd.date_range(start="1988-08-08", periods=4)
-    ... )
-    >>> PowerTrend(power=2., frequency="d", origin_date="1988-08-06").fit_transform(df)
-                A  trend
-    1988-08-08  a    4.0
-    1988-08-09  b    9.0
-    1988-08-10  c   16.0
-    1988-08-11  d   25.0
-    """
-
-    def __init__(
-        self,
-        power: float = 1.0,
-        frequency: Optional[str] = None,
-        origin_date: Optional[Union[str, pd.Timestamp]] = None,
-    ) -> None:
-        """Initialize."""
-        self.power = power
-        self.frequency = frequency
-        self.origin_date = origin_date
-
-    def _set_frequency(self, X: pd.DataFrame) -> None:
-        """
-        Infer the frequency.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            Input fataframe
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValueError
-            If no frequency was provided during initialization and also cannot be inferred.
-
-        """
-        if self.frequency is None:
-            self.freq_ = X.index.freq
-            if self.freq_ is None:
-                raise ValueError(
-                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
-                )
-        else:
-            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
-
-    def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
-        """
-        Fit the model.
-
-        The point of origin and the frequency is constructed here, if not provided during initialization.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            Used for inferring the frequency and the origin date, if not provided during initialization.
-
-        y : Ignored
-            Not used, present here for API consistency by convention.
-
-        Returns
-        -------
-        PowerTrend
-            Fitted transformer.
-
-        Raises
-        ------
-        ValueError
-            If no frequency was provided during initialization and also cannot be inferred.
-        """
-        self._set_frequency(X)
-
-        if self.origin_date is None:
-            self.origin_ = X.index.min()
-        else:
-            self.origin_ = pd.Timestamp(self.origin_date, freq=self.freq_)
-
-        return self
-
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Add the trend column to the input dataframe.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-             A pandas dataframe with a DatetimeIndex.
-
-        Returns
-        -------
-        pd.DataFrame
-            The input dataframe with an additional trend column.
-
-        """
-        check_is_fitted(self)
-
-        extended_index = pd.date_range(
-            start=self.origin_, end=X.index.max(), freq=self.freq_
-        )
-
-        dummy_dates = pd.Series(np.arange(len(extended_index)), index=extended_index)
-
-        return X.assign(trend=dummy_dates.reindex(X.index) ** self.power)
-
-
-class SpecialDayBumps(BaseEstimator, TransformerMixin):
-    """
-    Enrich a pandas dataframes with a new column that indicate the presense of special days.
-
-    This new column will contain a one for each date specified in the `dates` keyword. The other entries
-    of the column can
-
-    - be zero, yielding a one hot encoded column for these dates, or
-    - flatten when going further away from the date in a bell-shaped curve fashion.
-
-    Parameters
-    ----------
-    name : str
-        The name of the new column. Usually a holiday name such as Easter, Christmas, Black Friday, ...
-
-    dates : List[Union[pd.Timestamp, str]]
-        A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
-        Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
-
-    frequency : Optional[str], default=None
-        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
-        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
-        If None, the transformer tries to infer it during fit time.
-
-    window : int, default=1
-        Size of the sliding window. The effect of a holiday will reach from approximately
-        date - `window/2 * frequency` to date + `window/2 * frequency`, i.e. it is centered around the dates in `dates`.
-
-    p : float, default=1
-        Parameter for the shape of the curve. p=1 yields a typical Gaussian curve while p=0.5 yields a Laplace curve, for example.
-
-    sig : float, default=1
-        Parameter for the standard deviation of the bell-shaped curve.
-
-    tails : str, default="both"
-        Which tails to use. Can be one of
-
-            - "left"
-            - "right"
-            - "both"
-
-    Examples
-    --------
-    >>> import pandas as pd
-    >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"]).fit_transform(df)
-                A  new_year_2020
-    2019-12-29  0            0.0
-    2019-12-30  1            0.0
-    2019-12-31  2            0.0
-    2020-01-01  3            1.0
-    2020-01-02  4            0.0
-    2020-01-03  5            0.0
-    2020-01-04  6            0.0
-
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d", window=5, p=1, sig=1).fit_transform(df)
-                A  new_year_2020
-    2019-12-29  0       0.000000
-    2019-12-30  1       0.135335
-    2019-12-31  2       0.606531
-    2020-01-01  3       1.000000
-    2020-01-02  4       0.606531
-    2020-01-03  5       0.135335
-    2020-01-04  6       0.000000
-
-    >>> SpecialDayBumps("after_new_year_2020", ["2020-01-01"], window=7, tails="right").fit_transform(df)
-                A  after_new_year_2020
-    2019-12-29  0             0.000000
-    2019-12-30  1             0.000000
-    2019-12-31  2             0.000000
-    2020-01-01  3             1.000000
-    2020-01-02  4             0.606531
-    2020-01-03  5             0.135335
-    2020-01-04  6             0.011109
-    """
-
-    def __init__(
-        self,
-        name: str,
-        dates: List[Union[pd.Timestamp, str]],
-        frequency: Optional[str] = None,
-        window: int = 1,
-        p: float = 1,
-        sig: float = 1,
-        tails: str = "both",
-    ) -> None:
-        """Initialize."""
-        self.name = name
-        self.dates = dates
-        self.frequency = frequency
-        self.window = window
-        self.p = p
-        self.sig = sig
-        self.tails = tails
-
-    def _make_continuous_time_index(self, X: pd.DataFrame) -> pd.DatetimeIndex:
-        """
-        Sometimes, the input data has missing time periods. As this is bad for time difference based calculations, create a continuous DatetimeIndex first.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            Input dataframe with a DatetimeIndex, potentially with gaps.
-
-        Returns
-        -------
-        pd.DatetimeIndex
-            A continuous time range.
-        """
-        extended_index = pd.date_range(
-            start=X.index.min(),
-            end=X.index.max(),
-            freq=self.freq_,
-        )
-        return extended_index
-
-    def _set_sliding_window(self) -> None:
-        """
-        Calculate the sliding window.
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValueError
-            If the provided value for `tails` is not "left", "right" or "both".
-        """
-        self.sliding_window_ = np.exp(
-            -0.5
-            * np.abs(np.arange(-self.window // 2 + 1, self.window // 2 + 1) / self.sig)
-            ** (2 * self.p)
-        )
-        if self.tails == "left":
-            self.sliding_window_[self.window // 2 + 1 :] = 0
-        elif self.tails == "right":
-            self.sliding_window_[: self.window // 2] = 0
-        elif self.tails != "both":
-            raise ValueError(
-                "tails keyword has to be one of 'both', 'left' or 'right'."
-            )
-
-    def _set_frequency(self, X: pd.DataFrame) -> None:
-        """
-        Infer the frequency.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            Input fataframe
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValueError
-            If no frequency was provided during initialization and also cannot be inferred.
-
-        """
-        if self.frequency is None:
-            self.freq_ = X.index.freq
-            if self.freq_ is None:
-                raise ValueError(
-                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
-                )
-        else:
-            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
-
-    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
-        """
-        Fit the estimator.
-
-        The frequency is computed and the sliding window is created.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            Used for inferring the frequency, if not provided during initialization.
-
-        y : Ignored
-            Not used, present here for API consistency by convention.
-
-        Returns
-        -------
-        SpecialDayBumps
-            Fitted transformer.
-
-        Raises
-        ------
-        ValueError
-            If no frequency was provided during initialization and also cannot be inferred.
-
-        """
-        self._set_frequency(X)
-        self._set_sliding_window()
-
-        return self
-
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Add the new date feature to the dataframe.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            A pandas dataframe with a DatetimeIndex.
-
-        Returns
-        -------
-        pd.DataFrame
-            The input dataframe with an additional column for special dates.
-        """
-        check_is_fitted(self)
-
-        extended_index = self._make_continuous_time_index(X)
-        date_booleans = extended_index.isin(self.dates)
-        convolution = np.convolve(date_booleans, self.sliding_window_, mode="same")
-        smoothed_dates = pd.Series(convolution, index=extended_index).reindex(X.index)
-
-        return X.assign(**{self.name: smoothed_dates})
-
-
 class CyclicalEncoder(BaseEstimator, TransformerMixin):
     """
     Break each cyclic feature into two new features, corresponding to the representation of this feature on a circle.
@@ -694,3 +336,352 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
                 for col in X.columns.intersection(self.additional_cycles.keys())
             },
         )
+
+
+class BaseContinuousTransformer(BaseEstimator, TransformerMixin):
+    """
+    Base class for dealing with continuous Datetime indices.
+
+    Parameters
+    ----------
+    frequency : Optional[str], default=None
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
+    """
+
+    def __init__(self, frequency):
+        """Initialize."""
+        self.frequency = frequency
+
+    def _set_frequency(self, X: pd.DataFrame) -> None:
+        """
+        Infer the frequency.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input fataframe
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
+
+        """
+        if self.frequency is None:
+            self.freq_ = X.index.freq
+            if self.freq_ is None:
+                raise ValueError(
+                    "No frequency provided. It was also impossible to infer it while fitting. Please provide a value in the frequency keyword."
+                )
+        else:
+            self.freq_ = pd.tseries.frequencies.to_offset(self.frequency)
+
+    def _make_continuous_time_index(
+        self,
+        X: pd.DataFrame,
+        start: Optional[pd.Timestamp] = None,
+        end: Optional[pd.Timestamp] = None,
+    ) -> pd.DatetimeIndex:
+        """
+        Sometimes, the input data has missing time periods. As this is bad for time difference based calculations, create a continuous DatetimeIndex first.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input dataframe with a DatetimeIndex, potentially with gaps.
+
+        Returns
+        -------
+        pd.DatetimeIndex
+            A continuous time range.
+        """
+        extended_index = pd.date_range(
+            start=X.index.min() if start is None else start,
+            end=X.index.max() if end is None else end,
+            freq=self.freq_,
+        )
+        return extended_index
+
+
+class PowerTrend(BaseContinuousTransformer):
+    """
+    Add a power trend column to a pandas dataframe.
+
+    For example, it can create a new column with numbers increasing quadratically in the index.
+
+    Parameters
+    ----------
+    power : float, default=1.0
+        Exponent to use for the trend, i.e. linear (power=1.), root (power=0.5), or cube (power=3.).
+
+    frequency : Optional[str], default=None
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
+
+    origin_date : Optional[Union[str, pd.Timestamp]], default=None
+        A date the trend originates from, i.e. the value of the trend column is zero for this date.
+        If None, the transformer uses the smallest date of the training set during fit time.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame(
+    ...     {"A": ["a", "b", "c", "d"]},
+    ...     index=pd.date_range(start="1988-08-08", periods=4)
+    ... )
+    >>> PowerTrend(power=2., frequency="d", origin_date="1988-08-06").fit_transform(df)
+                A  trend
+    1988-08-08  a    4.0
+    1988-08-09  b    9.0
+    1988-08-10  c   16.0
+    1988-08-11  d   25.0
+    """
+
+    def __init__(
+        self,
+        power: float = 1.0,
+        frequency: Optional[str] = None,
+        origin_date: Optional[Union[str, pd.Timestamp]] = None,
+    ) -> None:
+        """Initialize."""
+        super().__init__(frequency)
+        self.power = power
+        self.origin_date = origin_date
+
+    def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
+        """
+        Fit the model.
+
+        The point of origin and the frequency is constructed here, if not provided during initialization.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Used for inferring the frequency and the origin date, if not provided during initialization.
+
+        y : Ignored
+            Not used, present here for API consistency by convention.
+
+        Returns
+        -------
+        PowerTrend
+            Fitted transformer.
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
+        """
+        self._set_frequency(X)
+
+        if self.origin_date is None:
+            self.origin_ = X.index.min()
+        else:
+            self.origin_ = pd.Timestamp(self.origin_date, freq=self.freq_)
+
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add the trend column to the input dataframe.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+             A pandas dataframe with a DatetimeIndex.
+
+        Returns
+        -------
+        pd.DataFrame
+            The input dataframe with an additional trend column.
+
+        """
+        check_is_fitted(self)
+
+        extended_index = self._make_continuous_time_index(X, start=self.origin_)
+        dummy_dates = pd.Series(np.arange(len(extended_index)), index=extended_index)
+
+        return X.assign(trend=dummy_dates.reindex(X.index) ** self.power)
+
+
+class SpecialDayBumps(BaseContinuousTransformer):
+    """
+    Enrich a pandas dataframes with a new column that indicate the presense of special days.
+
+    This new column will contain a one for each date specified in the `dates` keyword. The other entries
+    of the column can
+
+    - be zero, yielding a one hot encoded column for these dates, or
+    - flatten when going further away from the date in a bell-shaped curve fashion.
+
+    Parameters
+    ----------
+    name : str
+        The name of the new column. Usually a holiday name such as Easter, Christmas, Black Friday, ...
+
+    dates : List[Union[pd.Timestamp, str]]
+        A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
+        Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
+
+    frequency : Optional[str], default=None
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
+
+    window : int, default=1
+        Size of the sliding window. The effect of a holiday will reach from approximately
+        date - `window/2 * frequency` to date + `window/2 * frequency`, i.e. it is centered around the dates in `dates`.
+
+    p : float, default=1
+        Parameter for the shape of the curve. p=1 yields a typical Gaussian curve while p=0.5 yields a Laplace curve, for example.
+
+    sig : float, default=1
+        Parameter for the standard deviation of the bell-shaped curve.
+
+    tails : str, default="both"
+        Which tails to use. Can be one of
+
+            - "left"
+            - "right"
+            - "both"
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"]).fit_transform(df)
+                A  new_year_2020
+    2019-12-29  0            0.0
+    2019-12-30  1            0.0
+    2019-12-31  2            0.0
+    2020-01-01  3            1.0
+    2020-01-02  4            0.0
+    2020-01-03  5            0.0
+    2020-01-04  6            0.0
+
+    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d", window=5, p=1, sig=1).fit_transform(df)
+                A  new_year_2020
+    2019-12-29  0       0.000000
+    2019-12-30  1       0.135335
+    2019-12-31  2       0.606531
+    2020-01-01  3       1.000000
+    2020-01-02  4       0.606531
+    2020-01-03  5       0.135335
+    2020-01-04  6       0.000000
+
+    >>> SpecialDayBumps("after_new_year_2020", ["2020-01-01"], window=7, tails="right").fit_transform(df)
+                A  after_new_year_2020
+    2019-12-29  0             0.000000
+    2019-12-30  1             0.000000
+    2019-12-31  2             0.000000
+    2020-01-01  3             1.000000
+    2020-01-02  4             0.606531
+    2020-01-03  5             0.135335
+    2020-01-04  6             0.011109
+    """
+
+    def __init__(
+        self,
+        name: str,
+        dates: List[Union[pd.Timestamp, str]],
+        frequency: Optional[str] = None,
+        window: int = 1,
+        p: float = 1,
+        sig: float = 1,
+        tails: str = "both",
+    ) -> None:
+        """Initialize."""
+        super().__init__(frequency)
+        self.name = name
+        self.dates = dates
+        self.window = window
+        self.p = p
+        self.sig = sig
+        self.tails = tails
+
+    def _set_sliding_window(self) -> None:
+        """
+        Calculate the sliding window.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the provided value for `tails` is not "left", "right" or "both".
+        """
+        self.sliding_window_ = np.exp(
+            -0.5
+            * np.abs(np.arange(-self.window // 2 + 1, self.window // 2 + 1) / self.sig)
+            ** (2 * self.p)
+        )
+        if self.tails == "left":
+            self.sliding_window_[self.window // 2 + 1 :] = 0
+        elif self.tails == "right":
+            self.sliding_window_[: self.window // 2] = 0
+        elif self.tails != "both":
+            raise ValueError(
+                "tails keyword has to be one of 'both', 'left' or 'right'."
+            )
+
+    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
+        """
+        Fit the estimator.
+
+        The frequency is computed and the sliding window is created.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Used for inferring the frequency, if not provided during initialization.
+
+        y : Ignored
+            Not used, present here for API consistency by convention.
+
+        Returns
+        -------
+        SpecialDayBumps
+            Fitted transformer.
+
+        Raises
+        ------
+        ValueError
+            If no frequency was provided during initialization and also cannot be inferred.
+
+        """
+        self._set_frequency(X)
+        self._set_sliding_window()
+
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add the new date feature to the dataframe.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe with a DatetimeIndex.
+
+        Returns
+        -------
+        pd.DataFrame
+            The input dataframe with an additional column for special dates.
+        """
+        check_is_fitted(self)
+
+        extended_index = self._make_continuous_time_index(X)
+        date_booleans = extended_index.isin(self.dates)
+        convolution = np.convolve(date_booleans, self.sliding_window_, mode="same")
+        smoothed_dates = pd.Series(convolution, index=extended_index).reindex(X.index)
+
+        return X.assign(**{self.name: smoothed_dates})
