@@ -8,7 +8,8 @@ from ..time import (
     CyclicalEncoder,
     PowerTrend,
     SimpleTimeFeatures,
-    SpecialDayBumps,
+    GeneralGaussianSmoother,
+    DateIndicator,
 )
 
 non_continuous_input = pd.DataFrame(
@@ -69,46 +70,46 @@ def test_simple_time_features_fit_transform():
 
 def test_special_day_bumps_fit_transform():
     """Test the SpecialDayBumps."""
-    sda = SpecialDayBumps(
-        name="black_friday_2018",
-        dates=["2018-11-23"],
+    d = DateIndicator("black_friday_2018", ["2018-11-23"])
+    X = d.fit_transform(continuous_input)
+
+    sda = GeneralGaussianSmoother(
         frequency="d",
         window=15,
         p=1,
         sig=1,
     )
 
-    sda_transformed = sda.fit_transform(continuous_input)
+    sda_transformed = sda.fit_transform(X)
 
     np.testing.assert_almost_equal(
         sda_transformed.loc["2018-11-21":"2018-11-25", "black_friday_2018"].values,
-        [0.1353352832366127, 6.065307e-01, 1.0, 6.065307e-01, 0.1353352832366127],
+        [0.053991, 0.2419707, 0.3989423, 0.2419707, 0.053991],
     )
 
 
 def test_special_day_bumps_no_freq():
     """Test the SpecialDayBumps with the frequency inferred."""
-    sda = SpecialDayBumps(
-        name="black_friday_2018",
-        dates=["2018-11-23"],
+    d = DateIndicator("black_friday_2018", ["2018-11-23"])
+    X = d.fit_transform(continuous_input)
+
+    sda = GeneralGaussianSmoother(
         window=15,
         p=1,
         sig=1,
     )
 
-    sda_transformed = sda.fit_transform(continuous_input)
+    sda_transformed = sda.fit_transform(X)
 
     np.testing.assert_almost_equal(
         sda_transformed.loc["2018-11-21":"2018-11-25", "black_friday_2018"].values,
-        [0.1353352832366127, 6.065307e-01, 1.0, 6.065307e-01, 0.1353352832366127],
+        [0.053991, 0.2419707, 0.3989423, 0.2419707, 0.053991],
     )
 
 
 def test_special_day_bumps_no_freq_error():
     """Test the SpecialDayBumps without frequency provided, and where it cannot be inferred during fit time."""
-    sda = SpecialDayBumps(
-        name="black_friday_2018",
-        dates=["2018-11-23"],
+    sda = GeneralGaussianSmoother(
         window=15,
         p=1,
         sig=1,

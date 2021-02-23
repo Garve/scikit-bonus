@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
+from scipy.signal import convolve2d
 
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
@@ -338,6 +339,81 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         )
 
 
+class DateIndicator(BaseEstimator, TransformerMixin):
+    """
+    Enrich a pandas dataframes with a new column indicating if there is a special date.
+
+    This new column will contain a one for each date specified in the `dates` keyword, zero otherwise.
+
+    Parameters
+    ----------
+    name : str
+        The name of the new column. Usually a holiday name such as Easter, Christmas, Black Friday, ...
+
+    dates : List[str]
+        A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
+        Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
+    >>> DateIndicator("around_new_year_2020", ["2019-12-31", "2020-01-01", "2020-01-02"]).fit_transform(df)
+                A  around_new_year_2020
+    2019-12-29  0                     0
+    2019-12-30  1                     0
+    2019-12-31  2                     1
+    2020-01-01  3                     1
+    2020-01-02  4                     1
+    2020-01-03  5                     0
+    2020-01-04  6                     0
+    """
+
+    def __init__(self, name: str, dates: List[str]) -> None:
+        """Initialize."""
+        self.name = name
+        self.dates = dates
+
+    def fit(self, X: pd.DataFrame, y=None) -> "DateIndicator":
+        """
+        Fit the estimator. In this special case, nothing is done.
+
+        Parameters
+        ----------
+        X : Ignored
+            Not used, present here for API consistency by convention.
+
+        y : Ignored
+            Not used, present here for API consistency by convention.
+
+        Returns
+        -------
+        DateIndicator
+            Fitted transformer.
+        """
+        self.fitted_ = True
+
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add the new date feature to the dataframe.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe with a DatetimeIndex.
+
+        Returns
+        -------
+        pd.DataFrame
+            The input dataframe with an additional boolean column named `self.name`.
+        """
+        check_is_fitted(self)
+
+        return X.assign(**{self.name: lambda df: df.index.isin(self.dates).astype(int)})
+
+
 class BaseContinuousTransformer(BaseEstimator, TransformerMixin):
     """
     Base class for dealing with continuous Datetime indices.
@@ -511,25 +587,12 @@ class PowerTrend(BaseContinuousTransformer):
         return X.assign(trend=dummy_dates.reindex(X.index) ** self.power)
 
 
-class SpecialDayBumps(BaseContinuousTransformer):
+class GeneralGaussianSmoother(BaseContinuousTransformer):
     """
-    Enrich a pandas dataframes with a new column that indicate the presense of special days.
-
-    This new column will contain a one for each date specified in the `dates` keyword. The other entries
-    of the column can
-
-    - be zero, yielding a one hot encoded column for these dates, or
-    - flatten when going further away from the date in a bell-shaped curve fashion.
+    Smooth the columns of a data frame by applying a convolution with a generalized Gaussian curve.
 
     Parameters
     ----------
-    name : str
-        The name of the new column. Usually a holiday name such as Easter, Christmas, Black Friday, ...
-
-    dates : List[Union[pd.Timestamp, str]]
-        A list containing the dates of the holiday. You have to state every holiday explicitly, i.e.
-        Christmas from 2018 to 2020 can be encoded as ["2018-12-24", "2019-12-24", "2020-12-24"].
-
     frequency : Optional[str], default=None
         A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
@@ -555,42 +618,40 @@ class SpecialDayBumps(BaseContinuousTransformer):
     Examples
     --------
     >>> import pandas as pd
-    >>> df = pd.DataFrame({"A": range(7)}, index=pd.date_range(start="2019-12-29", periods=7))
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"]).fit_transform(df)
-                A  new_year_2020
-    2019-12-29  0            0.0
-    2019-12-30  1            0.0
-    2019-12-31  2            0.0
-    2020-01-01  3            1.0
-    2020-01-02  4            0.0
-    2020-01-03  5            0.0
-    2020-01-04  6            0.0
+    >>> df = pd.DataFrame({"A": [0,0,0,1,0,0,0]}, index=pd.date_range(start="2019-12-29", periods=7))
+    >>> GeneralGaussianSmoother().fit_transform(df)
+                  A
+    2019-12-29  0.0
+    2019-12-30  0.0
+    2019-12-31  0.0
+    2020-01-01  1.0
+    2020-01-02  0.0
+    2020-01-03  0.0
+    2020-01-04  0.0
 
-    >>> SpecialDayBumps("new_year_2020", ["2020-01-01"], frequency="d", window=5, p=1, sig=1).fit_transform(df)
-                A  new_year_2020
-    2019-12-29  0       0.000000
-    2019-12-30  1       0.135335
-    2019-12-31  2       0.606531
-    2020-01-01  3       1.000000
-    2020-01-02  4       0.606531
-    2020-01-03  5       0.135335
-    2020-01-04  6       0.000000
+    >>> GeneralGaussianSmoother(frequency="d", window=5, p=1, sig=1).fit_transform(df)
+                       A
+    2019-12-29  0.000000
+    2019-12-30  0.054489
+    2019-12-31  0.244201
+    2020-01-01  0.402620
+    2020-01-02  0.244201
+    2020-01-03  0.054489
+    2020-01-04  0.000000
 
-    >>> SpecialDayBumps("after_new_year_2020", ["2020-01-01"], window=7, tails="right").fit_transform(df)
-                A  after_new_year_2020
-    2019-12-29  0             0.000000
-    2019-12-30  1             0.000000
-    2019-12-31  2             0.000000
-    2020-01-01  3             1.000000
-    2020-01-02  4             0.606531
-    2020-01-03  5             0.135335
-    2020-01-04  6             0.011109
+    >>> GeneralGaussianSmoother(window=7, tails="right").fit_transform(df)
+                       A
+    2019-12-29  0.000000
+    2019-12-30  0.000000
+    2019-12-31  0.000000
+    2020-01-01  0.570459
+    2020-01-02  0.346001
+    2020-01-03  0.077203
+    2020-01-04  0.006337
     """
 
     def __init__(
         self,
-        name: str,
-        dates: List[Union[pd.Timestamp, str]],
         frequency: Optional[str] = None,
         window: int = 1,
         p: float = 1,
@@ -599,8 +660,6 @@ class SpecialDayBumps(BaseContinuousTransformer):
     ) -> None:
         """Initialize."""
         super().__init__(frequency)
-        self.name = name
-        self.dates = dates
         self.window = window
         self.p = p
         self.sig = sig
@@ -633,7 +692,7 @@ class SpecialDayBumps(BaseContinuousTransformer):
                 "tails keyword has to be one of 'both', 'left' or 'right'."
             )
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "SpecialDayBumps":
+    def fit(self, X: pd.DataFrame, y: None = None) -> "GeneralGaussianSmoother":
         """
         Fit the estimator.
 
@@ -649,7 +708,7 @@ class SpecialDayBumps(BaseContinuousTransformer):
 
         Returns
         -------
-        SpecialDayBumps
+        GeneralGaussianSmoother
             Fitted transformer.
 
         Raises
@@ -660,6 +719,9 @@ class SpecialDayBumps(BaseContinuousTransformer):
         """
         self._set_frequency(X)
         self._set_sliding_window()
+        self.sliding_window_ = (
+            self.sliding_window_.reshape(-1, 1) / self.sliding_window_.sum()
+        )
 
         return self
 
@@ -680,8 +742,11 @@ class SpecialDayBumps(BaseContinuousTransformer):
         check_is_fitted(self)
 
         extended_index = self._make_continuous_time_index(X)
-        date_booleans = extended_index.isin(self.dates)
-        convolution = np.convolve(date_booleans, self.sliding_window_, mode="same")
-        smoothed_dates = pd.Series(convolution, index=extended_index).reindex(X.index)
+        convolution = convolve2d(
+            X.reindex(extended_index).fillna(0), self.sliding_window_, mode="same"
+        )
+        smoothed_dates = pd.DataFrame(
+            convolution, index=extended_index, columns=X.columns
+        ).reindex(X.index)
 
-        return X.assign(**{self.name: smoothed_dates})
+        return smoothed_dates
