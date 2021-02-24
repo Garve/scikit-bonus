@@ -5,6 +5,7 @@ from ._regression import (
     mean_absolute_percentage_error,
     mean_directional_accuracy,
     symmetric_mean_absolute_percentage_error,
+    mean_arctangent_absolute_percentage_error,
 )
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "symmetric_mean_absolute_percentage_error",
     "mean_directional_accuracy",
     "mean_absolute_deviation",
+    "mean_arctangent_absolute_percentage_error",
 ]

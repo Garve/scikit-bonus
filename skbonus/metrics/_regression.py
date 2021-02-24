@@ -51,7 +51,7 @@ def mean_absolute_percentage_error(
 
     Parameters
     ----------
-    y_true : np.array (non-negative numbers)
+    y_true : np.array
         Observed values.
 
     y_pred : np.array
@@ -76,6 +76,47 @@ def mean_absolute_percentage_error(
     check_consistent_length(y_true, y_pred)
     sample_weight = _check_sample_weight(sample_weight, y_true)
     return np.mean(sample_weight * np.abs((y_true - y_pred) / y_true))
+
+
+def mean_arctangent_absolute_percentage_error(
+    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+) -> float:
+    """
+    Return the MAAPE (Mean Arctangent Absolute Percentage Error) of a prediction.
+
+    The formula is np.mean(np.arctan(np.abs((y_true - y_pred) / y_true))).
+
+    Parameters
+    ----------
+    y_true : np.array
+        Observed values.
+
+    y_pred : np.array
+        Predicted values.
+
+    sample_weight : Optional[np.array], default=None
+        Individual weights for each sample.
+
+    Returns
+    -------
+    float
+        MAAPE value of the input.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> y_true = np.array([1, 2, 4])
+    >>> y_pred = np.array([1, 1, 2])
+    >>> mean_arctangent_absolute_percentage_error(y_true, y_pred)
+    0.3090984060005374
+
+    Notes
+    -----
+    See "A new metric of absolute percentage error for intermittent demand forecasts" by Kim & Kim.
+    """
+    check_consistent_length(y_true, y_pred)
+    sample_weight = _check_sample_weight(sample_weight, y_true)
+    return np.mean(sample_weight * np.arctan(np.abs((y_true - y_pred) / y_true)))
 
 
 def symmetric_mean_absolute_percentage_error(

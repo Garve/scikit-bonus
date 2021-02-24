@@ -8,6 +8,7 @@ from .. import (
     mean_absolute_percentage_error,
     mean_directional_accuracy,
     symmetric_mean_absolute_percentage_error,
+    mean_arctangent_absolute_percentage_error,
 )
 
 
@@ -67,3 +68,22 @@ def test_mda(y_true, y_pred, result):
 def test_mad(y_true, y_pred, result):
     """Test mad."""
     np.testing.assert_almost_equal(mean_absolute_deviation(y_true, y_pred), result)
+
+
+@pytest.mark.parametrize(
+    "y_true, y_pred, result",
+    [
+        (np.array([1, 2, 4]), np.array([1, 1, 3]), 0.2362087573758901),
+        (
+            np.array([1, 5, 3, 6, 7, 8]),
+            np.array([1, 6, 4, 4, 6, 5]),
+            0.2235940655863169,
+        ),
+        (np.array(10 * [1]), np.array(10 * [1]), 0.0),
+    ],
+)
+def test_maape(y_true, y_pred, result):
+    """Test maape."""
+    np.testing.assert_almost_equal(
+        mean_arctangent_absolute_percentage_error(y_true, y_pred), result
+    )
