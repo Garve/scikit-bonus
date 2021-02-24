@@ -14,13 +14,13 @@ class BaseContinuousTransformer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    frequency : Optional[str], default=None
+    frequency : Optional[str]
         A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
         If None, the transformer tries to infer it during fit time.
     """
 
-    def __init__(self, frequency):
+    def __init__(self, frequency) -> None:
         """Initialize."""
         self.frequency = frequency
 
@@ -187,24 +187,33 @@ class Smoother(BaseContinuousTransformer, ABC):
 
     Parameters
     ----------
-    frequency : Optional[str], default=None
+    frequency : Optional[str]
         A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
         If None, the transformer tries to infer it during fit time.
 
-    window : int, default=1
+    window : int
         Size of the sliding window. The effect of a holiday will reach from approximately
         date - `window/2 * frequency` to date + `window/2 * frequency`, i.e. it is centered around the dates in `dates`.
+
+    mode : str
+        Which convolution mode to use. Can be one of
+
+            - "full": The output is the full discrete linear convolution of the inputs.
+            - "valid": The output consists only of those elements that do not rely on the zero-padding.
+            - "same": The output is the same size as the first input, centered with respect to the 'full' output.
     """
 
     def __init__(
         self,
-        frequency: Optional[str] = None,
-        window: int = 1,
+        frequency: Optional[str],
+        window: int,
+        mode: str,
     ) -> None:
         """Initialize."""
         super().__init__(frequency)
         self.window = window
+        self.mode = mode
 
     @abstractmethod
     def _set_sliding_window(self) -> None:
@@ -272,8 +281,12 @@ class Smoother(BaseContinuousTransformer, ABC):
 
         extended_index = self._make_continuous_time_index(X)
         convolution = convolve2d(
-            X.reindex(extended_index).fillna(0), self.sliding_window_, mode="same"
+            X.reindex(extended_index).fillna(0), self.sliding_window_, mode=self.mode
         )
+
+        if self.mode == "full" and self.window > 1:
+            convolution = convolution[: -self.window + 1]
+
         smoothed_dates = pd.DataFrame(
             convolution, index=extended_index, columns=X.columns
         ).reindex(X.index)
@@ -312,7 +325,7 @@ class GeneralGaussianSmoother(Smoother):
     Examples
     --------
     >>> import pandas as pd
-    >>> df = pd.DataFrame({"A": [0,0,0,1,0,0,0]}, index=pd.date_range(start="2019-12-29", periods=7))
+    >>> df = pd.DataFrame({"A": [0, 0, 0, 1, 0, 0, 0]}, index=pd.date_range(start="2019-12-29", periods=7))
     >>> GeneralGaussianSmoother().fit_transform(df)
                   A
     2019-12-29  0.0
@@ -353,7 +366,7 @@ class GeneralGaussianSmoother(Smoother):
         tails: str = "both",
     ) -> None:
         """Initialize."""
-        super().__init__(frequency, window)
+        super().__init__(frequency, window, mode="same")
         self.p = p
         self.sig = sig
         self.tails = tails
@@ -384,3 +397,97 @@ class GeneralGaussianSmoother(Smoother):
             raise ValueError(
                 "tails keyword has to be one of 'both', 'left' or 'right'."
             )
+
+
+class ExponentialDecaySmoother(Smoother):
+    """
+    Smooth the columns of a data frame by applying a convolution with a exponentially decaying curve.
+
+    This class can be used for modelling carry over effects in marketing mix models
+
+    Parameters
+    ----------
+    frequency : Optional[str], default=None
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
+
+    window : int, default=1
+        Size of the sliding window. The effect of a holiday will reach from approximately
+        date - `window/2 * frequency` to date + `window/2 * frequency`, i.e. it is centered around the dates in `dates`.
+
+    strength : float, default=0.0
+        Fraction of the spending effect that is carried over.
+
+    peak : float, default=0.0
+        Where the carryover effect peaks.
+
+    exponent : float, default=1.0
+        To further widen or narrow the carryover curve. A value of 1.0 yields a normal exponential decay.
+        With values larger than 1.0, a super exponential decay can be achieved.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({"A": [0, 0, 0, 1, 0, 0, 0]}, index=pd.date_range(start="2019-12-29", periods=7))
+    >>> ExponentialDecaySmoother().fit_transform(df)
+                  A
+    2019-12-29  0.0
+    2019-12-30  0.0
+    2019-12-31  0.0
+    2020-01-01  1.0
+    2020-01-02  0.0
+    2020-01-03  0.0
+    2020-01-04  0.0
+
+    >>> ExponentialDecaySmoother(frequency="d", window=3, strength=0.5).fit_transform(df)
+                       A
+    2019-12-29  0.000000
+    2019-12-30  0.000000
+    2019-12-31  0.000000
+    2020-01-01  0.571429
+    2020-01-02  0.285714
+    2020-01-03  0.142857
+    2020-01-04  0.000000
+
+    >>> ExponentialDecaySmoother(window=3, strength=0.5, peak=1).fit_transform(df)
+                   A
+    2019-12-29  0.00
+    2019-12-30  0.00
+    2019-12-31  0.00
+    2020-01-01  0.25
+    2020-01-02  0.50
+    2020-01-03  0.25
+    2020-01-04  0.00
+    """
+
+    def __init__(
+        self,
+        frequency: Optional[str] = None,
+        window: int = 1,
+        strength: float = 0.0,
+        peak: float = 0.0,
+        exponent: float = 1.0,
+    ) -> None:
+        """Initialize."""
+        super().__init__(frequency, window, mode="full")
+        self.strength = strength
+        self.peak = peak
+        self.exponent = exponent
+
+    def _set_sliding_window(self) -> None:
+        """
+        Calculate the sliding window.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the provided value for `tails` is not "left", "right" or "both".
+        """
+        self.sliding_window_ = self.strength ** (
+            np.abs(np.arange(self.window) - self.peak) ** self.exponent
+        )
