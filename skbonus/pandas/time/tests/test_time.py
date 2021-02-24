@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ..time import (
+from skbonus.pandas.time import (
     CyclicalEncoder,
     PowerTrend,
     SimpleTimeFeatures,
@@ -12,22 +12,32 @@ from ..time import (
     DateIndicator,
 )
 
-non_continuous_input = pd.DataFrame(
-    {"A": ["a", "b", "c"], "B": [1, 2, 2], "C": [0, 1, 0]},
-    index=[
-        pd.Timestamp("1988-08-08 11:12:12"),
-        pd.Timestamp("2000-01-01 07:06:05"),
-        pd.Timestamp("1950-12-31"),
-    ],
-)
 
-continuous_input = pd.DataFrame(
-    {"data": range(60)}, index=pd.date_range(start="2018-11-01", periods=60)
-)
+@pytest.fixture
+def get_non_continuous_data():
+    """Generate data with a non-continuous DatetimeIndex."""
+    return pd.DataFrame(
+        {"A": ["a", "b", "c"], "B": [1, 2, 2], "C": [0, 1, 0]},
+        index=[
+            pd.Timestamp("1988-08-08 11:12:12"),
+            pd.Timestamp("2000-01-01 07:06:05"),
+            pd.Timestamp("1950-12-31"),
+        ],
+    )
 
 
-def test_simple_time_features_fit_transform():
+@pytest.fixture
+def get_continuous_data():
+    """Generate data with a continuous DatetimeIndex."""
+    return pd.DataFrame(
+        {"data": range(60)}, index=pd.date_range(start="2018-11-01", periods=60)
+    )
+
+
+def test_simple_time_features_fit_transform(get_non_continuous_data):
     """Test SimpleTimeFeatures' fit and transform."""
+    non_continuous_data = get_non_continuous_data
+
     dfa = SimpleTimeFeatures(
         second=True,
         minute=True,
@@ -43,7 +53,7 @@ def test_simple_time_features_fit_transform():
 
     assert (
         (
-            dfa.fit_transform(non_continuous_input)
+            dfa.fit_transform(non_continuous_data)
             == pd.DataFrame(
                 {
                     "A": ["a", "b", "c"],
@@ -60,7 +70,7 @@ def test_simple_time_features_fit_transform():
                     "month": [8, 1, 12],
                     "year": [1988, 2000, 1950],
                 },
-                index=non_continuous_input.index,
+                index=non_continuous_data.index,
             )
         )
         .all()
@@ -68,10 +78,11 @@ def test_simple_time_features_fit_transform():
     )
 
 
-def test_special_day_bumps_fit_transform():
+def test_special_day_bumps_fit_transform(get_continuous_data):
     """Test the SpecialDayBumps."""
+    continuous_data = get_continuous_data
     d = DateIndicator("black_friday_2018", ["2018-11-23"])
-    X = d.fit_transform(continuous_input)
+    X = d.fit_transform(continuous_data)
 
     sda = GeneralGaussianSmoother(
         frequency="d",
@@ -88,10 +99,11 @@ def test_special_day_bumps_fit_transform():
     )
 
 
-def test_special_day_bumps_no_freq():
+def test_special_day_bumps_no_freq(get_continuous_data):
     """Test the SpecialDayBumps with the frequency inferred."""
+    continuous_data = get_continuous_data
     d = DateIndicator("black_friday_2018", ["2018-11-23"])
-    X = d.fit_transform(continuous_input)
+    X = d.fit_transform(continuous_data)
 
     sda = GeneralGaussianSmoother(
         window=15,
@@ -107,8 +119,10 @@ def test_special_day_bumps_no_freq():
     )
 
 
-def test_special_day_bumps_no_freq_error():
+def test_special_day_bumps_no_freq_error(get_non_continuous_data):
     """Test the SpecialDayBumps without frequency provided, and where it cannot be inferred during fit time."""
+    non_continuous_data = get_non_continuous_data
+
     sda = GeneralGaussianSmoother(
         window=15,
         p=1,
@@ -116,28 +130,34 @@ def test_special_day_bumps_no_freq_error():
     )
 
     with pytest.raises(ValueError):
-        sda.fit(non_continuous_input)
+        sda.fit(non_continuous_data)
 
 
-def test_power_trend_adder_fit_transform():
+def test_power_trend_adder_fit_transform(get_continuous_data):
     """Test the PowerTrendAdder."""
+    continuous_data = get_continuous_data
     pta = PowerTrend(frequency="d", origin_date="2018-11-01")
-    assert pta.fit_transform(continuous_input).trend.tolist() == list(range(60))
+
+    assert pta.fit_transform(continuous_data).trend.tolist() == list(range(60))
 
 
-def test_power_trend_adder_fit_transform_defaults():
+def test_power_trend_adder_fit_transform_defaults(get_continuous_data):
     """Test the PowerTrendAdder without provided frequency and origin_date."""
+    continuous_data = get_continuous_data
     pta = PowerTrend()
-    assert pta.fit_transform(continuous_input).trend.tolist() == list(range(60))
+
+    assert pta.fit_transform(continuous_data).trend.tolist() == list(range(60))
     assert pta.freq_ == "D"
     assert pta.origin_ == pd.Timestamp("2018-11-01", freq="D")
 
 
-def test_power_trend_adder_fit_transform_defaults_error():
+def test_power_trend_adder_fit_transform_defaults_error(get_non_continuous_data):
     """Test the PowerTrendAdder without provided frequency and origin_date, and without the possibility to extract it during fit time."""
+    non_continuous_data = get_non_continuous_data
     pta = PowerTrend()
+
     with pytest.raises(ValueError):
-        pta.fit(non_continuous_input)
+        pta.fit(non_continuous_data)
 
 
 def test_cyclical_encoder():
@@ -166,4 +186,5 @@ def test_cyclical_encoder_additional_cycles():
     """Test if the additional_cyclces."""
     ce = CyclicalEncoder(additional_cycles={"TEST": {"min": 0, "max": 99}})
     test = pd.DataFrame({"TEST": range(10)})
+
     assert ce.fit_transform(test).columns.tolist() == ["TEST", "TEST_cos", "TEST_sin"]

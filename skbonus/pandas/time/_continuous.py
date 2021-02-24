@@ -150,6 +150,7 @@ class PowerTrend(BaseContinuousTransformer):
             If no frequency was provided during initialization and also cannot be inferred.
         """
         self._set_frequency(X)
+        self.n_features_in_ = X.shape[1]
 
         if self.origin_date is None:
             self.origin_ = X.index.min()
@@ -174,6 +175,10 @@ class PowerTrend(BaseContinuousTransformer):
 
         """
         check_is_fitted(self)
+        if X.shape[1] != self.n_features_in_:
+            raise ValueError(
+                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
+            )
 
         extended_index = self._make_continuous_time_index(X, start=self.origin_)
         dummy_dates = pd.Series(np.arange(len(extended_index)), index=extended_index)
@@ -255,6 +260,7 @@ class Smoother(BaseContinuousTransformer, ABC):
             If no frequency was provided during initialization and also cannot be inferred.
 
         """
+        self.n_features_in_ = X.shape[1]
         self._set_frequency(X)
         self._set_sliding_window()
         self.sliding_window_ = (
@@ -278,6 +284,10 @@ class Smoother(BaseContinuousTransformer, ABC):
             The input dataframe with an additional column for special dates.
         """
         check_is_fitted(self)
+        if X.shape[1] != self.n_features_in_:
+            raise ValueError(
+                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
+            )
 
         extended_index = self._make_continuous_time_index(X)
         convolution = convolve2d(

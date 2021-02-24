@@ -1,8 +1,9 @@
 """Preprocess data for training with a focus on pandas compatibility."""
 
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
+from sklearn.utils.validation import check_is_fitted
 
 
 class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
@@ -119,6 +120,8 @@ class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
             Fitted transformer.
         """
         self.column_names_ = X.columns
+        self.n_features_in_ = len(self.column_names_)
+
         return super().fit(X, y)
 
     def _replace_prefix(self, ohe_column_name):
@@ -249,7 +252,7 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
         DateTimeExploder
             Fitted transformer.
         """
-        self.fitted_ = True
+        self.n_features_in_ = X.shape[1]
 
         return self
 
@@ -288,6 +291,13 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
         pd.DataFrame
             A longer dataframe with one date per row.
         """
+        check_is_fitted(self)
+
+        if X.shape[1] != self.n_features_in_:
+            raise ValueError(
+                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
+            )
+
         return (
             X.assign(
                 **{

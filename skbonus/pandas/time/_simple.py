@@ -151,7 +151,8 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         SimpleTimeFeatures
             Fitted transformer.
         """
-        self.fitted_ = True
+        self.n_features_in_ = X.shape[1]
+
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -169,6 +170,10 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
             The input dataframe with additional time feature columns.
         """
         check_is_fitted(self)
+        if X.shape[1] != self.n_features_in_:
+            raise ValueError(
+                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
+            )
 
         res = (
             X.pipe(self._add_second)
@@ -282,7 +287,8 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         CyclicalEncoder
             Fitted transformer.
         """
-        self.fitted_ = True
+        self.n_features_in_ = X.shape[1]
+
         return self
 
     def transform(self, X):
@@ -311,6 +317,10 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             The input dataframe with two additional columns for each original column.
         """
         check_is_fitted(self)
+        if X.shape[1] != self.n_features_in_:
+            raise ValueError(
+                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
+            )
 
         def min_max(col):
             return (
@@ -388,7 +398,7 @@ class DateIndicator(BaseEstimator, TransformerMixin):
         DateIndicator
             Fitted transformer.
         """
-        self.fitted_ = True
+        self.n_features_in_ = X.shape[1]
 
         return self
 
@@ -407,5 +417,9 @@ class DateIndicator(BaseEstimator, TransformerMixin):
             The input dataframe with an additional boolean column named `self.name`.
         """
         check_is_fitted(self)
+        if X.shape[1] != self.n_features_in_:
+            raise ValueError(
+                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
+            )
 
         return X.assign(**{self.name: lambda df: df.index.isin(self.dates).astype(int)})
