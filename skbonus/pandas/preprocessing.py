@@ -2,8 +2,7 @@
 
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
-
-__all__ = ["OneHotEncoderWithNames"]
+from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
@@ -160,3 +159,147 @@ class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
             one_hot_encoded.todense() if self.sparse else one_hot_encoded,
             columns=feature_names,
         ).astype(int)
+
+
+class DateTimeExploder(BaseEstimator, TransformerMixin):
+    """
+    Transform a pandas dataframe with columns (*, start_date, end_date) into a longer format with columns (*, date).
+
+    This is useful if you deal with datasets that contain special time periods per row, but you need a single date per row.
+    See the examples for more details.
+
+    Parameters
+    ----------
+    name : str
+        Name of the new output date column.
+
+    start_column : str
+        Start date of the period.
+
+    end_column : str
+        End date of the period.
+
+    frequency : str
+        A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
+        be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
+        If None, the transformer tries to infer it during fit time.
+
+    drop : bool, default=True
+        Whether to drop the `start_column` and `end_column` in the transformed output.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({
+    ...    "Data": ["a", "b", "c"],
+    ...    "Start": pd.date_range("2020-01-01", periods=3),
+    ...    "End": pd.date_range("2020-01-03", periods=3)
+    ... })
+    >>> df
+      Data      Start        End
+    0    a 2020-01-01 2020-01-03
+    1    b 2020-01-02 2020-01-04
+    2    c 2020-01-03 2020-01-05
+
+    >>> DateTimeExploder(name="output_date", start_column="Start", end_column="End", frequency="d").fit_transform(df)
+      Data output_date
+    0    a  2020-01-01
+    0    a  2020-01-02
+    0    a  2020-01-03
+    1    b  2020-01-02
+    1    b  2020-01-03
+    1    b  2020-01-04
+    2    c  2020-01-03
+    2    c  2020-01-04
+    2    c  2020-01-05
+
+    """
+
+    def __init__(
+        self,
+        name: str,
+        start_column: str,
+        end_column: str,
+        frequency: str,
+        drop: bool = True,
+    ) -> None:
+        """Initialize."""
+        self.name = name
+        self.start_column = start_column
+        self.end_column = end_column
+        self.frequency = frequency
+        self.drop = drop
+
+    def fit(self, X: pd.DataFrame, y=None) -> "DateTimeExploder":
+        """
+        Fits the estimator.
+
+        In this special case, nothing is done.
+
+        Parameters
+        ----------
+        X : Ignored
+            Not used, present here for API consistency by convention.
+
+        y : Ignored
+            Not used, present here for API consistency by convention.
+
+        Returns
+        -------
+        DateTimeExploder
+            Fitted transformer.
+        """
+        self.fitted_ = True
+
+        return self
+
+    def _start_and_end_to_date_range(
+        self, start: pd.Timestamp, end: pd.Timestamp
+    ) -> pd.DatetimeIndex:
+        """
+        Given a start and an end date, output a continuous DatetimeIndex.
+
+        Parameters
+        ----------
+        start : pd.Timestamp
+            Start date of the period.
+
+        end : pd.Timestamp
+            End date of the period.
+
+        Returns
+        -------
+        pd.DatetimeIndex
+            A date range from `start` to `end` with a frequency of `self.frequency`.
+        """
+        return pd.date_range(start=start, end=end, freq=self.frequency)
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transform the input.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            A pandas dataframe with the columns `self.start_column` and `end_column` containing dates.
+
+        Returns
+        -------
+        pd.DataFrame
+            A longer dataframe with one date per row.
+        """
+        return (
+            X.assign(
+                **{
+                    self.name: lambda df: df.apply(
+                        lambda row: self._start_and_end_to_date_range(
+                            start=row[self.start_column],
+                            end=row[self.end_column],
+                        ),
+                        axis=1,
+                    )
+                }
+            )
+            .explode(self.name)
+            .drop(columns=self.drop * ["Start", "End"])
+        )
