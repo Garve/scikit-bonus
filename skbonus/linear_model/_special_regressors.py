@@ -11,6 +11,8 @@ from sklearn.utils.validation import (
     check_X_y,
 )
 
+from skbonus.utils.validation import check_n_features
+
 
 class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     """
@@ -198,10 +200,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         """
         check_is_fitted(self)
         X = check_array(X)
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         return X @ self.coef_ + self.intercept_
 

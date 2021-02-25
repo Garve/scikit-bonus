@@ -7,6 +7,8 @@ from scipy.signal import convolve2d
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
+from skbonus.utils.validation import check_n_features
+
 
 class BaseContinuousTransformer(BaseEstimator, TransformerMixin):
     """
@@ -143,11 +145,6 @@ class PowerTrend(BaseContinuousTransformer):
         -------
         PowerTrend
             Fitted transformer.
-
-        Raises
-        ------
-        ValueError
-            If no frequency was provided during initialization and also cannot be inferred.
         """
         self._set_frequency(X)
         self.n_features_in_ = X.shape[1]
@@ -175,10 +172,7 @@ class PowerTrend(BaseContinuousTransformer):
 
         """
         check_is_fitted(self)
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         extended_index = self._make_continuous_time_index(X, start=self.origin_)
         dummy_dates = pd.Series(np.arange(len(extended_index)), index=extended_index)
@@ -228,11 +222,6 @@ class Smoother(BaseContinuousTransformer, ABC):
         Returns
         -------
         None
-
-        Raises
-        ------
-        ValueError
-            If the provided value for `tails` is not "left", "right" or "both".
         """
 
     def fit(self, X: pd.DataFrame, y: None = None) -> "Smoother":
@@ -253,12 +242,6 @@ class Smoother(BaseContinuousTransformer, ABC):
         -------
         GeneralGaussianSmoother
             Fitted transformer.
-
-        Raises
-        ------
-        ValueError
-            If no frequency was provided during initialization and also cannot be inferred.
-
         """
         self.n_features_in_ = X.shape[1]
         self._set_frequency(X)
@@ -284,10 +267,7 @@ class Smoother(BaseContinuousTransformer, ABC):
             The input dataframe with an additional column for special dates.
         """
         check_is_fitted(self)
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         extended_index = self._make_continuous_time_index(X)
         convolution = convolve2d(
@@ -492,11 +472,6 @@ class ExponentialDecaySmoother(Smoother):
         Returns
         -------
         None
-
-        Raises
-        ------
-        ValueError
-            If the provided value for `tails` is not "left", "right" or "both".
         """
         self.sliding_window_ = self.strength ** (
             np.abs(np.arange(self.window) - self.peak) ** self.exponent

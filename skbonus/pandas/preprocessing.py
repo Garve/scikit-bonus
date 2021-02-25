@@ -5,6 +5,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
 from sklearn.utils.validation import check_is_fitted
 
+from skbonus.utils.validation import check_n_features
+
 
 class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
     """
@@ -292,11 +294,7 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
             A longer dataframe with one date per row.
         """
         check_is_fitted(self)
-
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         return (
             X.assign(

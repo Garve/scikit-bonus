@@ -1,9 +1,11 @@
 from typing import Any
 
-from sklearn.base import BaseEstimator, RegressorMixin, clone
-from sklearn.utils.validation import check_is_fitted, check_X_y, check_array
-from sklearn.linear_model import LogisticRegression, LinearRegression
 import numpy as np
+from sklearn.base import BaseEstimator, RegressorMixin, clone
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.utils.validation import check_is_fitted, check_X_y, check_array
+
+from skbonus.utils.validation import check_n_features
 
 
 class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
@@ -103,10 +105,6 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         """
         check_is_fitted(self)
         X = check_array(X)
-
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         return self.classifier_.predict(X) * self.regressor_.predict(X)

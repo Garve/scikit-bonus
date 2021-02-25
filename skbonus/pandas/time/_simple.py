@@ -5,6 +5,8 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
+from skbonus.utils.validation import check_n_features
+
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     """
@@ -170,10 +172,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
             The input dataframe with additional time feature columns.
         """
         check_is_fitted(self)
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         res = (
             X.pipe(self._add_second)
@@ -317,10 +316,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             The input dataframe with two additional columns for each original column.
         """
         check_is_fitted(self)
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         def min_max(col):
             return (
@@ -417,9 +413,6 @@ class DateIndicator(BaseEstimator, TransformerMixin):
             The input dataframe with an additional boolean column named `self.name`.
         """
         check_is_fitted(self)
-        if X.shape[1] != self.n_features_in_:
-            raise ValueError(
-                f"The dimension during fit time was {self.n_features_in_} and now it is {X.shape[1]}. They should be the same, however."
-            )
+        check_n_features(self, X)
 
         return X.assign(**{self.name: lambda df: df.index.isin(self.dates).astype(int)})
