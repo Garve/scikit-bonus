@@ -3,7 +3,7 @@ from typing import Any, List
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
+from sklearn.utils.validation import check_is_fitted, check_array
 
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
@@ -170,6 +170,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
             The input dataframe with additional time feature columns.
         """
         check_is_fitted(self)
+        check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
         res = (
@@ -258,6 +259,7 @@ class DateIndicator(BaseEstimator, TransformerMixin):
             The input dataframe with an additional boolean column named `self.name`.
         """
         check_is_fitted(self)
+        check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
         return X.assign(**{self.name: lambda df: df.index.isin(self.dates).astype(int)})

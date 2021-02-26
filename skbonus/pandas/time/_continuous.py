@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import convolve2d
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
+from sklearn.utils.validation import check_is_fitted, check_array
 
 
 class BaseContinuousTransformer(BaseEstimator, TransformerMixin):
@@ -170,6 +170,7 @@ class PowerTrend(BaseContinuousTransformer):
 
         """
         check_is_fitted(self)
+        check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
         extended_index = self._make_continuous_time_index(X, start=self.origin_)
@@ -265,6 +266,7 @@ class Smoother(BaseContinuousTransformer, ABC):
             The input dataframe with an additional column for special dates.
         """
         check_is_fitted(self)
+        check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
         extended_index = self._make_continuous_time_index(X)

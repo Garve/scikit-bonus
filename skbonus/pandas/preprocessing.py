@@ -3,7 +3,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
-from sklearn.utils.validation import check_is_fitted
+from sklearn.utils.validation import check_is_fitted, check_array
 
 
 class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
@@ -292,6 +292,7 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
             A longer dataframe with one date per row.
         """
         check_is_fitted(self)
+        check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
         return (
