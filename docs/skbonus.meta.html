@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>skbonus.meta package &mdash; scikit-bonus 2021 documentation</title>
+
+
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="skbonus.metrics package" href="skbonus.metrics.html" />
+    <link rel="prev" title="skbonus.linear_model package" href="skbonus.linear_model.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="index.html" class="icon icon-home"> scikit-bonus
+
+
+
+          </a>
+
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">scikit-bonus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="skbonus.linear_model.html">skbonus.linear_model package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.metrics.html">skbonus.metrics package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.preprocessing.html">skbonus.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">scikit-bonus</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+
+          <li><a href="modules.html">scikit-bonus</a> &raquo;</li>
+
+          <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
+
+      <li>skbonus.meta package</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+            <a href="_sources/skbonus.meta.rst.txt" rel="nofollow"> View page source</a>
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <div class="section" id="skbonus-meta-package">
+<h1>skbonus.meta package<a class="headerlink" href="#skbonus-meta-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-skbonus.meta">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.meta" title="Permalink to this headline">¶</a></h2>
+<p>Meta estimators.</p>
+<dl class="py class">
+<dt id="skbonus.meta.ZeroInflatedRegressor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.meta.</span></code><code class="sig-name descname"><span class="pre">ZeroInflatedRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code></p>
+<p>A meta regressor for zero-inflated datasets, i.e. the targets contain a lot of zeroes.</p>
+<p><cite>ZeroInflatedRegressor</cite> consists of a classifier and a regressor.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The classifier’s task is to find of if the target is zero or not.</p></li>
+<li><p>The regressor’s task is to output a (usually positive) prediction whenever the classifier indicates that the there should be a non-zero prediction.</p></li>
+</ul>
+</div></blockquote>
+<p>The regressor is only trained on examples where the target is non-zero, which makes it easier for it to focus.</p>
+<p>At prediction time, the classifier is first asked if the output should be zero. If yes, output zero.
+Otherwise, ask the regressor for its prediction and output it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>Any</em><em>, </em><em>scikit-learn classifier</em><em>, </em><em>default=`LogisticRegression</em><em>(</em><em>)</em><em>`</em>) – A classifier that answers the question “Should the output be zero?”.</p></li>
+<li><p><strong>regressor</strong> (<em>Any</em><em>, </em><em>scikit-learn regressor</em><em>, </em><em>default=`LinearRegression</em><em>(</em><em>)</em><em>`</em>) – A regressor for predicting the target. Its prediction is only used if <cite>classifier</cite> says that the output is non-zero.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">ExtraTreesClassifier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">ZeroInflatedRegressor</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="n">ExtraTreesClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">ZeroInflatedRegressor(classifier=ExtraTreesClassifier(random_state=0))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="go">array([0.52977797, 0.        , 0.        , 0.73678052, 0.        ])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="skbonus.meta.ZeroInflatedRegressor.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">skbonus.meta._zero_inflated_regressor.ZeroInflatedRegressor</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.array of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The training data.</p></li>
+<li><p><strong>y</strong> (<em>np.array</em><em>, </em><em>1-dimensional</em>) – The target values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted regressor.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.meta.ZeroInflatedRegressor" title="skbonus.meta.ZeroInflatedRegressor">ZeroInflatedRegressor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.meta.ZeroInflatedRegressor.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.array</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>np.array</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Samples to get predictions of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> – The predicted values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array, shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="skbonus.metrics.html" class="btn btn-neutral float-right" title="skbonus.metrics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="skbonus.linear_model.html" class="btn btn-neutral float-left" title="skbonus.linear_model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Robert Kübler.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+skbonus.preprocessing package
+=============================
+
+Submodules
+----------
+
+skbonus.preprocessing.saturation module
+---------------------------------------
+
+.. automodule:: skbonus.preprocessing.saturation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+skbonus.preprocessing.time module
+---------------------------------
+
+.. automodule:: skbonus.preprocessing.time
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: skbonus.preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,10 @@
+skbonus.pandas.time package
+===========================
+
+Module contents
+---------------
+
+.. automodule:: skbonus.pandas.time
+   :members:
+   :undoc-members:
+   :show-inheritance:

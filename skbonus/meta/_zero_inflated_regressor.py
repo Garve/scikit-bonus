@@ -18,7 +18,7 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
     The regressor is only trained on examples where the target is non-zero, which makes it easier for it to focus.
 
     At prediction time, the classifier is first asked if the output should be zero. If yes, output zero.
-    Else, ask the regressor for its prediction and output it.
+    Otherwise, ask the regressor for its prediction and output it.
 
     Parameters
     ----------

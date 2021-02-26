@@ -1,0 +1,10 @@
+skbonus.meta package
+====================
+
+Module contents
+---------------
+
+.. automodule:: skbonus.meta
+   :members:
+   :undoc-members:
+   :show-inheritance:

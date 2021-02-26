@@ -38,7 +38,7 @@
 
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="skbonus.metrics package" href="skbonus.metrics.html" />
+    <link rel="next" title="skbonus.meta package" href="skbonus.meta.html" />
     <link rel="prev" title="skbonus package" href="skbonus.html" />
 </head>
 
@@ -86,12 +86,15 @@
 
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">scikit-bonus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.linear_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.meta.html">skbonus.meta package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="skbonus.metrics.html">skbonus.metrics package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.preprocessing.html">skbonus.preprocessing package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
@@ -148,7 +151,7 @@
 
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
 
-          <li><a href="modules.html">skbonus</a> &raquo;</li>
+          <li><a href="modules.html">scikit-bonus</a> &raquo;</li>
 
           <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
 
@@ -178,17 +181,28 @@
 <p>Special linear regressors.</p>
 <dl class="py class">
 <dt id="skbonus.linear_model.ImbalancedLinearRegression">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">ImbalancedLinearRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overestimation_punishment_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">ImbalancedLinearRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_ratio</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overestimation_punishment_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
 <p>Linear regression where overestimating is <cite>overestimation_punishment_factor</cite> times worse than underestimating.</p>
 <p>A value of <cite>overestimation_punishment_factor=5</cite> implies that overestimations by the model are penalized with a factor of 5
-while underestimations have a default factor of 1.</p>
+while underestimations have a default factor of 1. The formula optimized for is</p>
+<blockquote>
+<div><p>1 / (2 * n_samples) * switch * ||y - Xw||_2 ** 2
++ alpha * l1_ratio * ||w||_1
++ 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2</p>
+</div></blockquote>
+<p>where switch is a vector with value <cite>overestimation_punishment_factor</cite> if y - Xw &lt; 0, else 1.</p>
 <p>ImbalancedLinearRegression fits a linear model to minimize the residual sum of squares between
 the observed targets in the dataset, and the targets predicted by the linear approximation.
 Compared to normal linear regression, this approach allows for a different treatment of over or under estimations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – Constant that multiplies the penalty terms.</p></li>
+<li><p><strong>l1_ratio</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – The ElasticNet mixing parameter, with <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">l1_ratio</span> <span class="pre">&lt;=</span> <span class="pre">1</span></code>. For
+<code class="docutils literal notranslate"><span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">0</span></code> the penalty is an L2 penalty. <code class="docutils literal notranslate"><span class="pre">For</span> <span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">1</span></code> it
+is an L1 penalty.  For <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">l1_ratio</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>, the penalty is a
+combination of L1 and L2.</p></li>
 <li><p><strong>fit_intercept</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to calculate the intercept for this model. If set
 to False, no intercept will be used in calculations
 (i.e. data is expected to be centered).</p></li>
@@ -228,16 +242,12 @@ to False, no intercept will be used in calculations
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span> <span class="o">=</span> <span class="n">ImbalancedLinearRegression</span><span class="p">(</span><span class="n">overestimation_punishment_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="go">ImbalancedLinearRegression(overestimation_punishment_factor=50)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span> <span class="o">=</span> <span class="n">ImbalancedLinearRegression</span><span class="p">(</span><span class="n">overestimation_punishment_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">over_bad</span><span class="o">.</span><span class="n">coef_</span>
 <span class="go">array([0.36267036, 1.39526844, 3.4247146 , 3.93679175])</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span> <span class="o">=</span> <span class="n">ImbalancedLinearRegression</span><span class="p">(</span><span class="n">overestimation_punishment_factor</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="go">ImbalancedLinearRegression(overestimation_punishment_factor=0.01)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span> <span class="o">=</span> <span class="n">ImbalancedLinearRegression</span><span class="p">(</span><span class="n">overestimation_punishment_factor</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">under_bad</span><span class="o">.</span><span class="n">coef_</span>
 <span class="go">array([0.73519586, 1.28698197, 2.61362614, 4.35989806])</span>
 </pre></div>
@@ -246,17 +256,27 @@ to False, no intercept will be used in calculations
 
 <dl class="py class">
 <dt id="skbonus.linear_model.LADRegression">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">LADRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.LADRegression" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">LADRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_ratio</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.LADRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
 <p>Least absolute deviation Regression.</p>
-<p>LADRegression fits a linear model to minimize the residual sum of absolute deviations between
-the observed targets in the dataset, and the targets predicted by the linear approximation.</p>
+<p><cite>LADRegression</cite> fits a linear model to minimize the residual sum of absolute deviations between
+the observed targets in the dataset, and the targets predicted by the linear approximation, i.e.</p>
+<blockquote>
+<div><p>1 / (2 * n_samples) * ||y - Xw||_1
++ alpha * l1_ratio * ||w||_1
++ 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2</p>
+</div></blockquote>
 <p>Compared to linear regression, this approach is robust to outliers. You can even
 optimize for the lowest MAPE (Mean Average Percentage Error), if you pass in np.abs(1/y_train) for the
-sample_weight keyword when fitting the regressor.</p>
+<cite>sample_weight</cite> keyword when fitting the regressor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – Constant that multiplies the penalty terms.</p></li>
+<li><p><strong>l1_ratio</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – The ElasticNet mixing parameter, with <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">l1_ratio</span> <span class="pre">&lt;=</span> <span class="pre">1</span></code>. For
+<code class="docutils literal notranslate"><span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">0</span></code> the penalty is an L2 penalty. <code class="docutils literal notranslate"><span class="pre">For</span> <span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">1</span></code> it
+is an L1 penalty.  For <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">l1_ratio</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>, the penalty is a
+combination of L1 and L2.</p></li>
 <li><p><strong>fit_intercept</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to calculate the intercept for this model. If set
 to False, no intercept will be used in calculations
 (i.e. data is expected to be centered).</p></li>
@@ -295,9 +315,7 @@ to False, no intercept will be used in calculations
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">LADRegression</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="go">LADRegression()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">LADRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">coef_</span>
 <span class="go">array([1., 2., 3., 4.])</span>
 </pre></div>
@@ -306,11 +324,9 @@ to False, no intercept will be used in calculations
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">LADRegression</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="go">LADRegression(positive=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">LADRegression</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">coef_</span>
-<span class="go">array([0.        , 1.42423304, 0.        , 4.29789588])</span>
+<span class="go">array([8.44480086e-17, 1.42423304e+00, 1.97135192e-16, 4.29789588e+00])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -324,7 +340,7 @@ to False, no intercept will be used in calculations
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="skbonus.metrics.html" class="btn btn-neutral float-right" title="skbonus.metrics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="skbonus.meta.html" class="btn btn-neutral float-right" title="skbonus.meta package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="skbonus.html" class="btn btn-neutral float-left" title="skbonus package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

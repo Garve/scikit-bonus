@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="skbonus.pandas package" href="skbonus.pandas.html" />
-    <link rel="prev" title="skbonus.linear_model package" href="skbonus.linear_model.html" />
+    <link rel="prev" title="skbonus.meta package" href="skbonus.meta.html" />
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,12 +86,15 @@
 
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">scikit-bonus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="skbonus.linear_model.html">skbonus.linear_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.meta.html">skbonus.meta package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.metrics package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.preprocessing.html">skbonus.preprocessing package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
@@ -148,7 +151,7 @@
 
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
 
-          <li><a href="modules.html">skbonus</a> &raquo;</li>
+          <li><a href="modules.html">scikit-bonus</a> &raquo;</li>
 
           <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
 
@@ -214,7 +217,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>y_true</strong> (<em>np.array</em><em> (</em><em>non-negative numbers</em><em>)</em>) – Observed values.</p></li>
+<li><p><strong>y_true</strong> (<em>np.array</em>) – Observed values.</p></li>
 <li><p><strong>y_pred</strong> (<em>np.array</em>) – Predicted values.</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.array</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
 </ul>
@@ -234,6 +237,38 @@
 <span class="go">0.3333333333333333</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skbonus.metrics.mean_arctangent_absolute_percentage_error">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_arctangent_absolute_percentage_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_arctangent_absolute_percentage_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MAAPE (Mean Arctangent Absolute Percentage Error) of a prediction.</p>
+<p>The formula is np.mean(np.arctan(np.abs((y_true - y_pred) / y_true))).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.array</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.array</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.array</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MAAPE value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_arctangent_absolute_percentage_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.3090984060005374</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>See “A new metric of absolute percentage error for intermittent demand forecasts” by Kim &amp; Kim.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -269,10 +304,42 @@ of len(y_true) - 1 summands.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt id="skbonus.metrics.mean_log_quotient">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_log_quotient</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_log_quotient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MLQ (Mean Log Quotient) of a prediction.</p>
+<p>This is np.mean(np.log(y_pred / y_true)**2).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.array</em><em> (</em><em>non-negative numbers</em><em>)</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.array</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.array</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MLQ value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_log_quotient</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.1877379962427844</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>See Tofallis, C (2015) “A Better Measure of Relative Prediction Accuracy for Model Selection and Model Estimation”, Journal of the Operational Research Society, 66(8),1352-1362.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="skbonus.metrics.symmetric_mean_absolute_percentage_error">
 <code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">symmetric_mean_absolute_percentage_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.symmetric_mean_absolute_percentage_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction.</p>
-<p>The formula is 2 * np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))).</p>
+<p>The formula is np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -293,7 +360,7 @@ of len(y_true) - 1 summands.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">symmetric_mean_absolute_percentage_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
-<span class="go">0.4444444444444444</span>
+<span class="go">0.2222222222222222</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -308,7 +375,7 @@ of len(y_true) - 1 summands.</p></li>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="skbonus.pandas.html" class="btn btn-neutral float-right" title="skbonus.pandas package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="skbonus.linear_model.html" class="btn btn-neutral float-left" title="skbonus.linear_model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="skbonus.meta.html" class="btn btn-neutral float-left" title="skbonus.meta package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
