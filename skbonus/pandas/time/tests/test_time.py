@@ -5,7 +5,6 @@ import pandas as pd
 import pytest
 
 from skbonus.pandas.time import (
-    CyclicalEncoder,
     PowerTrend,
     SimpleTimeFeatures,
     GeneralGaussianSmoother,
@@ -160,31 +159,3 @@ def test_power_trend_adder_fit_transform_defaults_error(get_non_continuous_data)
         pta.fit(non_continuous_data)
 
 
-def test_cyclical_encoder():
-    """Test the CyclicalEncoder."""
-    ce = CyclicalEncoder()
-    minutes = pd.DataFrame({"minute": range(60)})
-    ce_transformed = ce.fit_transform(minutes)
-
-    np.testing.assert_almost_equal(
-        ce_transformed.minute_cos.values[:7],
-        np.array(
-            [
-                1.0000000e00,
-                9.9452190e-01,
-                9.7814760e-01,
-                9.5105652e-01,
-                9.1354546e-01,
-                8.6602540e-01,
-                8.0901699e-01,
-            ]
-        ),
-    )
-
-
-def test_cyclical_encoder_additional_cycles():
-    """Test if the additional_cyclces."""
-    ce = CyclicalEncoder(additional_cycles={"TEST": {"min": 0, "max": 99}})
-    test = pd.DataFrame({"TEST": range(10)})
-
-    assert ce.fit_transform(test).columns.tolist() == ["TEST", "TEST_cos", "TEST_sin"]

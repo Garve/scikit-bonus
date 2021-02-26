@@ -3,9 +3,8 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
-import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
+from sklearn.utils.validation import check_is_fitted, check_array
 
 from skbonus.utils.validation import check_n_features
 
@@ -13,7 +12,7 @@ from skbonus.utils.validation import check_n_features
 class Saturation(BaseEstimator, TransformerMixin, ABC):
     """Base class for all saturations, such as Box-Cox, Adbudg, ..."""
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "Saturation":
+    def fit(self, X: np.array, y: None = None) -> "Saturation":
         """
         Fit the transformer.
 
@@ -32,31 +31,33 @@ class Saturation(BaseEstimator, TransformerMixin, ABC):
         Saturation
             Fitted transformer.
         """
+        X = check_array(X)
         self.n_features_in_ = X.shape[1]
 
         return self
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: np.array) -> np.array:
         """
         Apply the saturation effect.
 
         Parameters
         ----------
-        X : pd.DataFrame
+        X : np.array
             Data to be transformed.
 
         Returns
         -------
-        pd.DataFrame
+        np.array
             Data with saturation effect applied.
         """
         check_is_fitted(self)
+        X = check_array(X)
         check_n_features(self, X)
 
         return self._transformation(X)
 
     @abstractmethod
-    def _transformation(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transformation(self, X: np.array) -> np.array:
         """Generate the transformation formula."""
 
 
@@ -76,13 +77,12 @@ class BoxCoxSaturation(Saturation):
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> X = pd.DataFrame([[1, 1000], [2, 1000], [3, 1000]], columns=["A", "B"])
+    >>> import numpy as np
+    >>> X = np.array([[1, 1000], [2, 1000], [3, 1000]])
     >>> BoxCoxSaturation(exponent=0.5).fit_transform(X)
-              A          B
-    0  0.828427  61.277168
-    1  1.464102  61.277168
-    2  2.000000  61.277168
+    array([[ 0.82842712, 61.27716808],
+           [ 1.46410162, 61.27716808],
+           [ 2.        , 61.27716808]])
     """
 
     def __init__(self, exponent: float = 1.0, shift: float = 1.0) -> None:
@@ -90,7 +90,7 @@ class BoxCoxSaturation(Saturation):
         self.exponent = exponent
         self.shift = shift
 
-    def _transformation(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transformation(self, X: np.array) -> np.array:
         """Generate the transformation formula."""
         if self.exponent != 0:
             return ((X + self.shift) ** self.exponent - 1) / self.exponent
@@ -119,13 +119,12 @@ class AdbudgSaturation(Saturation):
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> X = pd.DataFrame([[1, 1000], [2, 1000], [3, 1000]], columns=["A", "B"])
+    >>> import numpy as np
+    >>> X = np.array([[1, 1000], [2, 1000], [3, 1000]])
     >>> AdbudgSaturation().fit_transform(X)
-              A         B
-    0  0.500000  0.999001
-    1  0.666667  0.999001
-    2  0.750000  0.999001
+    array([[0.5       , 0.999001  ],
+           [0.66666667, 0.999001  ],
+           [0.75      , 0.999001  ]])
     """
 
     def __init__(self, exponent: float = 1.0, denominator_shift: float = 1.0) -> None:
@@ -133,7 +132,7 @@ class AdbudgSaturation(Saturation):
         self.exponent = exponent
         self.denominator_shift = denominator_shift
 
-    def _transformation(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transformation(self, X: np.array) -> np.array:
         """Generate the transformation formula."""
         return X ** self.exponent / (self.denominator_shift + X ** self.exponent)
 
@@ -154,13 +153,12 @@ class HillSaturation(Saturation):
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> X = pd.DataFrame([[1, 1000], [2, 1000], [3, 1000]], columns=["A", "B"])
+    >>> import numpy as np
+    >>> X = np.array([[1, 1000], [2, 1000], [3, 1000]])
     >>> HillSaturation().fit_transform(X)
-              A         B
-    0  0.500000  0.999001
-    1  0.666667  0.999001
-    2  0.750000  0.999001
+    array([[0.5       , 0.999001  ],
+           [0.66666667, 0.999001  ],
+           [0.75      , 0.999001  ]])
     """
 
     def __init__(self, exponent: float = 1.0, half_saturation: float = 1.0) -> None:
@@ -168,7 +166,7 @@ class HillSaturation(Saturation):
         self.half_saturation = half_saturation
         self.exponent = exponent
 
-    def _transformation(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transformation(self, X: np.array) -> np.array:
         """Generate the transformation formula."""
         return 1 / (1 + (self.half_saturation / X) ** self.exponent)
 
@@ -191,19 +189,18 @@ class ExponentialSaturation(Saturation):
 
     Examples
     --------
-    >>> import pandas as pd
-    >>> X = pd.DataFrame([[1, 1000], [2, 1000], [3, 1000]], columns=["A", "B"])
+    >>> import numpy as np
+    >>> X = np.array([[1, 1000], [2, 1000], [3, 1000]])
     >>> ExponentialSaturation().fit_transform(X)
-              A    B
-    0  0.632121  1.0
-    1  0.864665  1.0
-    2  0.950213  1.0
+    array([[0.63212056, 1.        ],
+           [0.86466472, 1.        ],
+           [0.95021293, 1.        ]])
     """
 
     def __init__(self, exponent: float = 1.0) -> None:
         """Initialize."""
         self.exponent = exponent
 
-    def _transformation(self, X: pd.DataFrame) -> pd.DataFrame:
+    def _transformation(self, X: np.array) -> np.array:
         """Generate the transformation formula."""
         return 1 - np.exp(-self.exponent * X)

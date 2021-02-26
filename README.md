@@ -107,7 +107,7 @@ normal, analog, round clock.
 In code:
 ```python
 import pandas as pd
-from skbonus.pandas.time import CyclicalEncoder
+from skbonus.preprocessing.time import CyclicalEncoder
 
 data = pd.DataFrame({"hour": range(24)})
 
