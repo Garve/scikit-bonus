@@ -6,8 +6,6 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted, check_array
 
-from skbonus.utils.validation import check_n_features
-
 
 class Saturation(BaseEstimator, TransformerMixin, ABC):
     """Base class for all saturations, such as Box-Cox, Adbudg, ..."""
@@ -32,7 +30,7 @@ class Saturation(BaseEstimator, TransformerMixin, ABC):
             Fitted transformer.
         """
         X = check_array(X)
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         return self
 
@@ -52,7 +50,7 @@ class Saturation(BaseEstimator, TransformerMixin, ABC):
         """
         check_is_fitted(self)
         X = check_array(X)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         return self._transformation(X)
 

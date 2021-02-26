@@ -5,8 +5,6 @@ from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.utils.validation import check_is_fitted, check_X_y, check_array
 
-from skbonus.utils.validation import check_n_features
-
 
 class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
     """
@@ -69,7 +67,7 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
             Fitted regressor.
         """
         X, y = check_X_y(X, y)
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         self.classifier_ = (
             clone(self.classifier)
@@ -105,6 +103,6 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         """
         check_is_fitted(self)
         X = check_array(X)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         return self.classifier_.predict(X) * self.regressor_.predict(X)

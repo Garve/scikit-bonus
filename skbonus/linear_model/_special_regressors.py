@@ -11,8 +11,6 @@ from sklearn.utils.validation import (
     check_X_y,
 )
 
-from skbonus.utils.validation import check_n_features
-
 
 class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     """
@@ -171,7 +169,9 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
     def _prepare_inputs(self, X, sample_weight, y):
         X, y = check_X_y(X, y)
         sample_weight = _check_sample_weight(sample_weight, X)
-        n, self.n_features_in_ = X.shape
+        self._check_n_features(X, reset=True)
+
+        n = X.shape[0]
 
         if self.copy_X:
             X_ = X.copy()
@@ -200,7 +200,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         """
         check_is_fitted(self)
         X = check_array(X)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         return X @ self.coef_ + self.intercept_
 

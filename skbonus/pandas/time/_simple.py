@@ -1,11 +1,9 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, List
 
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
-
-from skbonus.utils.validation import check_n_features
 
 
 class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
@@ -153,7 +151,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
         SimpleTimeFeatures
             Fitted transformer.
         """
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         return self
 
@@ -172,7 +170,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
             The input dataframe with additional time feature columns.
         """
         check_is_fitted(self)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         res = (
             X.pipe(self._add_second)
@@ -241,7 +239,7 @@ class DateIndicator(BaseEstimator, TransformerMixin):
         DateIndicator
             Fitted transformer.
         """
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         return self
 
@@ -260,6 +258,6 @@ class DateIndicator(BaseEstimator, TransformerMixin):
             The input dataframe with an additional boolean column named `self.name`.
         """
         check_is_fitted(self)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         return X.assign(**{self.name: lambda df: df.index.isin(self.dates).astype(int)})

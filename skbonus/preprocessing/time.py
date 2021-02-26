@@ -4,8 +4,6 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from skbonus.utils.validation import check_n_features
-
 
 class CyclicalEncoder(BaseEstimator, TransformerMixin):
     """
@@ -67,7 +65,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
             Fitted transformer.
         """
         X = check_array(X)
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         if self.cycles is None:
             self.cycles_ = list(zip(X.min(axis=0), X.max(axis=0)))
@@ -92,7 +90,7 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         """
         check_is_fitted(self)
         X = check_array(X)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         def min_max(column):
             return (

@@ -7,8 +7,6 @@ from scipy.signal import convolve2d
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-from skbonus.utils.validation import check_n_features
-
 
 class BaseContinuousTransformer(BaseEstimator, TransformerMixin):
     """
@@ -147,7 +145,7 @@ class PowerTrend(BaseContinuousTransformer):
             Fitted transformer.
         """
         self._set_frequency(X)
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         if self.origin_date is None:
             self.origin_ = X.index.min()
@@ -172,7 +170,7 @@ class PowerTrend(BaseContinuousTransformer):
 
         """
         check_is_fitted(self)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         extended_index = self._make_continuous_time_index(X, start=self.origin_)
         dummy_dates = pd.Series(np.arange(len(extended_index)), index=extended_index)
@@ -243,7 +241,7 @@ class Smoother(BaseContinuousTransformer, ABC):
         GeneralGaussianSmoother
             Fitted transformer.
         """
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
         self._set_frequency(X)
         self._set_sliding_window()
         self.sliding_window_ = (
@@ -267,7 +265,7 @@ class Smoother(BaseContinuousTransformer, ABC):
             The input dataframe with an additional column for special dates.
         """
         check_is_fitted(self)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         extended_index = self._make_continuous_time_index(X)
         convolution = convolve2d(

@@ -5,8 +5,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
 from sklearn.utils.validation import check_is_fitted
 
-from skbonus.utils.validation import check_n_features
-
 
 class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
     """
@@ -122,7 +120,7 @@ class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
             Fitted transformer.
         """
         self.column_names_ = X.columns
-        self.n_features_in_ = len(self.column_names_)
+        self._check_n_features(X, reset=True)
 
         return super().fit(X, y)
 
@@ -254,7 +252,7 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
         DateTimeExploder
             Fitted transformer.
         """
-        self.n_features_in_ = X.shape[1]
+        self._check_n_features(X, reset=True)
 
         return self
 
@@ -294,7 +292,7 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
             A longer dataframe with one date per row.
         """
         check_is_fitted(self)
-        check_n_features(self, X)
+        self._check_n_features(X, reset=False)
 
         return (
             X.assign(
