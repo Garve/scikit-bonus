@@ -125,7 +125,7 @@ def symmetric_mean_absolute_percentage_error(
     """
     Return the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction.
 
-    The formula is 2 * np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))).
+    The formula is np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))).
 
     Parameters
     ----------
@@ -149,12 +149,13 @@ def symmetric_mean_absolute_percentage_error(
     >>> y_true = np.array([1, 2, 4])
     >>> y_pred = np.array([1, 1, 2])
     >>> symmetric_mean_absolute_percentage_error(y_true, y_pred)
-    0.4444444444444444
+    0.2222222222222222
     """
     check_consistent_length(y_true, y_pred)
     sample_weight = _check_sample_weight(sample_weight, y_true)
-    return 2 * np.mean(
-        sample_weight * np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))
+    return np.mean(
+        sample_weight
+        * np.nan_to_num(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred)))
     )
 
 
@@ -198,3 +199,45 @@ def mean_directional_accuracy(
         sample_weight[1:] * np.sign(np.diff(y_true))
         == np.sign(y_pred[1:] - y_true[:-1])
     )
+
+
+def mean_log_quotient(
+    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+) -> float:
+    """
+    Return the MLQ (Mean Log Quotient) of a prediction.
+
+    This is np.mean(np.log(y_pred / y_true)**2).
+
+    Parameters
+    ----------
+    y_true : np.array (non-negative numbers)
+        Observed values.
+
+    y_pred : np.array
+        Predicted values.
+
+    sample_weight : Optional[np.array], default=None
+        Individual weights for each sample.
+
+    Returns
+    -------
+    float
+        MLQ value of the input.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> y_true = np.array([1, 2, 4])
+    >>> y_pred = np.array([1, 1, 3])
+    >>> mean_log_quotient(y_true, y_pred)
+    0.1877379962427844
+
+    Notes
+    -----
+    See Tofallis, C (2015) "A Better Measure of Relative Prediction Accuracy for Model Selection and Model Estimation", Journal of the Operational Research Society, 66(8),1352-1362.
+    """
+    check_consistent_length(y_true, y_pred)
+    sample_weight = _check_sample_weight(sample_weight, y_true)
+
+    return np.mean(sample_weight * np.log(y_pred / y_true) ** 2)
