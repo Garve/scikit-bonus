@@ -14,20 +14,6 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
     For example, take the hours from 0 to 23. On a normal, round  analog clock,
     these features are perfectly aligned on a circle already. You can do the same with days, month, ...
 
-    The column names affected by default are
-
-        - second
-        - minute
-        - hour
-        - day_of_week
-        - day_of_month
-        - day_of_year
-        - week_of_month
-        - week_of_year
-        - month
-
-    You can add more with the additional_cycles parameter.
-
     Notes
     -----
     This method has the advantage that close points in time stay close together. See the examples below.
@@ -38,20 +24,11 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    additional_cycles : Optional[Dict[str, Dict[str, int]]], default=None
-        Define additional additional_cycles in the form {cycle_name: {"min": min_value, "max": max_value}}, e.g.
-        {"day_of_week": {"min": 1, "max": 7}}. Probably you need this only for very specific additional_cycles, as
-        these ones are already implemented:
+    cycles : Optional[List[Tuple[float, float]]], default=None
+        Define the ranges of the cycles in the format [(col_1_min, col_1_max), (col_2_min, col_2_max), ...).
+        For example, use [(0, 23), (1, 7)] if your dataset consists of two columns, the first one containing hours and the second one the day of the week.
 
-            - "second": {"min": 0, "max": 59},
-            - "minute": {"min": 0, "max": 59},
-            - "hour": {"min": 0, "max": 23},
-            - "day_of_week": {"min": 1, "max": 7},
-            - "day_of_month": {"min": 1, "max": 31},
-            - "day_of_year": {"min": 1, "max": 366},
-            - "week_of_month": {"min": 1, "max": 5},
-            - "week_of_year": {"min": 1, "max": 53},
-            - "month": {"min": 1, "max": 12}
+        If left empty, the encoder tries to infer it from the data, i.e. it looks for the minimum and maximum value of each column.
 
     Examples
     --------
@@ -78,8 +55,8 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : Ignored
-            Not used, present here for API consistency by convention.
+        X : np.array
+            Used for inferring te ranges of the data, if not provided during initialization.
 
         y : Ignored
             Not used, present here for API consistency by convention.
