@@ -111,19 +111,18 @@ from skbonus.preprocessing.time import CyclicalEncoder
 
 data = pd.DataFrame({"hour": range(24)})
 
-ce = CyclicalEncoder()
+ce = CyclicalEncoder(cycles=[(0, 23)])
 ce.fit(data)
 print(ce.transform(data.query("hour in [22, 23, 0, 1, 2]")))
 
 ------------------------------------------
 OUTPUT:
 
-    hour  hour_cos  hour_sin
-0      0  1.000000  0.000000
-1      1  0.965926  0.258819
-2      2  0.866025  0.500000
-22    22  0.866025 -0.500000
-23    23  0.965926 -0.258819
+[[ 1.          0.        ]
+ [ 0.96592583  0.25881905]
+ [ 0.8660254   0.5       ]
+ [ 0.8660254  -0.5       ]
+ [ 0.96592583 -0.25881905]]
 ```
 
 > Note that the hours 0 and 23 are as close together as 0 and 1.
