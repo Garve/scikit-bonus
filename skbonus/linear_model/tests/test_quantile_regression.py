@@ -1,9 +1,9 @@
-"""Test the ImbalancedLinearRegression."""
+"""Test the QuantileRegression."""
 
 import numpy as np
 import pytest
 
-from .. import ImbalancedLinearRegression
+from .. import QuantileRegression
 
 test_batch = [
     (np.array([0, 0, 3, 0, 6]), 3),
@@ -25,7 +25,7 @@ def _create_dataset(coefs, intercept, noise=0.0):
 def test_under_estimation(coefs, intercept):
     """Test if the model is able to underestimate."""
     X, y = _create_dataset(coefs, intercept, noise=2.0)
-    imb = ImbalancedLinearRegression(overestimation_punishment_factor=50)
+    imb = QuantileRegression(quantile=0.1)
     imb.fit(X, y)
 
     assert (imb.predict(X) < y).mean() > 0.8
@@ -35,7 +35,7 @@ def test_under_estimation(coefs, intercept):
 def test_over_estimation(coefs, intercept):
     """Test if the model is able to overestimate."""
     X, y = _create_dataset(coefs, intercept, noise=2.0)
-    imb = ImbalancedLinearRegression(overestimation_punishment_factor=0.01)
+    imb = QuantileRegression(quantile=0.9)
     imb.fit(X, y)
 
     assert (imb.predict(X) < y).mean() < 0.15

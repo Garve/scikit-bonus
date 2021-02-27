@@ -289,6 +289,119 @@ class LADRegression(BaseScipyMinimizeRegressor):
         return mae_loss, grad_mae_loss
 
 
+class QuantileRegression(BaseScipyMinimizeRegressor):
+    """
+    Compute Quantile Regression. This can be used for computing confidence intervals of linear regressions.
+
+    `QuantileRegression` fits a linear model to minimize a weighted residual sum of absolute deviations between
+    the observed targets in the dataset and the targets predicted by the linear approximation, i.e.
+
+        1 / (2 * n_samples) * switch * ||y - Xw||_1
+        + alpha * l1_ratio * ||w||_1
+        + 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2
+
+    where switch is a vector with value `quantile` if y - Xw < 0, else `1 - quantile`. The regressor defaults to
+    `LADRegression` for its default value of `quantile=0.5`.
+
+    Compared to linear regression, this approach is robust to outliers.
+
+    Parameters
+    ----------
+    alpha : float, default=0.0
+        Constant that multiplies the penalty terms.
+
+    l1_ratio : float, default=0.0
+        The ElasticNet mixing parameter, with ``0 <= l1_ratio <= 1``. For
+        ``l1_ratio = 0`` the penalty is an L2 penalty. ``For l1_ratio = 1`` it
+        is an L1 penalty.  For ``0 < l1_ratio < 1``, the penalty is a
+        combination of L1 and L2.
+
+    fit_intercept : bool, default=True
+        Whether to calculate the intercept for this model. If set
+        to False, no intercept will be used in calculations
+        (i.e. data is expected to be centered).
+
+    copy_X : bool, default=True
+        If True, X will be copied; else, it may be overwritten.
+
+    positive : bool, default=False
+        When set to True, forces the coefficients to be positive.
+
+    quantile : float, between 0 and 1, default=0.5
+        The line output by the model will have a share of approximately `quantile` data points under it.
+        A value of `quantile=1` outputs a line that is above each data point, for example. `quantile=0.5` corresponds to LADRegression.
+
+    Attributes
+    ----------
+    coef_ : np.array of shape (n_features,)
+        Estimated coefficients of the model.
+
+    intercept_ : float
+        Independent term in the linear model. Set to 0.0 if fit_intercept = False.
+
+    Notes
+    -----
+    This implementation uses scipy.optimize.minimize, see
+    https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> np.random.seed(0)
+    >>> X = np.random.randn(100, 4)
+    >>> y = X @ np.array([1, 2, 3, 4])
+    >>> l = QuantileRegression().fit(X, y)
+    >>> l.coef_
+    array([1., 2., 3., 4.])
+
+    >>> import numpy as np
+    >>> np.random.seed(0)
+    >>> X = np.random.randn(100, 4)
+    >>> y = X @ np.array([-1, 2, -3, 4])
+    >>> l = QuantileRegression(quantile=0.8).fit(X, y)
+    >>> l.coef_
+    array([-1.,  2., -3.,  4.])
+    """
+
+    def __init__(
+        self,
+        alpha: float = 0.0,
+        l1_ratio: float = 0.0,
+        fit_intercept: bool = True,
+        copy_X: bool = True,
+        positive: bool = False,
+        quantile: float = 0.5,
+    ) -> None:
+        """Initialize."""
+        super().__init__(alpha, l1_ratio, fit_intercept, copy_X, positive)
+        self.quantile = quantile
+
+    def _get_objective(
+        self, X: np.array, y: np.array, sample_weight: np.array
+    ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        @self._loss_regularize
+        def imbalanced_loss(params):
+            return np.mean(
+                sample_weight
+                * np.where(X @ params < y, self.quantile, 1 - self.quantile)
+                * np.abs(y - X @ params)
+            )
+
+        @self._grad_loss_regularize
+        def grad_imbalanced_loss(params):
+            return (
+                -(
+                    sample_weight
+                    * np.where(X @ params < y, self.quantile, 1 - self.quantile)
+                    * np.sign(y - X @ params)
+                )
+                @ X
+                / X.shape[0]
+            )
+
+        return imbalanced_loss, grad_imbalanced_loss
+
+
 class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     """
     Linear regression where overestimating is `overestimation_punishment_factor` times worse than underestimating.
