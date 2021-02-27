@@ -10,13 +10,14 @@ test_batch = [
     (np.array([0, 0, 3, 0, 6]), 3),
     (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
     (np.array([4, -4]), 0),
+    (np.array([0.1]), 1000),
 ]
 
 
 def _create_dataset(coefs, intercept, noise=0.0):
     np.random.seed(0)
-    X = np.random.randn(10000, coefs.shape[0])
-    y = X @ coefs + intercept + noise * np.random.randn(10000)
+    X = np.random.randn(1000, coefs.shape[0])
+    y = X @ coefs + intercept + noise * np.random.randn(1000)
 
     return X, y
 
@@ -38,7 +39,8 @@ def test_score(coefs, intercept):
     lad = LADRegression()
     lad.fit(X, y)
 
-    assert lad.score(X, y) > 0.9
+    np.testing.assert_almost_equal(lad.coef_, coefs, decimal=1)
+    np.testing.assert_almost_equal(lad.intercept_, intercept, decimal=1)
 
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
@@ -57,11 +59,11 @@ def test_coefs_and_intercept__no_noise_regularization(coefs, intercept):
     """Test model with regularization. The size of the coef vector should shrink the larger alpha gets."""
     X, y = _create_dataset(coefs, intercept)
 
-    lads = [LADRegression(alpha=alpha, l1_ratio=0.5).fit(X, y) for alpha in range(3)]
+    lads = [LADRegression(alpha=alpha, l1_ratio=0.5).fit(X, y) for alpha in range(4)]
     coef_size = np.array([np.sum(lad.coef_ ** 2) for lad in lads])
 
-    for i in range(2):
-        assert coef_size[i] >= coef_size[i + 1]
+    for i in range(3):
+        assert round(coef_size[i], 5) >= round(coef_size[i + 1], 5)
 
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)

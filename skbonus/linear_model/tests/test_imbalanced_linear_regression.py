@@ -10,6 +10,7 @@ test_batch = [
     (np.array([0, 0, 3, 0, 6]), 3),
     (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
     (np.array([4, -4]), 0),
+    (np.array([0.1]), 1000),
 ]
 
 
@@ -38,7 +39,8 @@ def test_score(coefs, intercept):
     imb = ImbalancedLinearRegression()
     imb.fit(X, y)
 
-    assert imb.score(X, y) > 0.9
+    np.testing.assert_almost_equal(imb.coef_, coefs, decimal=1)
+    np.testing.assert_almost_equal(imb.intercept_, intercept, decimal=1)
 
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
@@ -63,7 +65,7 @@ def test_coefs_and_intercept__no_noise_regularization(coefs, intercept):
     coef_size = np.array([np.sum(imb.coef_ ** 2) for imb in imbs])
 
     for i in range(3):
-        assert coef_size[i] >= coef_size[i + 1]
+        assert round(coef_size[i], 5) >= round(coef_size[i + 1], 5)
 
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
