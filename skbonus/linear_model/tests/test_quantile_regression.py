@@ -25,17 +25,26 @@ def _create_dataset(coefs, intercept, noise=0.0):
 def test_under_estimation(coefs, intercept):
     """Test if the model is able to underestimate."""
     X, y = _create_dataset(coefs, intercept, noise=2.0)
-    imb = QuantileRegression(quantile=0.1)
-    imb.fit(X, y)
+    regressor = QuantileRegression(quantile=0.1)
+    regressor.fit(X, y)
 
-    assert (imb.predict(X) < y).mean() > 0.8
+    assert (regressor.predict(X) < y).mean() > 0.8
 
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
 def test_over_estimation(coefs, intercept):
     """Test if the model is able to overestimate."""
     X, y = _create_dataset(coefs, intercept, noise=2.0)
-    imb = QuantileRegression(quantile=0.9)
-    imb.fit(X, y)
+    regressor = QuantileRegression(quantile=0.9)
+    regressor.fit(X, y)
 
-    assert (imb.predict(X) < y).mean() < 0.15
+    assert (regressor.predict(X) < y).mean() < 0.15
+
+
+def test_quantile_ok():
+    """Test if quantile check works."""
+    X, y = np.zeros(2)
+    regressor = QuantileRegression(quantile=2.0)
+
+    with pytest.raises(ValueError):
+        regressor.fit(X, y)

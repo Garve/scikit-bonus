@@ -401,6 +401,37 @@ class QuantileRegression(BaseScipyMinimizeRegressor):
 
         return imbalanced_loss, grad_imbalanced_loss
 
+    def fit(
+        self,
+        X: np.array,
+        y: np.array,
+        sample_weight: Optional[np.array] = None,
+    ) -> "QuantileRegression":
+        """
+        Fit the model using the SLSQP algorithm.
+
+        Parameters
+        ----------
+        X : np.array of shape (n_samples, n_features)
+            The training data.
+
+        y : np.array, 1-dimensional
+            The target values.
+
+        sample_weight : Optional[np.array], default=None
+            Individual weights for each sample.
+
+        Returns
+        -------
+        Fitted regressor.
+        """
+        if 0 <= self.quantile <= 1:
+            super().fit(X, y, sample_weight)
+        else:
+            raise ValueError("Parameter quantile should be between zero and one.")
+
+        return self
+
 
 class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
     """
