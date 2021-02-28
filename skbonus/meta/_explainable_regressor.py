@@ -2,6 +2,7 @@ from typing import Any
 
 import numpy as np
 from sklearn.base import BaseEstimator, RegressorMixin, clone
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.utils.validation import (
     check_X_y,
     check_is_fitted,
@@ -22,7 +23,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
 
     Parameters
     ----------
-    base_regressor : Any
+    base_regressor : Any, default=DecisionTreeRegressor(max_depth=4)
         A single scikit-learn compatible regressor or a list of those regressors of length `n_features`.
 
     max_rounds : int, default=5000
@@ -51,12 +52,12 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
     ... ).fit(X, y)
     >>> e.score(X, y)
     0.9377382292348461
-    >>> e.outputs_[0]
+    >>> e.outputs_[0] # increasing in the first feature, as it should be
     array([-4.47984456, -4.47984456, -4.47984456, -4.47984456, -3.00182713,
            -2.96627696, -1.60843287, -1.06601264, -0.92013822, -0.7217753 ,
            -0.66440783,  0.28132994,  1.33664486,  1.47592253,  1.96677286,
             2.88969439,  2.96292906,  4.33642573,  4.38506967,  6.42967225])
-    >>> e.outputs_[1]
+    >>> e.outputs_[1] # decreasing in the second feature, as it should be
     array([ 6.35605214,  6.06407947,  6.05458114,  4.8488004 ,  4.41880876,
             3.45056373,  2.64560385,  1.6138303 ,  0.89860987,  0.458301  ,
             0.33455608, -0.43609495, -1.55600464, -2.05142528, -2.42791679,
@@ -70,7 +71,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
 
     def __init__(
         self,
-        base_regressor: Any,
+        base_regressor: Any = None,
         max_rounds: int = 5000,
         learning_rate: float = 0.01,
         grid_points: int = 1000,
@@ -105,7 +106,12 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         self._check_n_features(X, reset=True)
 
         if not isinstance(self.base_regressor, list):
-            self.base_regressors_ = self.n_features_in_ * [self.base_regressor]
+            if self.base_regressor is not None:
+                self.base_regressors_ = self.n_features_in_ * [self.base_regressor]
+            else:
+                self.base_regressors_ = self.n_features_in_ * [
+                    DecisionTreeRegressor(max_depth=4)
+                ]
         else:
             if len(self.base_regressor) == self.n_features_in_:
                 self.base_regressors_ = self.base_regressor
