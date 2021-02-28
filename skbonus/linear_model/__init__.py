@@ -1,6 +1,6 @@
 """Special linear regressors."""
 
-from ._special_regressors import (
+from ._scipy_regressors import (
     ImbalancedLinearRegression,
     LADRegression,
     QuantileRegression,
