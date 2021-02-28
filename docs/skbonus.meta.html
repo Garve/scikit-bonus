@@ -180,6 +180,99 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.meta" title="Permalink to this headline">¶</a></h2>
 <p>Meta estimators.</p>
 <dl class="py class">
+<dt id="skbonus.meta.ExplainableBoostingMetaRegressor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.meta.</span></code><code class="sig-name descname"><span class="pre">ExplainableBoostingMetaRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_regressor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rounds</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_points</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.meta.ExplainableBoostingMetaRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code></p>
+<p>A meta regressor that outputs a transparent, explainable model given blackbox models.</p>
+<p>It works exactly like the <cite>ExplainableBoostingRegressor</cite> by the interpretml team, but here you can choose any base regressor instead of
+being restricted to trees. For example, you can use scikit-learn’s <cite>IsotonicRegression</cite> to create a model that is
+monotonically increasing or decreasing in some of the features, while still being explainable and well-performing.</p>
+<p>See the notes below to find a nice explanation of how the algorithm works at a high level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_regressor</strong> (<em>Any</em><em>, </em><em>default=DecisionTreeRegressor</em><em>(</em><em>max_depth=4</em><em>)</em>) – A single scikit-learn compatible regressor or a list of those regressors of length <cite>n_features</cite>.</p></li>
+<li><p><strong>max_rounds</strong> (<em>int</em><em>, </em><em>default=5000</em>) – Conduct the boosting for these many rounds.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em><em>, </em><em>default=0.01</em>) – The learning rate. Should be quite small.</p></li>
+<li><p><strong>grid_points</strong> (<em>int</em><em>, </em><em>default=1000</em>) – <p>The more grid points, the</p>
+<blockquote>
+<div><ul>
+<li><p>more detailed the explanations get and</p></li>
+<li><p>the better the model performs, but</p></li>
+<li><p>the slower the algorithm gets.</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.isotonic</span> <span class="kn">import</span> <span class="n">IsotonicRegression</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">ExplainableBoostingMetaRegressor</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">base_regressor</span><span class="o">=</span><span class="p">[</span><span class="n">IsotonicRegression</span><span class="p">(),</span> <span class="n">IsotonicRegression</span><span class="p">(</span><span class="n">increasing</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+<span class="gp">... </span>        <span class="n">grid_points</span><span class="o">=</span><span class="mi">20</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">0.9377382292348461</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">outputs_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># increasing in the first feature, as it should be</span>
+<span class="go">array([-4.47984456, -4.47984456, -4.47984456, -4.47984456, -3.00182713,</span>
+<span class="go">       -2.96627696, -1.60843287, -1.06601264, -0.92013822, -0.7217753 ,</span>
+<span class="go">       -0.66440783,  0.28132994,  1.33664486,  1.47592253,  1.96677286,</span>
+<span class="go">        2.88969439,  2.96292906,  4.33642573,  4.38506967,  6.42967225])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">outputs_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># decreasing in the second feature, as it should be</span>
+<span class="go">array([ 6.35605214,  6.06407947,  6.05458114,  4.8488004 ,  4.41880876,</span>
+<span class="go">        3.45056373,  2.64560385,  1.6138303 ,  0.89860987,  0.458301  ,</span>
+<span class="go">        0.33455608, -0.43609495, -1.55600464, -2.05142528, -2.42791679,</span>
+<span class="go">       -3.58961475, -4.80134218, -4.94421252, -5.94858712, -6.36828774])</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>Check out the original author’s Github at <a class="reference external" href="https://github.com/interpretml/interpret">https://github.com/interpretml/interpret</a> and <a class="reference external" href="https://www.youtube.com/watch?v=MREiHgHgl0k">https://www.youtube.com/watch?v=MREiHgHgl0k</a>
+for a great introduction into the operations of the algorithm.</p>
+<dl class="py method">
+<dt id="skbonus.meta.ExplainableBoostingMetaRegressor.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">skbonus.meta._explainable_regressor.ExplainableBoostingMetaRegressor</span><a class="headerlink" href="#skbonus.meta.ExplainableBoostingMetaRegressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.array of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The training data.</p></li>
+<li><p><strong>y</strong> (<em>np.array</em><em>, </em><em>1-dimensional</em>) – The target values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted regressor.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.meta.ExplainableBoostingMetaRegressor" title="skbonus.meta.ExplainableBoostingMetaRegressor">ExplainableBoostingMetaRegressor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.meta.ExplainableBoostingMetaRegressor.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.array</span><a class="headerlink" href="#skbonus.meta.ExplainableBoostingMetaRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>np.array</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Samples to get predictions of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> – The predicted values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array, shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="skbonus.meta.ZeroInflatedRegressor">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.meta.</span></code><code class="sig-name descname"><span class="pre">ZeroInflatedRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code></p>

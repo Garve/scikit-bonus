@@ -182,7 +182,7 @@
 <dl class="py class">
 <dt id="skbonus.linear_model.ImbalancedLinearRegression">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">ImbalancedLinearRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_ratio</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overestimation_punishment_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.ImbalancedLinearRegression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._scipy_regressors.BaseScipyMinimizeRegressor</span></code></p>
 <p>Linear regression where overestimating is <cite>overestimation_punishment_factor</cite> times worse than underestimating.</p>
 <p>A value of <cite>overestimation_punishment_factor=5</cite> implies that overestimations by the model are penalized with a factor of 5
 while underestimations have a default factor of 1. The formula optimized for is</p>
@@ -257,7 +257,7 @@ to False, no intercept will be used in calculations
 <dl class="py class">
 <dt id="skbonus.linear_model.LADRegression">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">LADRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_ratio</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.LADRegression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._special_regressors.BaseScipyMinimizeRegressor</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._scipy_regressors.BaseScipyMinimizeRegressor</span></code></p>
 <p>Least absolute deviation Regression.</p>
 <p><cite>LADRegression</cite> fits a linear model to minimize the residual sum of absolute deviations between
 the observed targets in the dataset, and the targets predicted by the linear approximation, i.e.</p>
@@ -329,6 +329,106 @@ to False, no intercept will be used in calculations
 <span class="go">array([8.44480086e-17, 1.42423304e+00, 1.97135192e-16, 4.29789588e+00])</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.linear_model.QuantileRegression">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.linear_model.</span></code><code class="sig-name descname"><span class="pre">QuantileRegression</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_ratio</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantile</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.linear_model.QuantileRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.linear_model._scipy_regressors.BaseScipyMinimizeRegressor</span></code></p>
+<p>Compute Quantile Regression. This can be used for computing confidence intervals of linear regressions.</p>
+<p><cite>QuantileRegression</cite> fits a linear model to minimize a weighted residual sum of absolute deviations between
+the observed targets in the dataset and the targets predicted by the linear approximation, i.e.</p>
+<blockquote>
+<div><p>1 / (2 * n_samples) * switch * ||y - Xw||_1
++ alpha * l1_ratio * ||w||_1
++ 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2</p>
+</div></blockquote>
+<p>where switch is a vector with value <cite>quantile</cite> if y - Xw &lt; 0, else <cite>1 - quantile</cite>. The regressor defaults to
+<cite>LADRegression</cite> for its default value of <cite>quantile=0.5</cite>.</p>
+<p>Compared to linear regression, this approach is robust to outliers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – Constant that multiplies the penalty terms.</p></li>
+<li><p><strong>l1_ratio</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – The ElasticNet mixing parameter, with <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">l1_ratio</span> <span class="pre">&lt;=</span> <span class="pre">1</span></code>. For
+<code class="docutils literal notranslate"><span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">0</span></code> the penalty is an L2 penalty. <code class="docutils literal notranslate"><span class="pre">For</span> <span class="pre">l1_ratio</span> <span class="pre">=</span> <span class="pre">1</span></code> it
+is an L1 penalty.  For <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">l1_ratio</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>, the penalty is a
+combination of L1 and L2.</p></li>
+<li><p><strong>fit_intercept</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to calculate the intercept for this model. If set
+to False, no intercept will be used in calculations
+(i.e. data is expected to be centered).</p></li>
+<li><p><strong>copy_X</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, X will be copied; else, it may be overwritten.</p></li>
+<li><p><strong>positive</strong> (<em>bool</em><em>, </em><em>default=False</em>) – When set to True, forces the coefficients to be positive.</p></li>
+<li><p><strong>quantile</strong> (<em>float</em><em>, </em><em>between 0 and 1</em><em>, </em><em>default=0.5</em>) – The line output by the model will have a share of approximately <cite>quantile</cite> data points under it.
+A value of <cite>quantile=1</cite> outputs a line that is above each data point, for example. <cite>quantile=0.5</cite> corresponds to LADRegression.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="skbonus.linear_model.QuantileRegression.coef_">
+<code class="sig-name descname"><span class="pre">coef_</span></code><a class="headerlink" href="#skbonus.linear_model.QuantileRegression.coef_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimated coefficients of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>np.array of shape (n_features,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="skbonus.linear_model.QuantileRegression.intercept_">
+<code class="sig-name descname"><span class="pre">intercept_</span></code><a class="headerlink" href="#skbonus.linear_model.QuantileRegression.intercept_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Independent term in the linear model. Set to 0.0 if fit_intercept = False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>This implementation uses scipy.optimize.minimize, see
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html</a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">QuantileRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">coef_</span>
+<span class="go">array([1., 2., 3., 4.])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">QuantileRegression</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">coef_</span>
+<span class="go">array([-1.,  2., -3.,  4.])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="skbonus.linear_model.QuantileRegression.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">skbonus.linear_model._scipy_regressors.QuantileRegression</span><a class="headerlink" href="#skbonus.linear_model.QuantileRegression.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model using the SLSQP algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.array of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The training data.</p></li>
+<li><p><strong>y</strong> (<em>np.array</em><em>, </em><em>1-dimensional</em>) – The target values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.array</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Fitted regressor.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
