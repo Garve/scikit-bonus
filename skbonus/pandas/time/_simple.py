@@ -242,6 +242,11 @@ class DateIndicator(BaseEstimator, TransformerMixin):
         """
         self._check_n_features(X, reset=True)
 
+        if isinstance(self.dates, str) or isinstance(self.dates, pd.Timestamp):
+            self.dates_ = [self.dates]
+        else:
+            self.dates_ = self.dates
+
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -262,4 +267,4 @@ class DateIndicator(BaseEstimator, TransformerMixin):
         check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
-        return X.assign(**{self.name: lambda df: df.index.isin(self.dates).astype(int)})
+        return X.assign(**{self.name: lambda df: df.index.isin(self.dates_).astype(int)})
