@@ -74,16 +74,14 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
             if self.classifier is not None
             else LogisticRegression()
         )
-        self.classifier_.fit(X, y > 0)
+        self.classifier_.fit(X, y != 0)
 
-        positive_indices = self.classifier_.predict(X) == 1
-        X_pos = X[positive_indices]
-        y_pos = y[positive_indices]
+        non_zero_indices = self.classifier_.predict(X) == 1
 
         self.regressor_ = (
             clone(self.regressor) if self.regressor is not None else LinearRegression()
         )
-        self.regressor_.fit(X_pos, y_pos)
+        self.regressor_.fit(X[non_zero_indices], y[non_zero_indices])
 
         return self
 
@@ -105,4 +103,8 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         X = check_array(X)
         self._check_n_features(X, reset=False)
 
-        return self.classifier_.predict(X) * self.regressor_.predict(X)
+        output = np.zeros(len(X))
+        non_zero_indices = np.where(self.classifier_.predict(X))[0]
+        output[non_zero_indices] = self.regressor_.predict(X[non_zero_indices])
+
+        return output
