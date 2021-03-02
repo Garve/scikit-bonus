@@ -132,6 +132,11 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
 
         y_copy = y.copy() - self.mean_
 
+        self._fit(X, sample_weight, y_copy)
+
+        return self
+
+    def _fit(self, X, sample_weight, y_copy):
         for i in range(self.max_rounds):
             feature_number = i % self.n_features_in_
             h = clone(self.base_regressors_[feature_number])
@@ -142,8 +147,6 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
                 self.domains_[feature_number].reshape(-1, 1)
             )
             y_copy -= self.learning_rate * h.predict(x)
-
-        return self
 
     def predict(self, X: np.array) -> np.array:
         """

@@ -12,6 +12,7 @@ Welcome to scikit-bonus's documentation!
 
    modules
    license
+   Pokemon.ipynb
 
 Indices and tables
 ==================

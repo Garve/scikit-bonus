@@ -6,12 +6,22 @@
 Welcome to scikit-bonus's documentation!
 ========================================
 
+Installation
+************
+
+Install `scikit-bonus` via pip with
+
+.. code-block:: bash
+
+   pip install scikit-bonus
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
    license
+   linear-models.ipynb
+   api/modules
 
 Indices and tables
 ==================
