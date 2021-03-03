@@ -4,7 +4,6 @@ import pytest
 from sklearn.utils.estimator_checks import check_estimator
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.dummy import DummyClassifier
 
 from .. import ZeroInflatedRegressor, ExplainableBoostingMetaRegressor
 
@@ -13,7 +12,6 @@ from .. import ZeroInflatedRegressor, ExplainableBoostingMetaRegressor
     "model",
     [
         ZeroInflatedRegressor(
-            classifier=DummyClassifier(strategy="constant", constant=1),
             regressor=RandomForestRegressor(random_state=0),
         ),
         ExplainableBoostingMetaRegressor(
