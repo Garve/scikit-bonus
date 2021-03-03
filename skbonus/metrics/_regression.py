@@ -112,9 +112,10 @@ def mean_absolute_percentage_error(
         y_true, y_pred, multioutput
     )
     check_consistent_length(y_true, y_pred, sample_weight)
+    eps = np.finfo(np.float64).eps
 
     output_errors = np.average(
-        np.abs((y_true - y_pred) / y_true), weights=sample_weight
+        np.abs((y_true - y_pred) / np.maximum(y_true, eps)), weights=sample_weight
     )
 
     if isinstance(multioutput, str):
@@ -178,9 +179,11 @@ def mean_arctangent_absolute_percentage_error(
         y_true, y_pred, multioutput
     )
     check_consistent_length(y_true, y_pred, sample_weight)
+    eps = np.finfo(np.float64).eps
 
     output_errors = np.average(
-        np.arctan(np.abs((y_true - y_pred) / y_true)), weights=sample_weight
+        np.arctan(np.abs((y_true - y_pred) / np.maximum(y_true, eps))),
+        weights=sample_weight,
     )
 
     if isinstance(multioutput, str):
@@ -240,9 +243,10 @@ def symmetric_mean_absolute_percentage_error(
         y_true, y_pred, multioutput
     )
     check_consistent_length(y_true, y_pred, sample_weight)
+    eps = np.finfo(np.float64).eps
 
     output_errors = np.average(
-        np.nan_to_num(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))),
+        np.abs((y_true - y_pred)) / np.maximum(np.abs(y_true) + np.abs(y_pred), eps),
         weights=sample_weight,
     )
 
