@@ -1,11 +1,15 @@
 from typing import Optional
 
 import numpy as np
-from sklearn.utils.validation import _check_sample_weight, check_consistent_length
+from sklearn.metrics._regression import _check_reg_targets
+from sklearn.utils.validation import check_consistent_length
 
 
 def mean_absolute_deviation(
-    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+    y_true: np.array,
+    y_pred: np.array,
+    sample_weight: Optional[np.array] = None,
+    multioutput: str = "uniform_average",
 ) -> float:
     """
     Return the MAD (Mean Absolute Deviation) of a prediction.
@@ -23,6 +27,14 @@ def mean_absolute_deviation(
     sample_weight : Optional[np.array], default=None
         Individual weights for each sample.
 
+    multioutput : {"raw_values", "uniform_average"} or array-like
+        Defines aggregating of multiple output values.
+        Array-like value defines weights used to average errors.
+        If input is list then the shape must be (n_outputs,).
+
+        - "raw_values": Returns a full set of errors in case of multioutput input.
+        - "uniform_average": Errors of all outputs are averaged with uniform weight.
+
     Returns
     -------
     float
@@ -36,13 +48,28 @@ def mean_absolute_deviation(
     >>> mean_absolute_deviation(y_true, y_pred)
     1.0
     """
-    check_consistent_length(y_true, y_pred)
-    sample_weight = _check_sample_weight(sample_weight, y_true)
-    return np.mean(sample_weight * np.abs(y_true - y_pred))
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+        y_true, y_pred, multioutput
+    )
+    check_consistent_length(y_true, y_pred, sample_weight)
+
+    output_errors = np.average(np.abs(y_true - y_pred), weights=sample_weight)
+
+    if isinstance(multioutput, str):
+        if multioutput == "raw_values":
+            return output_errors
+        elif multioutput == "uniform_average":
+            # pass None as weights to np.average: uniform mean
+            multioutput = None
+
+    return np.average(output_errors, weights=multioutput)
 
 
 def mean_absolute_percentage_error(
-    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+    y_true: np.array,
+    y_pred: np.array,
+    sample_weight: Optional[np.array] = None,
+    multioutput: str = "uniform_average",
 ) -> float:
     """
     Return the MAPE (Mean Absolute Percentage Error) of a prediction.
@@ -60,6 +87,14 @@ def mean_absolute_percentage_error(
     sample_weight : Optional[np.array], default=None
         Individual weights for each sample.
 
+    multioutput : {"raw_values", "uniform_average"} or array-like
+        Defines aggregating of multiple output values.
+        Array-like value defines weights used to average errors.
+        If input is list then the shape must be (n_outputs,).
+
+        - "raw_values": Returns a full set of errors in case of multioutput input.
+        - "uniform_average": Errors of all outputs are averaged with uniform weight.
+
     Returns
     -------
     float
@@ -73,13 +108,30 @@ def mean_absolute_percentage_error(
     >>> mean_absolute_percentage_error(y_true, y_pred)
     0.3333333333333333
     """
-    check_consistent_length(y_true, y_pred)
-    sample_weight = _check_sample_weight(sample_weight, y_true)
-    return np.mean(sample_weight * np.abs((y_true - y_pred) / y_true))
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+        y_true, y_pred, multioutput
+    )
+    check_consistent_length(y_true, y_pred, sample_weight)
+
+    output_errors = np.average(
+        np.abs((y_true - y_pred) / y_true), weights=sample_weight
+    )
+
+    if isinstance(multioutput, str):
+        if multioutput == "raw_values":
+            return output_errors
+        elif multioutput == "uniform_average":
+            # pass None as weights to np.average: uniform mean
+            multioutput = None
+
+    return np.average(output_errors, weights=multioutput)
 
 
 def mean_arctangent_absolute_percentage_error(
-    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+    y_true: np.array,
+    y_pred: np.array,
+    sample_weight: Optional[np.array] = None,
+    multioutput: str = "uniform_average",
 ) -> float:
     """
     Return the MAAPE (Mean Arctangent Absolute Percentage Error) of a prediction.
@@ -96,6 +148,14 @@ def mean_arctangent_absolute_percentage_error(
 
     sample_weight : Optional[np.array], default=None
         Individual weights for each sample.
+
+    multioutput : {"raw_values", "uniform_average"} or array-like
+        Defines aggregating of multiple output values.
+        Array-like value defines weights used to average errors.
+        If input is list then the shape must be (n_outputs,).
+
+        - "raw_values": Returns a full set of errors in case of multioutput input.
+        - "uniform_average": Errors of all outputs are averaged with uniform weight.
 
     Returns
     -------
@@ -114,13 +174,30 @@ def mean_arctangent_absolute_percentage_error(
     -----
     See "A new metric of absolute percentage error for intermittent demand forecasts" by Kim & Kim.
     """
-    check_consistent_length(y_true, y_pred)
-    sample_weight = _check_sample_weight(sample_weight, y_true)
-    return np.mean(sample_weight * np.arctan(np.abs((y_true - y_pred) / y_true)))
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+        y_true, y_pred, multioutput
+    )
+    check_consistent_length(y_true, y_pred, sample_weight)
+
+    output_errors = np.average(
+        np.arctan(np.abs((y_true - y_pred) / y_true)), weights=sample_weight
+    )
+
+    if isinstance(multioutput, str):
+        if multioutput == "raw_values":
+            return output_errors
+        elif multioutput == "uniform_average":
+            # pass None as weights to np.average: uniform mean
+            multioutput = None
+
+    return np.average(output_errors, weights=multioutput)
 
 
 def symmetric_mean_absolute_percentage_error(
-    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+    y_true: np.array,
+    y_pred: np.array,
+    sample_weight: Optional[np.array] = None,
+    multioutput: str = "uniform_average",
 ) -> float:
     """
     Return the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction.
@@ -138,6 +215,14 @@ def symmetric_mean_absolute_percentage_error(
     sample_weight : Optional[np.array], default=None
         Individual weights for each sample.
 
+    multioutput : {"raw_values", "uniform_average"} or array-like
+        Defines aggregating of multiple output values.
+        Array-like value defines weights used to average errors.
+        If input is list then the shape must be (n_outputs,).
+
+        - "raw_values": Returns a full set of errors in case of multioutput input.
+        - "uniform_average": Errors of all outputs are averaged with uniform weight.
+
     Returns
     -------
     float
@@ -151,16 +236,31 @@ def symmetric_mean_absolute_percentage_error(
     >>> symmetric_mean_absolute_percentage_error(y_true, y_pred)
     0.2222222222222222
     """
-    check_consistent_length(y_true, y_pred)
-    sample_weight = _check_sample_weight(sample_weight, y_true)
-    return np.mean(
-        sample_weight
-        * np.nan_to_num(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred)))
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+        y_true, y_pred, multioutput
     )
+    check_consistent_length(y_true, y_pred, sample_weight)
+
+    output_errors = np.average(
+        np.nan_to_num(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))),
+        weights=sample_weight,
+    )
+
+    if isinstance(multioutput, str):
+        if multioutput == "raw_values":
+            return output_errors
+        elif multioutput == "uniform_average":
+            # pass None as weights to np.average: uniform mean
+            multioutput = None
+
+    return np.average(output_errors, weights=multioutput)
 
 
 def mean_directional_accuracy(
-    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+    y_true: np.array,
+    y_pred: np.array,
+    sample_weight: Optional[np.array] = None,
+    multioutput: str = "uniform_average",
 ) -> float:
     """
     Return the MDA (Mean Directional Accuracy) of a prediction.
@@ -180,6 +280,14 @@ def mean_directional_accuracy(
         Individual weights for each sample. The first entry is ignored since the MDA loss term consists
         of len(y_true) - 1 summands.
 
+    multioutput : {"raw_values", "uniform_average"} or array-like
+        Defines aggregating of multiple output values.
+        Array-like value defines weights used to average errors.
+        If input is list then the shape must be (n_outputs,).
+
+        - "raw_values": Returns a full set of errors in case of multioutput input.
+        - "uniform_average": Errors of all outputs are averaged with uniform weight.
+
     Returns
     -------
     float
@@ -193,16 +301,31 @@ def mean_directional_accuracy(
     >>> mean_directional_accuracy(y_true, y_pred)
     0.5
     """
-    check_consistent_length(y_true, y_pred)
-    sample_weight = _check_sample_weight(sample_weight, y_true)
-    return np.mean(
-        sample_weight[1:] * np.sign(np.diff(y_true))
-        == np.sign(y_pred[1:] - y_true[:-1])
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+        y_true, y_pred, multioutput
     )
+    check_consistent_length(y_true, y_pred, sample_weight)
+
+    output_errors = np.average(
+        np.sign(y_true[1:] - y_true[:-1]) == np.sign(y_pred[1:] - y_true[:-1]),
+        weights=sample_weight[1:] if sample_weight is not None else None,
+    )
+
+    if isinstance(multioutput, str):
+        if multioutput == "raw_values":
+            return output_errors
+        elif multioutput == "uniform_average":
+            # pass None as weights to np.average: uniform mean
+            multioutput = None
+
+    return np.average(output_errors, weights=multioutput)
 
 
 def mean_log_quotient(
-    y_true: np.array, y_pred: np.array, sample_weight: Optional[np.array] = None
+    y_true: np.array,
+    y_pred: np.array,
+    sample_weight: Optional[np.array] = None,
+    multioutput: str = "uniform_average",
 ) -> float:
     """
     Return the MLQ (Mean Log Quotient) of a prediction.
@@ -220,6 +343,14 @@ def mean_log_quotient(
     sample_weight : Optional[np.array], default=None
         Individual weights for each sample.
 
+    multioutput : {"raw_values", "uniform_average"} or array-like
+        Defines aggregating of multiple output values.
+        Array-like value defines weights used to average errors.
+        If input is list then the shape must be (n_outputs,).
+
+        - "raw_values": Returns a full set of errors in case of multioutput input.
+        - "uniform_average": Errors of all outputs are averaged with uniform weight.
+
     Returns
     -------
     float
@@ -235,9 +366,21 @@ def mean_log_quotient(
 
     Notes
     -----
-    See Tofallis, C (2015) "A Better Measure of Relative Prediction Accuracy for Model Selection and Model Estimation", Journal of the Operational Research Society, 66(8),1352-1362.
+    See Tofallis, C (2015) "A Better Measure of Relative Prediction Accuracy for Model Selection and Model Estimation",
+    Journal of the Operational Research Society, 66(8),1352-1362.
     """
-    check_consistent_length(y_true, y_pred)
-    sample_weight = _check_sample_weight(sample_weight, y_true)
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+        y_true, y_pred, multioutput
+    )
+    check_consistent_length(y_true, y_pred, sample_weight)
 
-    return np.mean(sample_weight * np.log(y_pred / y_true) ** 2)
+    output_errors = np.average(np.log(y_pred / y_true) ** 2, weights=sample_weight)
+
+    if isinstance(multioutput, str):
+        if multioutput == "raw_values":
+            return output_errors
+        elif multioutput == "uniform_average":
+            # pass None as weights to np.average: uniform mean
+            multioutput = None
+
+    return np.average(output_errors, weights=multioutput)
