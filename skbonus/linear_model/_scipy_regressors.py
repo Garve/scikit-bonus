@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable, Optional, Tuple
 
@@ -40,7 +41,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
     Attributes
     ----------
-    coef_ : np.array of shape (n_features,)
+    coef_ : np.ndarray of shape (n_features,)
         Estimated coefficients of the model.
 
     intercept_ : float
@@ -69,28 +70,28 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
     @abstractmethod
     def _get_objective(
-        self, X: np.array, y: np.array, sample_weight: np.array
-    ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray
+    ) -> Tuple[Callable[[np.ndarray], float], Callable[[np.ndarray], np.ndarray]]:
         """
         Produce the loss function to be minimized, and its gradient to speed up computations.
 
         Parameters
         ----------
-        X : np.array of shape (n_samples, n_features)
+        X : np.ndarray of shape (n_samples, n_features)
             The training data.
 
-        y : np.array, 1-dimensional
+        y : np.ndarray, 1-dimensional
             The target values.
 
-        sample_weight : Optional[np.array], default=None
+        sample_weight : Optional[np.ndarray], default=None
             Individual weights for each sample.
 
         Returns
         -------
-        loss : Callable[[np.array], float]
+        loss : Callable[[np.ndarray], float]
             The loss function to be minimized.
 
-        grad_loss : Callable[[np.array], np.array]
+        grad_loss : Callable[[np.ndarray], np.ndarray]
             The gradient of the loss function. Speeds up finding the minimum.
         """
 
@@ -116,22 +117,22 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
     def fit(
         self,
-        X: np.array,
-        y: np.array,
-        sample_weight: Optional[np.array] = None,
-    ) -> "BaseScipyMinimizeRegressor":
+        X: np.ndarray,
+        y: np.ndarray,
+        sample_weight: Optional[np.ndarray] = None,
+    ) -> BaseScipyMinimizeRegressor:
         """
         Fit the model using the SLSQP algorithm.
 
         Parameters
         ----------
-        X : np.array of shape (n_samples, n_features)
+        X : np.ndarray of shape (n_samples, n_features)
             The training data.
 
-        y : np.array, 1-dimensional
+        y : np.ndarray, 1-dimensional
             The target values.
 
-        sample_weight : Optional[np.array], default=None
+        sample_weight : Optional[np.ndarray], default=None
             Individual weights for each sample.
 
         Returns
@@ -184,18 +185,18 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
 
         return X_, grad_loss, loss
 
-    def predict(self, X: np.array) -> np.array:
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """
         Predict using the linear model.
 
         Parameters
         ----------
-        X : np.array, shape (n_samples, n_features)
+        X : np.ndarray, shape (n_samples, n_features)
             Samples to get predictions of.
 
         Returns
         -------
-        y : np.array, shape (n_samples,)
+        y : np.ndarray, shape (n_samples,)
             The predicted values.
         """
         check_is_fitted(self)
@@ -244,7 +245,7 @@ class LADRegression(BaseScipyMinimizeRegressor):
 
     Attributes
     ----------
-    coef_ : np.array of shape (n_features,)
+    coef_ : np.ndarray of shape (n_features,)
         Estimated coefficients of the model.
 
     intercept_ : float
@@ -276,8 +277,8 @@ class LADRegression(BaseScipyMinimizeRegressor):
     """
 
     def _get_objective(
-        self, X: np.array, y: np.array, sample_weight: np.array
-    ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray
+    ) -> Tuple[Callable[[np.ndarray], float], Callable[[np.ndarray], np.ndarray]]:
         @self._loss_regularize
         def mae_loss(params):
             return np.mean(sample_weight * np.abs(y - X @ params))
@@ -333,7 +334,7 @@ class QuantileRegression(BaseScipyMinimizeRegressor):
 
     Attributes
     ----------
-    coef_ : np.array of shape (n_features,)
+    coef_ : np.ndarray of shape (n_features,)
         Estimated coefficients of the model.
 
     intercept_ : float
@@ -377,8 +378,8 @@ class QuantileRegression(BaseScipyMinimizeRegressor):
         self.quantile = quantile
 
     def _get_objective(
-        self, X: np.array, y: np.array, sample_weight: np.array
-    ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray
+    ) -> Tuple[Callable[[np.ndarray], float], Callable[[np.ndarray], np.ndarray]]:
         @self._loss_regularize
         def imbalanced_loss(params):
             return np.mean(
@@ -403,22 +404,22 @@ class QuantileRegression(BaseScipyMinimizeRegressor):
 
     def fit(
         self,
-        X: np.array,
-        y: np.array,
-        sample_weight: Optional[np.array] = None,
+        X: np.ndarray,
+        y: np.ndarray,
+        sample_weight: Optional[np.ndarray] = None,
     ) -> "QuantileRegression":
         """
         Fit the model using the SLSQP algorithm.
 
         Parameters
         ----------
-        X : np.array of shape (n_samples, n_features)
+        X : np.ndarray of shape (n_samples, n_features)
             The training data.
 
-        y : np.array, 1-dimensional
+        y : np.ndarray, 1-dimensional
             The target values.
 
-        sample_weight : Optional[np.array], default=None
+        sample_weight : Optional[np.ndarray], default=None
             Individual weights for each sample.
 
         Returns
@@ -477,7 +478,7 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
 
     Attributes
     ----------
-    coef_ : np.array of shape (n_features,)
+    coef_ : np.ndarray of shape (n_features,)
         Estimated coefficients of the model.
 
     intercept_ : float
@@ -518,8 +519,8 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
         self.overestimation_punishment_factor = overestimation_punishment_factor
 
     def _get_objective(
-        self, X: np.array, y: np.array, sample_weight: np.array
-    ) -> Tuple[Callable[[np.array], float], Callable[[np.array], np.array]]:
+        self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray
+    ) -> Tuple[Callable[[np.ndarray], float], Callable[[np.ndarray], np.ndarray]]:
         @self._loss_regularize
         def imbalanced_loss(params):
             return 0.5 * np.mean(

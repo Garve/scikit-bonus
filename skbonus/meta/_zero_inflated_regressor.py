@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any
 
 import numpy as np
@@ -50,16 +51,16 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         self.classifier = classifier
         self.regressor = regressor
 
-    def fit(self, X: np.array, y: np.array) -> "ZeroInflatedRegressor":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> ZeroInflatedRegressor:
         """
         Fit the model.
 
         Parameters
         ----------
-        X : np.array of shape (n_samples, n_features)
+        X : np.ndarray of shape (n_samples, n_features)
             The training data.
 
-        y : np.array, 1-dimensional
+        y : np.ndarray, 1-dimensional
             The target values.
 
         Returns
@@ -83,18 +84,18 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
 
         return self
 
-    def predict(self, X: np.array) -> np.array:
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """
         Get predictions.
 
         Parameters
         ----------
-        X : np.array, shape (n_samples, n_features)
+        X : np.ndarray, shape (n_samples, n_features)
             Samples to get predictions of.
 
         Returns
         -------
-        y : np.array, shape (n_samples,)
+        y : np.ndarray, shape (n_samples,)
             The predicted values.
         """
         check_is_fitted(self)

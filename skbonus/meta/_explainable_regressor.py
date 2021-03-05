@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any
 
 import numpy as np
@@ -83,17 +84,17 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         self.grid_points = grid_points
 
     def fit(
-        self, X: np.array, y: np.array, sample_weight: np.array = None
-    ) -> "ExplainableBoostingMetaRegressor":
+        self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray = None
+    ) -> ExplainableBoostingMetaRegressor:
         """
         Fit the model.
 
         Parameters
         ----------
-        X : np.array of shape (n_samples, n_features)
+        X : np.ndarray of shape (n_samples, n_features)
             The training data.
 
-        y : np.array, 1-dimensional
+        y : np.ndarray, 1-dimensional
             The target values.
 
         Returns
@@ -148,18 +149,18 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
             )
             y_copy -= self.learning_rate * h.predict(x)
 
-    def predict(self, X: np.array) -> np.array:
+    def predict(self, X: np.ndarray) -> np.ndarray:
         """
         Get predictions.
 
         Parameters
         ----------
-        X : np.array, shape (n_samples, n_features)
+        X : np.ndarray, shape (n_samples, n_features)
             Samples to get predictions of.
 
         Returns
         -------
-        y : np.array, shape (n_samples,)
+        y : np.ndarray, shape (n_samples,)
             The predicted values.
         """
         X = check_array(X)

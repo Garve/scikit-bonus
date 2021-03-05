@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, Tuple, Optional
 
 import numpy as np
@@ -47,13 +48,13 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
         """Initialize."""
         self.cycles = cycles
 
-    def fit(self, X: np.array, y=None) -> "CyclicalEncoder":
+    def fit(self, X: np.ndarray, y=None) -> CyclicalEncoder:
         """
         Fit the estimator. In this special case, nothing is done.
 
         Parameters
         ----------
-        X : np.array
+        X : np.ndarray
             Used for inferring te ranges of the data, if not provided during initialization.
 
         y : Ignored
@@ -74,18 +75,18 @@ class CyclicalEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X: np.array) -> np.array:
+    def transform(self, X: np.ndarray) -> np.ndarray:
         """
         Add the cyclic features to the dataframe.
 
         Parameters
         ----------
-        X : np.array
+        X : np.ndarray
             The data with cyclical features in the columns.
 
         Returns
         -------
-        np.array
+        np.ndarray
             The encoded data with twice as man columns as the original.
         """
         check_is_fitted(self)

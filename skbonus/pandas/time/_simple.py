@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any, List
 
 import numpy as np
@@ -132,7 +133,7 @@ class SimpleTimeFeatures(BaseEstimator, TransformerMixin):
     def _add_year(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.assign(year=lambda df: df.index.year) if self.year else X
 
-    def fit(self, X: pd.DataFrame, y: Any = None) -> "SimpleTimeFeatures":
+    def fit(self, X: pd.DataFrame, y: Any = None) -> SimpleTimeFeatures:
         """
         Fit the estimator.
 
@@ -223,7 +224,7 @@ class DateIndicator(BaseEstimator, TransformerMixin):
         self.name = name
         self.dates = dates
 
-    def fit(self, X: pd.DataFrame, y=None) -> "DateIndicator":
+    def fit(self, X: pd.DataFrame, y=None) -> DateIndicator:
         """
         Fit the estimator. In this special case, nothing is done.
 

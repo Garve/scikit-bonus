@@ -6,9 +6,9 @@ from sklearn.utils.validation import check_consistent_length
 
 
 def mean_absolute_deviation(
-    y_true: np.array,
-    y_pred: np.array,
-    sample_weight: Optional[np.array] = None,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sample_weight: Optional[np.ndarray] = None,
     multioutput: str = "uniform_average",
 ) -> float:
     """
@@ -18,13 +18,13 @@ def mean_absolute_deviation(
 
     Parameters
     ----------
-    y_true : np.array
+    y_true : np.ndarray
         Observed values.
 
-    y_pred : np.array
+    y_pred : np.ndarray
         Predicted values.
 
-    sample_weight : Optional[np.array], default=None
+    sample_weight : Optional[np.ndarray], default=None
         Individual weights for each sample.
 
     multioutput : {"raw_values", "uniform_average"} or array-like
@@ -66,9 +66,9 @@ def mean_absolute_deviation(
 
 
 def mean_absolute_percentage_error(
-    y_true: np.array,
-    y_pred: np.array,
-    sample_weight: Optional[np.array] = None,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sample_weight: Optional[np.ndarray] = None,
     multioutput: str = "uniform_average",
 ) -> float:
     """
@@ -78,13 +78,13 @@ def mean_absolute_percentage_error(
 
     Parameters
     ----------
-    y_true : np.array
+    y_true : np.ndarray
         Observed values.
 
-    y_pred : np.array
+    y_pred : np.ndarray
         Predicted values.
 
-    sample_weight : Optional[np.array], default=None
+    sample_weight : Optional[np.ndarray], default=None
         Individual weights for each sample.
 
     multioutput : {"raw_values", "uniform_average"} or array-like
@@ -129,9 +129,9 @@ def mean_absolute_percentage_error(
 
 
 def mean_arctangent_absolute_percentage_error(
-    y_true: np.array,
-    y_pred: np.array,
-    sample_weight: Optional[np.array] = None,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sample_weight: Optional[np.ndarray] = None,
     multioutput: str = "uniform_average",
 ) -> float:
     """
@@ -141,13 +141,13 @@ def mean_arctangent_absolute_percentage_error(
 
     Parameters
     ----------
-    y_true : np.array
+    y_true : np.ndarray
         Observed values.
 
-    y_pred : np.array
+    y_pred : np.ndarray
         Predicted values.
 
-    sample_weight : Optional[np.array], default=None
+    sample_weight : Optional[np.ndarray], default=None
         Individual weights for each sample.
 
     multioutput : {"raw_values", "uniform_average"} or array-like
@@ -197,9 +197,9 @@ def mean_arctangent_absolute_percentage_error(
 
 
 def symmetric_mean_absolute_percentage_error(
-    y_true: np.array,
-    y_pred: np.array,
-    sample_weight: Optional[np.array] = None,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sample_weight: Optional[np.ndarray] = None,
     multioutput: str = "uniform_average",
 ) -> float:
     """
@@ -209,13 +209,13 @@ def symmetric_mean_absolute_percentage_error(
 
     Parameters
     ----------
-    y_true : np.array (non-negative numbers)
+    y_true : np.ndarray (non-negative numbers)
         Observed values.
 
-    y_pred : np.array
+    y_pred : np.ndarray
         Predicted values.
 
-    sample_weight : Optional[np.array], default=None
+    sample_weight : Optional[np.ndarray], default=None
         Individual weights for each sample.
 
     multioutput : {"raw_values", "uniform_average"} or array-like
@@ -261,9 +261,9 @@ def symmetric_mean_absolute_percentage_error(
 
 
 def mean_directional_accuracy(
-    y_true: np.array,
-    y_pred: np.array,
-    sample_weight: Optional[np.array] = None,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sample_weight: Optional[np.ndarray] = None,
     multioutput: str = "uniform_average",
 ) -> float:
     """
@@ -274,13 +274,13 @@ def mean_directional_accuracy(
 
     Parameters
     ----------
-    y_true : np.array (non-negative numbers)
+    y_true : np.ndarray (non-negative numbers)
         Observed values.
 
-    y_pred : np.array
+    y_pred : np.ndarray
         Predicted values.
 
-    sample_weight : Optional[np.array], default=None
+    sample_weight : Optional[np.ndarray], default=None
         Individual weights for each sample. The first entry is ignored since the MDA loss term consists
         of len(y_true) - 1 summands.
 
@@ -326,9 +326,9 @@ def mean_directional_accuracy(
 
 
 def mean_log_quotient(
-    y_true: np.array,
-    y_pred: np.array,
-    sample_weight: Optional[np.array] = None,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sample_weight: Optional[np.ndarray] = None,
     multioutput: str = "uniform_average",
 ) -> float:
     """
@@ -338,13 +338,13 @@ def mean_log_quotient(
 
     Parameters
     ----------
-    y_true : np.array (non-negative numbers)
+    y_true : np.ndarray (non-negative numbers)
         Observed values.
 
-    y_pred : np.array
+    y_pred : np.ndarray
         Predicted values.
 
-    sample_weight : Optional[np.array], default=None
+    sample_weight : Optional[np.ndarray], default=None
         Individual weights for each sample.
 
     multioutput : {"raw_values", "uniform_average"} or array-like

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
@@ -125,7 +126,7 @@ class PowerTrend(BaseContinuousTransformer):
         self.power = power
         self.origin_date = origin_date
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "PowerTrend":
+    def fit(self, X: pd.DataFrame, y: None = None) -> PowerTrend:
         """
         Fit the model.
 
@@ -223,7 +224,7 @@ class Smoother(BaseContinuousTransformer, ABC):
         None
         """
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> "Smoother":
+    def fit(self, X: pd.DataFrame, y: None = None) -> Smoother:
         """
         Fit the estimator.
 

@@ -1,5 +1,6 @@
 """Saturation classes."""
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -10,7 +11,7 @@ from sklearn.utils.validation import check_is_fitted, check_array
 class Saturation(BaseEstimator, TransformerMixin, ABC):
     """Base class for all saturations, such as Box-Cox, Adbudg, ..."""
 
-    def fit(self, X: np.array, y: None = None) -> "Saturation":
+    def fit(self, X: np.ndarray, y: None = None) -> Saturation:
         """
         Fit the transformer.
 
@@ -34,18 +35,18 @@ class Saturation(BaseEstimator, TransformerMixin, ABC):
 
         return self
 
-    def transform(self, X: np.array) -> np.array:
+    def transform(self, X: np.ndarray) -> np.ndarray:
         """
         Apply the saturation effect.
 
         Parameters
         ----------
-        X : np.array
+        X : np.ndarray
             Data to be transformed.
 
         Returns
         -------
-        np.array
+        np.ndarray
             Data with saturation effect applied.
         """
         check_is_fitted(self)
@@ -55,7 +56,7 @@ class Saturation(BaseEstimator, TransformerMixin, ABC):
         return self._transformation(X)
 
     @abstractmethod
-    def _transformation(self, X: np.array) -> np.array:
+    def _transformation(self, X: np.ndarray) -> np.ndarray:
         """Generate the transformation formula."""
 
 
@@ -88,7 +89,7 @@ class BoxCoxSaturation(Saturation):
         self.exponent = exponent
         self.shift = shift
 
-    def _transformation(self, X: np.array) -> np.array:
+    def _transformation(self, X: np.ndarray) -> np.ndarray:
         """Generate the transformation formula."""
         if self.exponent != 0:
             return ((X + self.shift) ** self.exponent - 1) / self.exponent
@@ -130,7 +131,7 @@ class AdbudgSaturation(Saturation):
         self.exponent = exponent
         self.denominator_shift = denominator_shift
 
-    def _transformation(self, X: np.array) -> np.array:
+    def _transformation(self, X: np.ndarray) -> np.ndarray:
         """Generate the transformation formula."""
         return X ** self.exponent / (self.denominator_shift + X ** self.exponent)
 
@@ -164,7 +165,7 @@ class HillSaturation(Saturation):
         self.half_saturation = half_saturation
         self.exponent = exponent
 
-    def _transformation(self, X: np.array) -> np.array:
+    def _transformation(self, X: np.ndarray) -> np.ndarray:
         """Generate the transformation formula."""
         return 1 / (1 + (self.half_saturation / X) ** self.exponent)
 
@@ -199,6 +200,6 @@ class ExponentialSaturation(Saturation):
         """Initialize."""
         self.exponent = exponent
 
-    def _transformation(self, X: np.array) -> np.array:
+    def _transformation(self, X: np.ndarray) -> np.ndarray:
         """Generate the transformation formula."""
         return 1 - np.exp(-self.exponent * X)

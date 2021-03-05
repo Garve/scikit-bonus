@@ -1,5 +1,7 @@
 """Preprocess data for training with a focus on pandas compatibility."""
 
+from __future__ import annotations
+
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OneHotEncoder as ScikitLearnOneHotEncoder
@@ -102,7 +104,7 @@ class OneHotEncoderWithNames(ScikitLearnOneHotEncoder):
     2    1    0    0    0    1
     """
 
-    def fit(self, X: pd.DataFrame, y: None = None):
+    def fit(self, X: pd.DataFrame, y: None = None) -> OneHotEncoderWithNames:
         """
         Fits a OneHotEncoder while also storing the dataframe column names that let us check if the columns match when calling the transform method.
 
@@ -233,7 +235,7 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
         self.frequency = frequency
         self.drop = drop
 
-    def fit(self, X: pd.DataFrame, y=None) -> "DateTimeExploder":
+    def fit(self, X: pd.DataFrame, y=None) -> DateTimeExploder:
         """
         Fits the estimator.
 
