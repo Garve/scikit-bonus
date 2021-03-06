@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Any
 
 import numpy as np
@@ -45,6 +46,8 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
     >>> z.predict(X)[:5]
     array([4.91483294, 0.        , 0.        , 0.04941909, 0.        ])
     """
+
+    _required_parameters = ["classifier", "regressor"]
 
     def __init__(self, classifier: Any, regressor: Any) -> None:
         """Initialize."""

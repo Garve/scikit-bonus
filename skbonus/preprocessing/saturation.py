@@ -1,6 +1,7 @@
 """Saturation classes."""
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -167,7 +168,8 @@ class HillSaturation(Saturation):
 
     def _transformation(self, X: np.ndarray) -> np.ndarray:
         """Generate the transformation formula."""
-        return 1 / (1 + (self.half_saturation / X) ** self.exponent)
+        eps = np.finfo(np.float64).eps
+        return 1 / (1 + (self.half_saturation / (X + eps)) ** self.exponent)
 
 
 class ExponentialSaturation(Saturation):

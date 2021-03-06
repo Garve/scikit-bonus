@@ -1,5 +1,6 @@
+"""Special tests for the time module."""
+
 import numpy as np
-from sklearn.utils.estimator_checks import check_estimator
 
 from ..time import CyclicalEncoder
 
@@ -24,9 +25,3 @@ def test_cyclical_encoder():
             ]
         ),
     )
-
-
-def test_check_estimator():
-    ce = CyclicalEncoder()
-
-    check_estimator(ce)
