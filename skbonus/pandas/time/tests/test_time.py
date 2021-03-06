@@ -77,40 +77,29 @@ def test_simple_time_features_fit_transform(get_non_continuous_data):
     )
 
 
-def test_special_day_bumps_fit_transform(get_continuous_data):
+@pytest.mark.parametrize(
+    "estimator",
+    [
+        GeneralGaussianSmoother(
+            frequency="d",
+            window=15,
+            p=1,
+            sig=1,
+        ),
+        GeneralGaussianSmoother(
+            window=15,
+            p=1,
+            sig=1,
+        ),
+    ],
+)
+def test_special_day_bumps_fit_transform(get_continuous_data, estimator):
     """Test the SpecialDayBumps."""
     continuous_data = get_continuous_data
     d = DateIndicator("black_friday_2018", ["2018-11-23"])
     X = d.fit_transform(continuous_data)
 
-    sda = GeneralGaussianSmoother(
-        frequency="d",
-        window=15,
-        p=1,
-        sig=1,
-    )
-
-    sda_transformed = sda.fit_transform(X)
-
-    np.testing.assert_almost_equal(
-        sda_transformed.loc["2018-11-21":"2018-11-25", "black_friday_2018"].values,
-        [0.053991, 0.2419707, 0.3989423, 0.2419707, 0.053991],
-    )
-
-
-def test_special_day_bumps_no_freq(get_continuous_data):
-    """Test the SpecialDayBumps with the frequency inferred."""
-    continuous_data = get_continuous_data
-    d = DateIndicator("black_friday_2018", ["2018-11-23"])
-    X = d.fit_transform(continuous_data)
-
-    sda = GeneralGaussianSmoother(
-        window=15,
-        p=1,
-        sig=1,
-    )
-
-    sda_transformed = sda.fit_transform(X)
+    sda_transformed = estimator.fit_transform(X)
 
     np.testing.assert_almost_equal(
         sda_transformed.loc["2018-11-21":"2018-11-25", "black_friday_2018"].values,
@@ -157,5 +146,3 @@ def test_power_trend_adder_fit_transform_defaults_error(get_non_continuous_data)
 
     with pytest.raises(ValueError):
         pta.fit(non_continuous_data)
-
-

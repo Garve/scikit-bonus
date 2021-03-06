@@ -4,13 +4,7 @@ import numpy as np
 import pytest
 
 from .. import ImbalancedLinearRegression
-
-test_batch = [
-    (np.array([0, 0, 3, 0, 6]), 3),
-    (np.array([1, 0, -2, 0, 4, 0, -5, 0, 6]), 2),
-    (np.array([4, -4]), 0),
-    (np.array([0.1]), 1000),
-]
+from .test__general import test_batch
 
 
 def _create_dataset(coefs, intercept, noise=0.0):
