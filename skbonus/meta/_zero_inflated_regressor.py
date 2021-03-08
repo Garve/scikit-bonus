@@ -61,6 +61,31 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         self.classifier = classifier
         self.regressor = regressor
 
+    def _fit_estimator(self, estimator_type: str, X: np.ndarray, y: np.ndarray) -> None:
+        if estimator_type == 'classifier':
+            estimator = self.classifier
+        elif estimator_type == 'regressor':
+            estimator = self.regressor
+        else:
+            raise ValueError(f"Estimator type should be `classifier` or `regressor`, got {estimator_type}.")
+
+        try:
+            check_is_fitted(estimator)
+            self.estimators_[estimator_type] = estimator
+        except NotFittedError:
+            self.estimators_[estimator_type] = clone(estimator)
+            self.estimators_[estimator_type].fit(X, y)
+
+    def _check_estimators(self) -> None:
+        if not is_classifier(self.classifier):
+            raise ValueError(
+                f"`classifier` has to be a classifier. Received instance of {type(self.classifier)} instead."
+            )
+        if not is_regressor(self.regressor):
+            raise ValueError(
+                f"`regressor` has to be a regressor. Received instance of {type(self.regressor)} instead."
+            )
+
     def fit(self, X: np.ndarray, y: np.ndarray) -> ZeroInflatedRegressor:
         """
         Fit the model.
@@ -77,39 +102,16 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         -------
         ZeroInflatedRegressor
             Fitted regressor.
-
-        Raises
-        ------
-        ValueError
-            If the estimator passed as `classifier` (`regressor`) is not a classifier (regressor).
         """
         X, y = check_X_y(X, y)
         self._check_n_features(X, reset=True)
-        if not is_classifier(self.classifier):
-            raise ValueError(
-                f"`classifier` has to be a classifier. Received instance of {type(self.classifier)} instead."
-            )
-        if not is_regressor(self.regressor):
-            raise ValueError(
-                f"`regressor` has to be a regressor. Received instance of {type(self.regressor)} instead."
-            )
+        self._check_estimators()
 
-        try:
-            check_is_fitted(self.classifier)
-            self.classifier_ = self.classifier
-        except NotFittedError:
-            self.classifier_ = clone(self.classifier)
-            self.classifier_.fit(X, y != 0)
-
-        non_zero_indices = np.where(self.classifier_.predict(X) == 1)[0]
-
+        self.estimators_ = {}
+        self._fit_estimator('classifier', X, y != 0)
+        non_zero_indices = np.where(self.estimators_['classifier'].predict(X) == 1)[0]
         if non_zero_indices.size > 0:
-            try:
-                check_is_fitted(self.regressor)
-                self.regressor_ = self.regressor
-            except NotFittedError:
-                self.regressor_ = clone(self.regressor)
-                self.regressor_.fit(X[non_zero_indices], y[non_zero_indices])
+            self._fit_estimator('regressor', X[non_zero_indices], y[non_zero_indices])
         else:
             raise ValueError(
                 "The predicted training labels are all zero, making the regressor obsolete. Change the classifier or use a plain regressor instead."
@@ -136,9 +138,9 @@ class ZeroInflatedRegressor(BaseEstimator, RegressorMixin):
         self._check_n_features(X, reset=False)
 
         output = np.zeros(len(X))
-        non_zero_indices = np.where(self.classifier_.predict(X))[0]
+        non_zero_indices = np.where(self.estimators_['classifier'].predict(X))[0]
 
         if non_zero_indices.size > 0:
-            output[non_zero_indices] = self.regressor_.predict(X[non_zero_indices])
+            output[non_zero_indices] = self.estimators_['regressor'].predict(X[non_zero_indices])
 
         return output
