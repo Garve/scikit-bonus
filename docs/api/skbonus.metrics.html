@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>skbonus.metrics package &mdash; scikit-bonus 2021 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skbonus.pandas package" href="skbonus.pandas.html" />
+    <link rel="prev" title="skbonus.meta package" href="skbonus.meta.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../index.html" class="icon icon-home"> scikit-bonus
+
+
+
+          </a>
+
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linear-models.html">Linear Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="skbonus.linear_model.html">skbonus.linear_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.meta.html">skbonus.meta package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.metrics package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.preprocessing.html">skbonus.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">scikit-bonus</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+
+          <li><a href="modules.html">skbonus</a> &raquo;</li>
+
+          <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
+
+      <li>skbonus.metrics package</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+            <a href="../_sources/api/skbonus.metrics.rst.txt" rel="nofollow"> View page source</a>
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="skbonus-metrics-package">
+<h1>skbonus.metrics package<a class="headerlink" href="#skbonus-metrics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-skbonus.metrics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.metrics" title="Permalink to this headline">¶</a></h2>
+<p>Various loss functions and metrics.</p>
+<dl class="py function">
+<dt id="skbonus.metrics.mean_absolute_deviation">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_absolute_deviation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'uniform_average'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_absolute_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MAD (Mean Absolute Deviation) of a prediction.</p>
+<p>The formula is np.mean(np.abs(y_true - y_pred)).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+<li><p><strong>multioutput</strong> (<em>{&quot;raw_values&quot;</em><em>, </em><em>&quot;uniform_average&quot;}</em><em> or </em><em>array-like</em>) – <p>Defines aggregating of multiple output values.
+Array-like value defines weights used to average errors.
+If input is list then the shape must be (n_outputs,).</p>
+<ul>
+<li><p>”raw_values”: Returns a full set of errors in case of multioutput input.</p></li>
+<li><p>”uniform_average”: Errors of all outputs are averaged with uniform weight.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MAD value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_absolute_deviation</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skbonus.metrics.mean_absolute_percentage_error">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_absolute_percentage_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'uniform_average'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_absolute_percentage_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MAPE (Mean Absolute Percentage Error) of a prediction.</p>
+<p>The formula is np.mean(np.abs((y_true - y_pred) / y_true)).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+<li><p><strong>multioutput</strong> (<em>{&quot;raw_values&quot;</em><em>, </em><em>&quot;uniform_average&quot;}</em><em> or </em><em>array-like</em>) – <p>Defines aggregating of multiple output values.
+Array-like value defines weights used to average errors.
+If input is list then the shape must be (n_outputs,).</p>
+<ul>
+<li><p>”raw_values”: Returns a full set of errors in case of multioutput input.</p></li>
+<li><p>”uniform_average”: Errors of all outputs are averaged with uniform weight.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MAPE value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_absolute_percentage_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.3333333333333333</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skbonus.metrics.mean_arctangent_absolute_percentage_error">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_arctangent_absolute_percentage_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'uniform_average'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_arctangent_absolute_percentage_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MAAPE (Mean Arctangent Absolute Percentage Error) of a prediction.</p>
+<p>The formula is np.mean(np.arctan(np.abs((y_true - y_pred) / y_true))).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+<li><p><strong>multioutput</strong> (<em>{&quot;raw_values&quot;</em><em>, </em><em>&quot;uniform_average&quot;}</em><em> or </em><em>array-like</em>) – <p>Defines aggregating of multiple output values.
+Array-like value defines weights used to average errors.
+If input is list then the shape must be (n_outputs,).</p>
+<ul>
+<li><p>”raw_values”: Returns a full set of errors in case of multioutput input.</p></li>
+<li><p>”uniform_average”: Errors of all outputs are averaged with uniform weight.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MAAPE value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_arctangent_absolute_percentage_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.3090984060005374</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>See “A new metric of absolute percentage error for intermittent demand forecasts” by Kim &amp; Kim.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skbonus.metrics.mean_directional_accuracy">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_directional_accuracy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'uniform_average'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_directional_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MDA (Mean Directional Accuracy) of a prediction.</p>
+<p>This is the mean of the vector 1_{sgn(y_true - y_true_lag_1) = sgn(y_pred - y_true_lag_1)}.
+In plain words, it computes how often the model got the direction of the time series movement right.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em><em> (</em><em>non-negative numbers</em><em>)</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample. The first entry is ignored since the MDA loss term consists
+of len(y_true) - 1 summands.</p></li>
+<li><p><strong>multioutput</strong> (<em>{&quot;raw_values&quot;</em><em>, </em><em>&quot;uniform_average&quot;}</em><em> or </em><em>array-like</em>) – <p>Defines aggregating of multiple output values.
+Array-like value defines weights used to average errors.
+If input is list then the shape must be (n_outputs,).</p>
+<ul>
+<li><p>”raw_values”: Returns a full set of errors in case of multioutput input.</p></li>
+<li><p>”uniform_average”: Errors of all outputs are averaged with uniform weight.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MDA value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_directional_accuracy</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skbonus.metrics.mean_log_quotient">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">mean_log_quotient</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'uniform_average'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.mean_log_quotient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MLQ (Mean Log Quotient) of a prediction.</p>
+<p>This is np.mean(np.log(y_pred / y_true)**2).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em><em> (</em><em>non-negative numbers</em><em>)</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+<li><p><strong>multioutput</strong> (<em>{&quot;raw_values&quot;</em><em>, </em><em>&quot;uniform_average&quot;}</em><em> or </em><em>array-like</em>) – <p>Defines aggregating of multiple output values.
+Array-like value defines weights used to average errors.
+If input is list then the shape must be (n_outputs,).</p>
+<ul>
+<li><p>”raw_values”: Returns a full set of errors in case of multioutput input.</p></li>
+<li><p>”uniform_average”: Errors of all outputs are averaged with uniform weight.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MLQ value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_log_quotient</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.1877379962427844</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>See Tofallis, C (2015) “A Better Measure of Relative Prediction Accuracy for Model Selection and Model Estimation”,
+Journal of the Operational Research Society, 66(8),1352-1362.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skbonus.metrics.symmetric_mean_absolute_percentage_error">
+<code class="sig-prename descclassname"><span class="pre">skbonus.metrics.</span></code><code class="sig-name descname"><span class="pre">symmetric_mean_absolute_percentage_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'uniform_average'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#skbonus.metrics.symmetric_mean_absolute_percentage_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the SMAPE (Symmetric Mean Absolute Percentage Error) of a prediction.</p>
+<p>The formula is np.mean(np.abs((y_true - y_pred)) / (np.abs(y_true) + np.abs(y_pred))).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>np.ndarray</em><em> (</em><em>non-negative numbers</em><em>)</em>) – Observed values.</p></li>
+<li><p><strong>y_pred</strong> (<em>np.ndarray</em>) – Predicted values.</p></li>
+<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Individual weights for each sample.</p></li>
+<li><p><strong>multioutput</strong> (<em>{&quot;raw_values&quot;</em><em>, </em><em>&quot;uniform_average&quot;}</em><em> or </em><em>array-like</em>) – <p>Defines aggregating of multiple output values.
+Array-like value defines weights used to average errors.
+If input is list then the shape must be (n_outputs,).</p>
+<ul>
+<li><p>”raw_values”: Returns a full set of errors in case of multioutput input.</p></li>
+<li><p>”uniform_average”: Errors of all outputs are averaged with uniform weight.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>SMAPE value of the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symmetric_mean_absolute_percentage_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.2222222222222222</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="skbonus.pandas.html" class="btn btn-neutral float-right" title="skbonus.pandas package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="skbonus.meta.html" class="btn btn-neutral float-left" title="skbonus.meta package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Robert Kübler.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>

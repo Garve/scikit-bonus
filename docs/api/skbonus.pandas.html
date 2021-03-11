@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>skbonus.pandas package &mdash; scikit-bonus 2021 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skbonus.pandas.time package" href="skbonus.pandas.time.html" />
+    <link rel="prev" title="skbonus.metrics package" href="skbonus.metrics.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../index.html" class="icon icon-home"> scikit-bonus
+
+
+
+          </a>
+
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linear-models.html">Linear Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="skbonus.linear_model.html">skbonus.linear_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.meta.html">skbonus.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.metrics.html">skbonus.metrics package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.pandas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.preprocessing.html">skbonus.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">scikit-bonus</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+
+          <li><a href="modules.html">skbonus</a> &raquo;</li>
+
+          <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
+
+      <li>skbonus.pandas package</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+            <a href="../_sources/api/skbonus.pandas.rst.txt" rel="nofollow"> View page source</a>
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="skbonus-pandas-package">
+<h1>skbonus.pandas package<a class="headerlink" href="#skbonus-pandas-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="skbonus.pandas.time.html">skbonus.pandas.time package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="skbonus.pandas.time.html#module-skbonus.pandas.time">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-skbonus.pandas.preprocessing">
+<span id="skbonus-pandas-preprocessing-module"></span><h2>skbonus.pandas.preprocessing module<a class="headerlink" href="#module-skbonus.pandas.preprocessing" title="Permalink to this headline">¶</a></h2>
+<p>Preprocess data for training with a focus on pandas compatibility.</p>
+<dl class="py class">
+<dt id="skbonus.pandas.preprocessing.DateTimeExploder">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.pandas.preprocessing.</span></code><code class="sig-name descname"><span class="pre">DateTimeExploder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_column</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_column</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.pandas.preprocessing.DateTimeExploder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Transform a pandas dataframe with columns (<em>, start_date, end_date) into a longer format with columns (</em>, date).</p>
+<p>This is useful if you deal with datasets that contain special time periods per row, but you need a single date per row.
+See the examples for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the new output date column.</p></li>
+<li><p><strong>start_column</strong> (<em>str</em>) – Start date of the period.</p></li>
+<li><p><strong>end_column</strong> (<em>str</em>) – End date of the period.</p></li>
+<li><p><strong>frequency</strong> (<em>str</em>) – A pandas time frequency. Can take values like “d” for day or “m” for month. A full list can
+be found on <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases">https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases</a>.
+If None, the transformer tries to infer it during fit time.</p></li>
+<li><p><strong>drop</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to drop the <cite>start_column</cite> and <cite>end_column</cite> in the transformed output.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="gp">... </span>   <span class="s2">&quot;Data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">],</span>
+<span class="gp">... </span>   <span class="s2">&quot;Start&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>   <span class="s2">&quot;End&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;2020-01-03&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span>
+<span class="go">  Data      Start        End</span>
+<span class="go">0    a 2020-01-01 2020-01-03</span>
+<span class="go">1    b 2020-01-02 2020-01-04</span>
+<span class="go">2    c 2020-01-03 2020-01-05</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DateTimeExploder</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;output_date&quot;</span><span class="p">,</span> <span class="n">start_column</span><span class="o">=</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="n">end_column</span><span class="o">=</span><span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="go">  Data output_date</span>
+<span class="go">0    a  2020-01-01</span>
+<span class="go">0    a  2020-01-02</span>
+<span class="go">0    a  2020-01-03</span>
+<span class="go">1    b  2020-01-02</span>
+<span class="go">1    b  2020-01-03</span>
+<span class="go">1    b  2020-01-04</span>
+<span class="go">2    c  2020-01-03</span>
+<span class="go">2    c  2020-01-04</span>
+<span class="go">2    c  2020-01-05</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="skbonus.pandas.preprocessing.DateTimeExploder.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#skbonus.pandas.preprocessing.DateTimeExploder" title="skbonus.pandas.preprocessing.DateTimeExploder"><span class="pre">skbonus.pandas.preprocessing.DateTimeExploder</span></a><a class="headerlink" href="#skbonus.pandas.preprocessing.DateTimeExploder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the estimator.</p>
+<p>In this special case, nothing is done.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted transformer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.pandas.preprocessing.DateTimeExploder" title="skbonus.pandas.preprocessing.DateTimeExploder">DateTimeExploder</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.pandas.preprocessing.DateTimeExploder.transform">
+<code class="sig-name descname"><span class="pre">transform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#skbonus.pandas.preprocessing.DateTimeExploder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>pd.DataFrame</em>) – A pandas dataframe with the columns <cite>self.start_column</cite> and <cite>end_column</cite> containing dates.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A longer dataframe with one date per row.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.pandas.preprocessing.OneHotEncoderWithNames">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.pandas.preprocessing.</span></code><code class="sig-name descname"><span class="pre">OneHotEncoderWithNames</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">categories='auto'</span></em>, <em class="sig-param"><span class="pre">drop=None</span></em>, <em class="sig-param"><span class="pre">sparse=True</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></em>, <em class="sig-param"><span class="pre">handle_unknown='error'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.preprocessing._encoders.OneHotEncoder</span></code></p>
+<p>Razor-thin layer around scikit-learn’s OneHotEncoder class to return a pandas dataframe with the appropriate column names.</p>
+<p>Description from the maintainers of scikit-learn:</p>
+<p>Encode categorical features as a one-hot numeric array.
+The input to this transformer should be an array-like of integers or
+strings, denoting the values taken on by categorical (discrete) features.
+The features are encoded using a one-hot (aka ‘one-of-K’ or ‘dummy’)
+encoding scheme. This creates a binary column for each category and
+returns a sparse matrix or dense array (depending on the <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
+parameter).</p>
+<p>By default, the encoder derives the categories based on the unique values
+in each feature. Alternatively, you can also specify the <cite>categories</cite>
+manually.</p>
+<p>This encoding is needed for feeding categorical data to many scikit-learn
+estimators, notably linear models and SVMs with the standard kernels.
+Note: a one-hot encoding of y labels should use a LabelBinarizer
+instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>categories</strong> (<em>'auto'</em><em> or </em><em>a list of array-like</em><em>, </em><em>default='auto'</em>) – <p>Categories (unique values) per feature:</p>
+<ul>
+<li><p>’auto’ : Determine categories automatically from the training data.</p></li>
+<li><p>list : <code class="docutils literal notranslate"><span class="pre">categories[i]</span></code> holds the categories expected in the ith
+column. The passed categories should not mix strings and numeric
+values within a single feature, and should be sorted in case of
+numeric values.</p></li>
+</ul>
+<p>The used categories can be found in the <code class="docutils literal notranslate"><span class="pre">categories_</span></code> attribute.</p>
+</p></li>
+<li><p><strong>drop</strong> (<em>{'first'</em><em>, </em><em>'if_binary'}</em><em> or </em><em>a array-like of shape</em><em> (</em><em>n_features</em><em>,</em><em>)</em><em>, </em><em>default=None</em>) – <p>Specifies a methodology to use to drop one of the categories per
+feature. This is useful in situations where perfectly collinear
+features cause problems, such as when feeding the resulting data
+into a neural network or an unregularized regression.
+However, dropping one category breaks the symmetry of the original
+representation and can therefore induce a bias in downstream models,
+for instance for penalized linear classification or regression models.</p>
+<ul>
+<li><p>None : retain all features (the default).</p></li>
+<li><p>’first’ : drop the first category in each feature. If only one
+category is present, the feature will be dropped entirely.</p></li>
+<li><p>’if_binary’ : drop the first category in each feature with two
+categories. Features with 1 or more than 2 categories are
+left intact.</p></li>
+<li><p>array : <code class="docutils literal notranslate"><span class="pre">drop[i]</span></code> is the category in feature <code class="docutils literal notranslate"><span class="pre">X[:,</span> <span class="pre">i]</span></code> that
+should be dropped.</p></li>
+</ul>
+</p></li>
+<li><p><strong>sparse</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Will return sparse matrix if set True else will return an array.</p></li>
+<li><p><strong>dtype</strong> (<em>number type</em><em>, </em><em>default=float</em>) – Desired dtype of output.</p></li>
+<li><p><strong>handle_unknown</strong> (<em>{'error'</em><em>, </em><em>'ignore'}</em><em>, </em><em>default='error'</em>) – Whether to raise an error or ignore if an unknown categorical feature
+is present during transform (default is to raise). When this parameter
+is set to ‘ignore’ and an unknown category is encountered during
+transform, the resulting one-hot encoded columns for this feature
+will be all zeros. In the inverse transform, an unknown category
+will be denoted as None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="skbonus.pandas.preprocessing.OneHotEncoderWithNames.categories_">
+<code class="sig-name descname"><span class="pre">categories_</span></code><a class="headerlink" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames.categories_" title="Permalink to this definition">¶</a></dt>
+<dd><p>The categories of each feature determined during fitting
+(in order of the features in X and corresponding with the output
+of <code class="docutils literal notranslate"><span class="pre">transform</span></code>). This includes the category specified in <code class="docutils literal notranslate"><span class="pre">drop</span></code>
+(if any).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="skbonus.pandas.preprocessing.OneHotEncoderWithNames.drop_idx_">
+<code class="sig-name descname"><span class="pre">drop_idx_</span></code><a class="headerlink" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames.drop_idx_" title="Permalink to this definition">¶</a></dt>
+<dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">drop_idx_[i]</span></code> is the index in <code class="docutils literal notranslate"><span class="pre">categories_[i]</span></code> of the category
+to be dropped for each feature.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drop_idx_[i]</span> <span class="pre">=</span> <span class="pre">None</span></code> if no category is to be dropped from the
+feature with index <code class="docutils literal notranslate"><span class="pre">i</span></code>, e.g. when <cite>drop=’if_binary’</cite> and the
+feature isn’t binary.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drop_idx_</span> <span class="pre">=</span> <span class="pre">None</span></code> if all the transformed features will be
+retained.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array of shape (n_features,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">OneHotEncoderWithNames</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="go">   A_1  A_2  B_a  B_b  B_c</span>
+<span class="go">0    1    0    1    0    0</span>
+<span class="go">1    0    1    0    1    0</span>
+<span class="go">2    1    0    0    0    1</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="skbonus.pandas.preprocessing.OneHotEncoderWithNames.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames" title="skbonus.pandas.preprocessing.OneHotEncoderWithNames"><span class="pre">skbonus.pandas.preprocessing.OneHotEncoderWithNames</span></a><a class="headerlink" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits a OneHotEncoder while also storing the dataframe column names that let us check if the columns match when calling the transform method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>pd.DataFrame</em>) – Fit the OneHotEncoder on this dataframe.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted transformer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames" title="skbonus.pandas.preprocessing.OneHotEncoderWithNames">OneHotEncoderWithNames</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.pandas.preprocessing.OneHotEncoderWithNames.transform">
+<code class="sig-name descname"><span class="pre">transform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#skbonus.pandas.preprocessing.OneHotEncoderWithNames.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>One hot encode the input dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>pd.DataFrame</em>) – Input to be one hot encoded. The column names should be the same as during the fit method,
+including the same order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A pandas dataframe containing the one hot encoded data and proper column names.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If the column names during training and transformation time are not identical.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-skbonus.pandas.utils">
+<span id="skbonus-pandas-utils-module"></span><h2>skbonus.pandas.utils module<a class="headerlink" href="#module-skbonus.pandas.utils" title="Permalink to this headline">¶</a></h2>
+<p>Deal with dataframes.</p>
+<dl class="py function">
+<dt id="skbonus.pandas.utils.make_df_output">
+<code class="sig-prename descclassname"><span class="pre">skbonus.pandas.utils.</span></code><code class="sig-name descname"><span class="pre">make_df_output</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Any</span><a class="headerlink" href="#skbonus.pandas.utils.make_df_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a scikit-learn transformer output pandas dataframes, if its inputs are dataframes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>estimator</strong> (<em>scikit-learn transformer</em>) – Some transformer with a <cite>transform</cite> method.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Transformer with an altered <cite>transform</cite> method that outputs a dataframe with the same columns and index as the input X.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>scikit-learn transformer</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-skbonus.pandas">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.pandas" title="Permalink to this headline">¶</a></h2>
+<p>This module contains classes for an easy workflow with pandas and scikit-learn.</p>
+<p>Usually methods take dataframes as an input and return dataframes again.</p>
+</div>
+</div>
+
+
+           </div>
+
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="skbonus.pandas.time.html" class="btn btn-neutral float-right" title="skbonus.pandas.time package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="skbonus.metrics.html" class="btn btn-neutral float-left" title="skbonus.metrics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Robert Kübler.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>

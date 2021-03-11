@@ -1,0 +1,37 @@
+skbonus.pandas package
+======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   skbonus.pandas.time
+
+Submodules
+----------
+
+skbonus.pandas.preprocessing module
+-----------------------------------
+
+.. automodule:: skbonus.pandas.preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+skbonus.pandas.utils module
+---------------------------
+
+.. automodule:: skbonus.pandas.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: skbonus.pandas
+   :members:
+   :undoc-members:
+   :show-inheritance:

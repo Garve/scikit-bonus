@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>skbonus.meta package &mdash; scikit-bonus 2021 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skbonus.metrics package" href="skbonus.metrics.html" />
+    <link rel="prev" title="skbonus.linear_model package" href="skbonus.linear_model.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../index.html" class="icon icon-home"> scikit-bonus
+
+
+
+          </a>
+
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linear-models.html">Linear Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="skbonus.linear_model.html">skbonus.linear_model package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.metrics.html">skbonus.metrics package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.preprocessing.html">skbonus.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">scikit-bonus</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+
+          <li><a href="modules.html">skbonus</a> &raquo;</li>
+
+          <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
+
+      <li>skbonus.meta package</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+            <a href="../_sources/api/skbonus.meta.rst.txt" rel="nofollow"> View page source</a>
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="skbonus-meta-package">
+<h1>skbonus.meta package<a class="headerlink" href="#skbonus-meta-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-skbonus.meta">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.meta" title="Permalink to this headline">¶</a></h2>
+<p>Meta estimators.</p>
+<dl class="py class">
+<dt id="skbonus.meta.ExplainableBoostingMetaRegressor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.meta.</span></code><code class="sig-name descname"><span class="pre">ExplainableBoostingMetaRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_regressor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rounds</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_points</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.meta.ExplainableBoostingMetaRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code></p>
+<p>A meta regressor that outputs a transparent, explainable model given blackbox models.</p>
+<p>It works exactly like the <cite>ExplainableBoostingRegressor</cite> by the interpretml team, but here you can choose any base regressor instead of
+being restricted to trees. For example, you can use scikit-learn’s <cite>IsotonicRegression</cite> to create a model that is
+monotonically increasing or decreasing in some of the features, while still being explainable and well-performing.</p>
+<p>See the notes below to find a nice explanation of how the algorithm works at a high level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_regressor</strong> (<em>Any</em><em>, </em><em>default=DecisionTreeRegressor</em><em>(</em><em>max_depth=4</em><em>)</em>) – A single scikit-learn compatible regressor or a list of those regressors of length <cite>n_features</cite>.</p></li>
+<li><p><strong>max_rounds</strong> (<em>int</em><em>, </em><em>default=5000</em>) – Conduct the boosting for these many rounds.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em><em>, </em><em>default=0.01</em>) – The learning rate. Should be quite small.</p></li>
+<li><p><strong>grid_points</strong> (<em>int</em><em>, </em><em>default=1000</em>) – <p>The more grid points, the</p>
+<blockquote>
+<div><ul>
+<li><p>more detailed the explanations get and</p></li>
+<li><p>the better the model performs, but</p></li>
+<li><p>the slower the algorithm gets.</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.isotonic</span> <span class="kn">import</span> <span class="n">IsotonicRegression</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">ExplainableBoostingMetaRegressor</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">base_regressor</span><span class="o">=</span><span class="p">[</span><span class="n">IsotonicRegression</span><span class="p">(),</span> <span class="n">IsotonicRegression</span><span class="p">(</span><span class="n">increasing</span><span class="o">=</span><span class="kc">False</span><span class="p">)],</span>
+<span class="gp">... </span>        <span class="n">grid_points</span><span class="o">=</span><span class="mi">20</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">0.9377382292348461</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">outputs_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># increasing in the first feature, as it should be</span>
+<span class="go">array([-4.47984456, -4.47984456, -4.47984456, -4.47984456, -3.00182713,</span>
+<span class="go">       -2.96627696, -1.60843287, -1.06601264, -0.92013822, -0.7217753 ,</span>
+<span class="go">       -0.66440783,  0.28132994,  1.33664486,  1.47592253,  1.96677286,</span>
+<span class="go">        2.88969439,  2.96292906,  4.33642573,  4.38506967,  6.42967225])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">outputs_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># decreasing in the second feature, as it should be</span>
+<span class="go">array([ 6.35605214,  6.06407947,  6.05458114,  4.8488004 ,  4.41880876,</span>
+<span class="go">        3.45056373,  2.64560385,  1.6138303 ,  0.89860987,  0.458301  ,</span>
+<span class="go">        0.33455608, -0.43609495, -1.55600464, -2.05142528, -2.42791679,</span>
+<span class="go">       -3.58961475, -4.80134218, -4.94421252, -5.94858712, -6.36828774])</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>Check out the original author’s Github at <a class="reference external" href="https://github.com/interpretml/interpret">https://github.com/interpretml/interpret</a> and <a class="reference external" href="https://www.youtube.com/watch?v=MREiHgHgl0k">https://www.youtube.com/watch?v=MREiHgHgl0k</a>
+for a great introduction into the operations of the algorithm.</p>
+<dl class="py method">
+<dt id="skbonus.meta.ExplainableBoostingMetaRegressor.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">skbonus.meta._explainable_regressor.ExplainableBoostingMetaRegressor</span><a class="headerlink" href="#skbonus.meta.ExplainableBoostingMetaRegressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The training data.</p></li>
+<li><p><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>1-dimensional</em>) – The target values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted regressor.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.meta.ExplainableBoostingMetaRegressor" title="skbonus.meta.ExplainableBoostingMetaRegressor">ExplainableBoostingMetaRegressor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.meta.ExplainableBoostingMetaRegressor.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="headerlink" href="#skbonus.meta.ExplainableBoostingMetaRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>np.ndarray</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Samples to get predictions of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> – The predicted values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.meta.ZeroInflatedRegressor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.meta.</span></code><code class="sig-name descname"><span class="pre">ZeroInflatedRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code></p>
+<p>A meta regressor for zero-inflated datasets, i.e. the targets contain a lot of zeroes.</p>
+<p><cite>ZeroInflatedRegressor</cite> consists of a classifier and a regressor.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The classifier’s task is to find of if the target is zero or not.</p></li>
+<li><p>The regressor’s task is to output a (usually positive) prediction whenever the classifier indicates that the there should be a non-zero prediction.</p></li>
+</ul>
+</div></blockquote>
+<p>The regressor is only trained on examples where the target is non-zero, which makes it easier for it to focus.</p>
+<p>At prediction time, the classifier is first asked if the output should be zero. If yes, output zero.
+Otherwise, ask the regressor for its prediction and output it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>Any</em><em>, </em><em>scikit-learn classifier</em>) – A classifier that answers the question “Should the output be zero?”.</p></li>
+<li><p><strong>regressor</strong> (<em>Any</em><em>, </em><em>scikit-learn regressor</em>) – A regressor for predicting the target. Its prediction is only used if <cite>classifier</cite> says that the output is non-zero.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">ExtraTreesClassifier</span><span class="p">,</span> <span class="n">ExtraTreesRegressor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="p">((</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">ZeroInflatedRegressor</span><span class="p">(</span>
+<span class="gp">... </span><span class="n">classifier</span><span class="o">=</span><span class="n">ExtraTreesClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span><span class="n">regressor</span><span class="o">=</span><span class="n">ExtraTreesRegressor</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">ZeroInflatedRegressor(classifier=ExtraTreesClassifier(random_state=0),</span>
+<span class="go">                      regressor=ExtraTreesRegressor(random_state=0))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="go">array([4.91483294, 0.        , 0.        , 0.04941909, 0.        ])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="skbonus.meta.ZeroInflatedRegressor.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">skbonus.meta._zero_inflated_regressor.ZeroInflatedRegressor</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The training data.</p></li>
+<li><p><strong>y</strong> (<em>np.ndarray</em><em>, </em><em>1-dimensional</em>) – The target values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted regressor.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.meta.ZeroInflatedRegressor" title="skbonus.meta.ZeroInflatedRegressor">ZeroInflatedRegressor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.meta.ZeroInflatedRegressor.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="headerlink" href="#skbonus.meta.ZeroInflatedRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>np.ndarray</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Samples to get predictions of.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> – The predicted values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="skbonus.metrics.html" class="btn btn-neutral float-right" title="skbonus.metrics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="skbonus.linear_model.html" class="btn btn-neutral float-left" title="skbonus.linear_model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Robert Kübler.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>

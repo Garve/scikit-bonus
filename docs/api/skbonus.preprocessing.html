@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>skbonus.preprocessing package &mdash; scikit-bonus 2021 documentation</title>
+
+
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="skbonus.pandas.time package" href="skbonus.pandas.time.html" />
+</head>
+
+<body class="wy-body-for-nav">
+
+
+  <div class="wy-grid-for-nav">
+
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+
+            <a href="../index.html" class="icon icon-home"> scikit-bonus
+
+
+
+          </a>
+
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+
+
+
+
+
+
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linear-models.html">Linear Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">skbonus</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbonus.html">skbonus package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="skbonus.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="skbonus.linear_model.html">skbonus.linear_model package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.meta.html">skbonus.meta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.metrics.html">skbonus.metrics package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="skbonus.pandas.html">skbonus.pandas package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">skbonus.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbonus.html#module-skbonus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+        </div>
+
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+
+      <nav class="wy-nav-top" aria-label="top navigation">
+
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">scikit-bonus</a>
+
+      </nav>
+
+
+      <div class="wy-nav-content">
+
+        <div class="rst-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+
+          <li><a href="modules.html">skbonus</a> &raquo;</li>
+
+          <li><a href="skbonus.html">skbonus package</a> &raquo;</li>
+
+      <li>skbonus.preprocessing package</li>
+
+
+      <li class="wy-breadcrumbs-aside">
+
+
+            <a href="../_sources/api/skbonus.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+
+
+      </li>
+
+  </ul>
+
+
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="skbonus-preprocessing-package">
+<h1>skbonus.preprocessing package<a class="headerlink" href="#skbonus-preprocessing-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-skbonus.preprocessing.saturation">
+<span id="skbonus-preprocessing-saturation-module"></span><h2>skbonus.preprocessing.saturation module<a class="headerlink" href="#module-skbonus.preprocessing.saturation" title="Permalink to this headline">¶</a></h2>
+<p>Saturation classes.</p>
+<dl class="py class">
+<dt id="skbonus.preprocessing.saturation.AdbudgSaturation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.preprocessing.saturation.</span></code><code class="sig-name descname"><span class="pre">AdbudgSaturation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exponent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denominator_shift</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.preprocessing.saturation.AdbudgSaturation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#skbonus.preprocessing.saturation.Saturation" title="skbonus.preprocessing.saturation.Saturation"><code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.preprocessing.saturation.Saturation</span></code></a></p>
+<p>Apply the Adbudg saturation.</p>
+<p>The formula is x ** exponent / (denominator_shift + x ** exponent).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exponent</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The exponent.</p></li>
+<li><p><strong>denominator_shift</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The shift in the denominator.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This version produces saturated values in the interval [0, 1]. You can use <cite>LinearShift</cite> from the shift module to
+bring it between some interval [a, b].</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AdbudgSaturation</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">array([[0.5       , 0.999001  ],</span>
+<span class="go">       [0.66666667, 0.999001  ],</span>
+<span class="go">       [0.75      , 0.999001  ]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.preprocessing.saturation.BoxCoxSaturation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.preprocessing.saturation.</span></code><code class="sig-name descname"><span class="pre">BoxCoxSaturation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exponent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.preprocessing.saturation.BoxCoxSaturation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#skbonus.preprocessing.saturation.Saturation" title="skbonus.preprocessing.saturation.Saturation"><code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.preprocessing.saturation.Saturation</span></code></a></p>
+<p>Apply the Box-Cox saturation.</p>
+<p>The formula is ((x + shift) ** exponent-1) / exponent if exponent!=0, else ln(x+shift).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exponent</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The exponent.</p></li>
+<li><p><strong>shift</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The shift.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BoxCoxSaturation</span><span class="p">(</span><span class="n">exponent</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">array([[ 0.82842712, 61.27716808],</span>
+<span class="go">       [ 1.46410162, 61.27716808],</span>
+<span class="go">       [ 2.        , 61.27716808]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.preprocessing.saturation.ExponentialSaturation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.preprocessing.saturation.</span></code><code class="sig-name descname"><span class="pre">ExponentialSaturation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exponent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.preprocessing.saturation.ExponentialSaturation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#skbonus.preprocessing.saturation.Saturation" title="skbonus.preprocessing.saturation.Saturation"><code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.preprocessing.saturation.Saturation</span></code></a></p>
+<p>Apply exponential saturation.</p>
+<p>The formula is 1 - exp(-exponent * x).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>exponent</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The exponent.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This version produces saturated values in the interval [0, 1]. You can use <cite>LinearShift</cite> from the shift module to
+bring it between some interval [a, b].</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ExponentialSaturation</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">array([[0.63212056, 1.        ],</span>
+<span class="go">       [0.86466472, 1.        ],</span>
+<span class="go">       [0.95021293, 1.        ]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.preprocessing.saturation.HillSaturation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.preprocessing.saturation.</span></code><code class="sig-name descname"><span class="pre">HillSaturation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exponent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_saturation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.preprocessing.saturation.HillSaturation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#skbonus.preprocessing.saturation.Saturation" title="skbonus.preprocessing.saturation.Saturation"><code class="xref py py-class docutils literal notranslate"><span class="pre">skbonus.preprocessing.saturation.Saturation</span></code></a></p>
+<p>Apply the Hill saturation.</p>
+<p>The formula is 1 / (1 + (half_saturation / x) ** exponent).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exponent</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The exponent.</p></li>
+<li><p><strong>half_saturation</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – The point of half saturation, i.e. Hill(half_saturation) = 0.5.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">HillSaturation</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">array([[0.5       , 0.999001  ],</span>
+<span class="go">       [0.66666667, 0.999001  ],</span>
+<span class="go">       [0.75      , 0.999001  ]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="skbonus.preprocessing.saturation.Saturation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.preprocessing.saturation.</span></code><code class="sig-name descname"><span class="pre">Saturation</span></code><a class="headerlink" href="#skbonus.preprocessing.saturation.Saturation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for all saturations, such as Box-Cox, Adbudg, …</p>
+<dl class="py method">
+<dt id="skbonus.preprocessing.saturation.Saturation.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">None</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#skbonus.preprocessing.saturation.Saturation" title="skbonus.preprocessing.saturation.Saturation"><span class="pre">skbonus.preprocessing.saturation.Saturation</span></a><a class="headerlink" href="#skbonus.preprocessing.saturation.Saturation.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the transformer.</p>
+<p>In this special case, nothing is done.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted transformer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.preprocessing.saturation.Saturation" title="skbonus.preprocessing.saturation.Saturation">Saturation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.preprocessing.saturation.Saturation.transform">
+<code class="sig-name descname"><span class="pre">transform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="headerlink" href="#skbonus.preprocessing.saturation.Saturation.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the saturation effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>np.ndarray</em>) – Data to be transformed.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data with saturation effect applied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-skbonus.preprocessing.time">
+<span id="skbonus-preprocessing-time-module"></span><h2>skbonus.preprocessing.time module<a class="headerlink" href="#module-skbonus.preprocessing.time" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="skbonus.preprocessing.time.CyclicalEncoder">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skbonus.preprocessing.time.</span></code><code class="sig-name descname"><span class="pre">CyclicalEncoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cycles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#skbonus.preprocessing.time.CyclicalEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Break each cyclic feature into two new features, corresponding to the representation of this feature on a circle.</p>
+<p>For example, take the hours from 0 to 23. On a normal, round  analog clock,
+these features are perfectly aligned on a circle already. You can do the same with days, month, …</p>
+<p class="rubric">Notes</p>
+<p>This method has the advantage that close points in time stay close together. See the examples below.</p>
+<p>Otherwise, if algorithms deal with the raw value for hour they cannot know that 0 and 23 are actually close.
+Another possibility is one hot encoding the hour. This has the disadvantage that it breaks the distances
+between different hours. Hour 5 and 16 have the same distance as hour 0 and 23 when doing this.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cycles</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>]</em><em>]</em><em>, </em><em>default=None</em>) – <p>Define the ranges of the cycles in the format [(col_1_min, col_1_max), (col_2_min, col_2_max), …).
+For example, use [(0, 23), (1, 7)] if your dataset consists of two columns, the first one containing hours and the second one the day of the week.</p>
+<p>If left empty, the encoder tries to infer it from the data, i.e. it looks for the minimum and maximum value of each column.</p>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">22</span><span class="p">],</span> <span class="p">[</span><span class="mi">23</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CyclicalEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="go">array([[ 0.8660254 , -0.5       ],</span>
+<span class="go">       [ 0.96592583, -0.25881905],</span>
+<span class="go">       [ 1.        ,  0.        ],</span>
+<span class="go">       [ 0.96592583,  0.25881905],</span>
+<span class="go">       [ 0.8660254 ,  0.5       ]])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="skbonus.preprocessing.time.CyclicalEncoder.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#skbonus.preprocessing.time.CyclicalEncoder" title="skbonus.preprocessing.time.CyclicalEncoder"><span class="pre">skbonus.preprocessing.time.CyclicalEncoder</span></a><a class="headerlink" href="#skbonus.preprocessing.time.CyclicalEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the estimator. In this special case, nothing is done.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Used for inferring te ranges of the data, if not provided during initialization.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted transformer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#skbonus.preprocessing.time.CyclicalEncoder" title="skbonus.preprocessing.time.CyclicalEncoder">CyclicalEncoder</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="skbonus.preprocessing.time.CyclicalEncoder.transform">
+<code class="sig-name descname"><span class="pre">transform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="headerlink" href="#skbonus.preprocessing.time.CyclicalEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the cyclic features to the dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>np.ndarray</em>) – The data with cyclical features in the columns.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The encoded data with twice as man columns as the original.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-skbonus.preprocessing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-skbonus.preprocessing" title="Permalink to this headline">¶</a></h2>
+<p>Module for preprocessing data.</p>
+</div>
+</div>
+
+
+           </div>
+
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="skbonus.pandas.time.html" class="btn btn-neutral float-left" title="skbonus.pandas.time package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Robert Kübler.
+
+    </p>
+  </div>
+
+
+
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+
+
+
+
+
+</body>
+</html>
