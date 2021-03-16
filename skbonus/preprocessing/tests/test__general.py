@@ -10,6 +10,7 @@ from ..saturation import (
     BoxCoxSaturation,
 )
 from ..time import CyclicalEncoder
+from ..convolution import GeneralGaussianSmoother, ExponentialDecaySmoother
 
 
 @pytest.mark.parametrize(
@@ -20,6 +21,8 @@ from ..time import CyclicalEncoder
         ExponentialSaturation(),
         BoxCoxSaturation(),
         CyclicalEncoder(),
+        ExponentialSaturation(),
+        GeneralGaussianSmoother(),
     ],
 )
 def test_check_estimator(estimator):
