@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Optional, Union
 
 import numpy as np
-import pandas as pd
 from scipy.signal import convolve2d
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted, check_array
@@ -48,7 +46,7 @@ class Smoother(BaseEstimator, TransformerMixin, ABC):
         None
         """
 
-    def fit(self, X: pd.DataFrame, y: None = None) -> Smoother:
+    def fit(self, X: np.ndarray, y: None = None) -> Smoother:
         """
         Fit the estimator.
 
@@ -56,7 +54,7 @@ class Smoother(BaseEstimator, TransformerMixin, ABC):
 
         Parameters
         ----------
-        X : pd.DataFrame
+        X : np.ndarray
             Used for inferring the frequency, if not provided during initialization.
 
         y : Ignored
@@ -76,18 +74,18 @@ class Smoother(BaseEstimator, TransformerMixin, ABC):
 
         return self
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: np.ndarray) -> np.ndarray:
         """
         Add the new date feature to the dataframe.
 
         Parameters
         ----------
-        X : pd.DataFrame
+        X : np.ndarray
             A pandas dataframe with a DatetimeIndex.
 
         Returns
         -------
-        pd.DataFrame
+        np.ndarray
             The input dataframe with an additional column for special dates.
         """
         check_is_fitted(self)
@@ -106,7 +104,7 @@ class Smoother(BaseEstimator, TransformerMixin, ABC):
 
 class GeneralGaussianSmoother(Smoother):
     """
-    Smooth the columns of a data frame by applying a convolution with a generalized Gaussian curve.
+    Smooth the columns of an array by applying a convolution with a generalized Gaussian curve.
 
     Parameters
     ----------
@@ -202,9 +200,9 @@ class GeneralGaussianSmoother(Smoother):
 
 class ExponentialDecaySmoother(Smoother):
     """
-    Smooth the columns of a data frame by applying a convolution with a exponentially decaying curve.
+    Smooth the columns of an array by applying a convolution with a exponentially decaying curve.
 
-    This class can be used for modelling carry over effects in marketing mix models
+    This class can be used for modelling carry over effects in marketing mix models.
 
     Parameters
     ----------
