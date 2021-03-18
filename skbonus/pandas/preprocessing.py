@@ -310,5 +310,5 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
                 }
             )
             .explode(self.name)
-            .drop(columns=self.drop * ["Start", "End"])
+            .drop(columns=self.drop * [self.start_column, self.end_column])
         )
