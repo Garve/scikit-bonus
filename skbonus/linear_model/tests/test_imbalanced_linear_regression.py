@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from .. import ImbalancedLinearRegression
 from .test__general import test_batch
+from .. import ImbalancedLinearRegression
 
 
 def _create_dataset(coefs, intercept, noise=0.0):

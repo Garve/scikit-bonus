@@ -1,9 +1,9 @@
 """Basic tests for the Meta Regressors."""
 
 import pytest
-from sklearn.utils.estimator_checks import check_estimator
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.utils.estimator_checks import check_estimator
 
 from .. import ZeroInflatedRegressor, ExplainableBoostingMetaRegressor
 

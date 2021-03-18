@@ -1,4 +1,7 @@
+"""Naive outlier methods."""
+
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -49,8 +52,7 @@ class BoxEnvelope(BaseEstimator, OutlierMixin, ABC):
 
     def score_samples(self, X: np.ndarray) -> np.ndarray:
         """
-        Predict the labels (1 inlier, -1 outlier) of X according to the
-        fitted model.
+        Predict the labels (1 inlier, -1 outlier) of X according to the fitted model.
 
         Parameters
         ----------
@@ -82,8 +84,7 @@ class BoxEnvelope(BaseEstimator, OutlierMixin, ABC):
 
     def decision_function(self, X: np.ndarray) -> np.ndarray:
         """
-        Predict the labels (1 inlier, -1 outlier) of X according to the
-        fitted model.
+        Predict the labels (1 inlier, -1 outlier) of X according to the fitted model.
 
         Parameters
         ----------
@@ -99,8 +100,7 @@ class BoxEnvelope(BaseEstimator, OutlierMixin, ABC):
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
-        Predict the labels (1 inlier, -1 outlier) of X according to the
-        fitted model.
+        Predict the labels (1 inlier, -1 outlier) of X according to the fitted model.
 
         Parameters
         ----------

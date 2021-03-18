@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from .. import QuantileRegression
 from .test__general import test_batch
+from .. import QuantileRegression
 
 
 def _create_dataset(coefs, intercept, noise=0.0):

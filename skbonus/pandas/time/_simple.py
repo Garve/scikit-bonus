@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Any, List
 
 import numpy as np
@@ -268,4 +269,6 @@ class DateIndicator(BaseEstimator, TransformerMixin):
         check_array(X, dtype=None)
         self._check_n_features(X, reset=False)
 
-        return X.assign(**{self.name: lambda df: df.index.isin(self.dates_).astype(int)})
+        return X.assign(
+            **{self.name: lambda df: df.index.isin(self.dates_).astype(int)}
+        )
