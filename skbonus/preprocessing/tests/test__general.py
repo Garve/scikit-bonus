@@ -9,8 +9,7 @@ from ..saturation import (
     ExponentialSaturation,
     BoxCoxSaturation,
 )
-from ..time import CyclicalEncoder
-from ..convolution import GeneralGaussianSmoother, ExponentialDecaySmoother
+from ..time import CyclicalEncoder, GeneralGaussianSmoother, ExponentialDecaySmoother
 
 
 @pytest.mark.parametrize(
@@ -21,7 +20,7 @@ from ..convolution import GeneralGaussianSmoother, ExponentialDecaySmoother
         ExponentialSaturation(),
         BoxCoxSaturation(),
         CyclicalEncoder(),
-        ExponentialSaturation(),
+        ExponentialDecaySmoother(),
         GeneralGaussianSmoother(),
     ],
 )
