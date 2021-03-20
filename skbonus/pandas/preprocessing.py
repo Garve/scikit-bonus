@@ -175,16 +175,16 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    name : str
-        Name of the new output date column.
-
     start_column : str
         Start date of the period.
 
     end_column : str
         End date of the period.
 
-    frequency : str
+    name : str, default="date"
+        Name of the new output date column.
+
+    frequency : str, default="d" (for day)
         A pandas time frequency. Can take values like "d" for day or "m" for month. A full list can
         be found on https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#timeseries-offset-aliases.
         If None, the transformer tries to infer it during fit time.
@@ -222,16 +222,16 @@ class DateTimeExploder(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        name: str,
         start_column: str,
         end_column: str,
-        frequency: str,
+        name: str = "date",
+        frequency: str = "d",
         drop: bool = True,
     ) -> None:
         """Initialize."""
-        self.name = name
         self.start_column = start_column
         self.end_column = end_column
+        self.name = name
         self.frequency = frequency
         self.drop = drop
 

@@ -48,9 +48,7 @@ def mean_absolute_deviation(
     >>> mean_absolute_deviation(y_true, y_pred)
     1.0
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    _, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
 
     output_errors = np.average(np.abs(y_true - y_pred), weights=sample_weight)
@@ -108,9 +106,7 @@ def mean_absolute_percentage_error(
     >>> mean_absolute_percentage_error(y_true, y_pred)
     0.3333333333333333
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    _, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
     eps = np.finfo(np.float64).eps
 
@@ -175,9 +171,7 @@ def mean_arctangent_absolute_percentage_error(
     -----
     See "A new metric of absolute percentage error for intermittent demand forecasts" by Kim & Kim.
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    _, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
     eps = np.finfo(np.float64).eps
 
@@ -239,9 +233,7 @@ def symmetric_mean_absolute_percentage_error(
     >>> symmetric_mean_absolute_percentage_error(y_true, y_pred)
     0.2222222222222222
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    _, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
     eps = np.finfo(np.float64).eps
 
@@ -305,9 +297,7 @@ def mean_directional_accuracy(
     >>> mean_directional_accuracy(y_true, y_pred)
     0.5
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    _, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
 
     output_errors = np.average(
@@ -373,9 +363,7 @@ def mean_log_quotient(
     See Tofallis, C (2015) "A Better Measure of Relative Prediction Accuracy for Model Selection and Model Estimation",
     Journal of the Operational Research Society, 66(8),1352-1362.
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    _, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
 
     output_errors = np.average(np.log(y_pred / y_true) ** 2, weights=sample_weight)
