@@ -15,6 +15,7 @@ distlib==0.3.1
 docutils==0.16
 filelock==3.0.12
 flake8==3.8.4
+interpret==0.2.4
 identify==1.5.13
 idna==2.10
 imagesize==1.2.0
