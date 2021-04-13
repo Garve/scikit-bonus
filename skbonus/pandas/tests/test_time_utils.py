@@ -1,9 +1,9 @@
-"""Test the DateTimeExploder."""
+"""Test the time utilities."""
 
 import pandas as pd
 import pytest
 
-from ..preprocessing import DateTimeExploder
+from ..time_utils import explode_date
 
 
 @pytest.fixture
@@ -23,9 +23,6 @@ def get_data():
 def test_fit_transform(get_data):
     """Test if fit_transform with a non-existent column name fails."""
     input_data = get_data
-    d = DateTimeExploder(
-        name="output_date", start_column="___Start___", end_column="End", frequency="d"
-    )
 
     with pytest.raises(KeyError):
-        d.fit_transform(input_data)
+        explode_date(input_data, start_column="___Start___", end_column="End", result_column="output_date").fit_transform(input_data)
