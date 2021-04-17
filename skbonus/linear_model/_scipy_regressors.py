@@ -543,3 +543,74 @@ class ImbalancedLinearRegression(BaseScipyMinimizeRegressor):
             )
 
         return imbalanced_loss, grad_imbalanced_loss
+
+
+class LinearRegression(BaseScipyMinimizeRegressor):
+    """
+    Just plain and simple linear regression.
+
+    The formula optimized for is
+
+        1 / (2 * n_samples) * ||y - Xw||_2 ** 2
+        + alpha * l1_ratio * ||w||_1
+        + 0.5 * alpha * (1 - l1_ratio) * ||w||_2 ** 2
+
+    Parameters
+    ----------
+    alpha : float, default=0.0
+        Constant that multiplies the penalty terms.
+
+    l1_ratio : float, default=0.0
+        The ElasticNet mixing parameter, with ``0 <= l1_ratio <= 1``. For
+        ``l1_ratio = 0`` the penalty is an L2 penalty. ``For l1_ratio = 1`` it
+        is an L1 penalty.  For ``0 < l1_ratio < 1``, the penalty is a
+        combination of L1 and L2.
+
+    fit_intercept : bool, default=True
+        Whether to calculate the intercept for this model. If set
+        to False, no intercept will be used in calculations
+        (i.e. data is expected to be centered).
+
+    copy_X : bool, default=True
+        If True, X will be copied; else, it may be overwritten.
+
+    positive : bool, default=False
+        When set to True, forces the coefficients to be positive.
+
+    Attributes
+    ----------
+    coef_ : np.ndarray of shape (n_features,)
+        Estimated coefficients of the model.
+
+    intercept_ : float
+        Independent term in the linear model. Set to 0.0 if fit_intercept = False.
+
+    Notes
+    -----
+    This implementation uses scipy.optimize.minimize, see
+    https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> np.random.seed(0)
+    >>> X = np.random.randn(100, 4)
+    >>> y = X @ np.array([1, 2, 3, 4]) + 2*np.random.randn(100)
+    >>> lr = LinearRegression().fit(X, y)
+    >>> lr.coef_
+    array([0.73202377, 1.75186186, 2.92983272, 3.96578532])
+
+    """
+
+    def _get_objective(
+        self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray
+    ) -> Tuple[Callable[[np.ndarray], float], Callable[[np.ndarray], np.ndarray]]:
+        @self._loss_regularize
+        def ols_loss(params):
+            return 0.5 * np.mean(sample_weight * np.square(y - X @ params))
+
+        @self._grad_loss_regularize
+        def grad_ols_loss(params):
+            return -(sample_weight * (y - X @ params)) @ X / X.shape[0]
+
+        return ols_loss, grad_ols_loss

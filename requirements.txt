@@ -49,8 +49,6 @@ regex==2020.11.13
 requests==2.25.1
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
--e git+https://github.com/Garve/scikit-bonus.git@84314774ff32c3d905ece3aa917d0128c73873af#egg=scikit_bonus
-scikit-bonus-garve==0.0.1
 scikit-learn==0.24.1
 scipy==1.6.0
 six==1.15.0

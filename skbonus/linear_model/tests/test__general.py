@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from sklearn.utils.estimator_checks import check_estimator
 
-from .. import LADRegression, QuantileRegression, ImbalancedLinearRegression
+from .. import LADRegression, QuantileRegression, ImbalancedLinearRegression, LinearRegression
 
 test_batch = [
     (np.array([0, 0, 3, 0, 6]), 3),
@@ -24,7 +24,7 @@ def _create_dataset(coefs, intercept, noise=0.0):
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
 @pytest.mark.parametrize(
-    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression]
+    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression, LinearRegression]
 )
 def test_coefs_and_intercept__no_noise(coefs, intercept, model):
     """Regression problems without noise."""
@@ -37,7 +37,7 @@ def test_coefs_and_intercept__no_noise(coefs, intercept, model):
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
 @pytest.mark.parametrize(
-    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression]
+    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression, LinearRegression]
 )
 def test_score(coefs, intercept, model):
     """Tests with noise on an easy problem. Parameter reconstruction should be possible."""
@@ -51,7 +51,7 @@ def test_score(coefs, intercept, model):
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
 @pytest.mark.parametrize(
-    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression]
+    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression, LinearRegression]
 )
 def test_coefs_and_intercept__no_noise_positive(coefs, intercept, model):
     """Test with only positive coefficients."""
@@ -65,7 +65,7 @@ def test_coefs_and_intercept__no_noise_positive(coefs, intercept, model):
 
 @pytest.mark.parametrize("coefs, intercept", test_batch)
 @pytest.mark.parametrize(
-    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression]
+    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression, LinearRegression]
 )
 def test_fit_intercept_and_copy(coefs, intercept, model):
     """Test if fit_intercept and copy_X work."""
@@ -77,7 +77,7 @@ def test_fit_intercept_and_copy(coefs, intercept, model):
 
 
 @pytest.mark.parametrize(
-    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression]
+    "model", [LADRegression, QuantileRegression, ImbalancedLinearRegression, LinearRegression]
 )
 def test_check_estimator(model):
     """Conduct all scikit-learn estimator tests."""
