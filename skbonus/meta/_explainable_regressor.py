@@ -195,7 +195,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         return res + self.mean_
 
     def explain_global(self, name=None):
-        """ Provides global explanation for model.
+        """Provides global explanation for model.
         Args:
             name: User-defined explanation name.
         Returns:
@@ -290,11 +290,10 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
             "global",
             internal_obj,
             feature_names=self.feature_names,
-            feature_types=['continuous'] * self.n_features_in_,
+            feature_types=["continuous"] * self.n_features_in_,
             name=self.feature_names,
             selector=self.selector,
         )
-
 
     def _feature_importances_(self, X):
         res = []
@@ -320,9 +319,9 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         return pd.DataFrame(
             index=range(X.shape[1]),
             data={
-                'Name': feature_names,
-                'Type': 'continuous',
-                '# Unique': len(np.unique(X)),
-                '% Non-zero': (X != 0).mean(),
-            }
+                "Name": feature_names,
+                "Type": "continuous",
+                "# Unique": len(np.unique(X)),
+                "% Non-zero": (X != 0).mean(),
+            },
         )
