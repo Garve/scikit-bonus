@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional, Tuple, List
 
 import numpy as np
 from scipy.optimize import minimize
@@ -61,6 +61,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         fit_intercept: bool = True,
         copy_X: bool = True,
         positive: bool = False,
+        monotone_constraints: Optional[List[int]] = None
     ) -> None:
         """Initialize."""
         self.alpha = alpha
@@ -68,6 +69,7 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         self.fit_intercept = fit_intercept
         self.copy_X = copy_X
         self.positive = positive
+        self.monotone_constraints = monotone_constraints
 
     @abstractmethod
     def _get_objective(
@@ -143,11 +145,16 @@ class BaseScipyMinimizeRegressor(BaseEstimator, RegressorMixin, ABC):
         X_, grad_loss, loss = self._prepare_inputs(X, sample_weight, y)
 
         d = X_.shape[1] - self.n_features_in_  # This is either zero or one.
-        bounds = (
-            self.n_features_in_ * [(0, np.inf)] + d * [(-np.inf, np.inf)]
-            if self.positive
-            else None
-        )
+
+        if self.monotone_constraints is not None:
+            monotone_constraints = self.monotone_constraints[:]
+        elif self.positive:
+            monotone_constraints = self.n_features_in_ * [1]
+        else:
+            monotone_constraints = self.n_features_in_ * [0]
+        bounds = [(0, np.inf) if c == 1 else (-np.inf, 0) if c == -1 else (-np.inf, np.inf) for c in
+                      monotone_constraints] + d * [(-np.inf, np.inf)]
+
         minimize_result = minimize(
             loss,
             x0=np.zeros(self.n_features_in_ + d),
