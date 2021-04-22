@@ -271,7 +271,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
 
         overall_dict = {
             "type": "univariate",
-            "names": self.feature_names,
+            "names": self.__class__,
             "scores": self.feature_importances_,
         }
         internal_obj = {
@@ -317,9 +317,12 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         if self.feature_names is None:
             self.feature_names = range(X.shape[1])
 
-        return pd.DataFrame({
-            'Name': self.feature_names,
-            'Type': 'continuous',
-            '# Unique': len(np.unique(X)),
-            '% Non-zero': (X != 0).mean(),
-        })
+        return pd.DataFrame(
+            index=range(X.shape[1]),
+            data={
+                'Name': feature_names,
+                'Type': 'continuous',
+                '# Unique': len(np.unique(X)),
+                '% Non-zero': (X != 0).mean(),
+            }
+        )
