@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -15,7 +15,6 @@ from sklearn.utils.validation import (
 )
 
 from . import utils
-from interpret.glassbox.ebm.utils import EBMUtils
 from interpret.glassbox.ebm.ebm import EBMExplanation
 
 
@@ -83,13 +82,14 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         max_rounds: int = 5000,
         learning_rate: float = 0.01,
         grid_points: int = 1000,
+        feature_names: Optional[list] = None
     ) -> None:
         """Initialize."""
         self.base_regressor = base_regressor
         self.max_rounds = max_rounds
         self.learning_rate = learning_rate
         self.grid_points = grid_points
-        self.feature_names = None
+        self.feature_names = feature_names
 
     def fit(
         self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray = None
@@ -111,7 +111,11 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
             Fitted regressor.
         """
         if isinstance(X, pd.DataFrame):
-            self.feature_names = X.columns.tolist()
+            self.feature_names_ = X.columns.tolist()
+        elif self.feature_names is not None:
+            self.feature_names_ = list(self.feature_names)
+        else:
+            self.feature_names_ = None
 
         X, y = check_X_y(X, y)
 
@@ -134,7 +138,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
                 )
 
         if self.learning_rate <= 0:
-            raise ValueError("learning_rate has to be positive!")
+            raise ValueError("learning_rate has to be strictly positive!")
 
         self.domains_ = [
             np.linspace(feature_min, feature_max, self.grid_points)
@@ -148,7 +152,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         self._fit(X, sample_weight, y_copy)
 
         self.feature_importances_ = self._feature_importances_(X)
-        self.selector = self._selector(X)
+        self.selector_ = self._selector(X)
         return self
 
     def _fit(self, X, sample_weight, y_copy):
@@ -271,7 +275,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
 
         overall_dict = {
             "type": "univariate",
-            "names": self.feature_names,
+            "names": self.feature_names_,
             "scores": self.feature_importances_,
         }
         internal_obj = {
@@ -289,10 +293,10 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         return EBMExplanation(
             "global",
             internal_obj,
-            feature_names=self.feature_names,
+            feature_names=self.feature_names_,
             feature_types=["continuous"] * self.n_features_in_,
             name='ExplainableBoostingMetaRegressor',
-            selector=self.selector,
+            selector=self.selector_,
         )
 
     def _feature_importances_(self, X):
@@ -313,12 +317,12 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         return np.mean(np.abs(res), axis=1)
 
     def _selector(self, X):
-        if self.feature_names is None:
-            self.feature_names = range(X.shape[1])
+        if self.feature_names_ is None:
+            self.feature_names_ = range(X.shape[1])
 
         return pd.DataFrame(
             data={
-                "Name": self.feature_names,
+                "Name": self.feature_names_,
                 "Type": "continuous",
                 "# Unique": len(np.unique(X)),
                 "% Non-zero": (X != 0).mean(),
