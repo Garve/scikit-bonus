@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
+import pandas as pd
+
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.utils.validation import (
@@ -11,6 +13,10 @@ from sklearn.utils.validation import (
     check_array,
     _check_sample_weight,
 )
+
+from . import utils
+from interpret.glassbox.ebm.utils import EBMUtils
+from interpret.glassbox.ebm.ebm import EBMExplanation
 
 
 class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
@@ -83,6 +89,7 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         self.max_rounds = max_rounds
         self.learning_rate = learning_rate
         self.grid_points = grid_points
+        self.feature_names = None
 
     def fit(
         self, X: np.ndarray, y: np.ndarray, sample_weight: np.ndarray = None
@@ -103,7 +110,11 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
         ExplainableBoostingMetaRegressor
             Fitted regressor.
         """
+        if isinstance(X, pd.DataFrame):
+            self.feature_names = X.columns.tolist()
+
         X, y = check_X_y(X, y)
+
         sample_weight = _check_sample_weight(sample_weight, X)
         self._check_n_features(X, reset=True)
 
@@ -136,6 +147,8 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
 
         self._fit(X, sample_weight, y_copy)
 
+        self.feature_importances_ = self._feature_importances_(X)
+        self.selector = self._selector(X)
         return self
 
     def _fit(self, X, sample_weight, y_copy):
@@ -180,3 +193,133 @@ class ExplainableBoostingMetaRegressor(BaseEstimator, RegressorMixin):
             res += feature_outputs
 
         return res + self.mean_
+
+    def explain_global(self, name=None):
+        """ Provides global explanation for model.
+        Args:
+            name: User-defined explanation name.
+        Returns:
+            An explanation object,
+            visualizing feature-value pairs as horizontal bar chart.
+        """
+
+        lower_bound = np.inf
+        upper_bound = -np.inf
+        for feature_group_index in range(self.n_features_in_):
+            errors = utils.fake_std(self)[feature_group_index]
+            scores = self.outputs_[feature_group_index]
+
+            lower_bound = min(lower_bound, np.min(scores - errors))
+            upper_bound = max(upper_bound, np.max(scores + errors))
+
+        bounds = (lower_bound, upper_bound)
+
+        # Add per feature graph
+        data_dicts = []
+        feature_list = []
+        density_list = []
+        for feature_group_index, feature_indexes in enumerate(
+            [[i] for i in range(self.n_features_in_)]
+        ):
+            model_graph = self.outputs_[feature_group_index]
+
+            # NOTE: This uses stddev. for bounds, consider issue warnings.
+            errors = utils.fake_std(self)[feature_group_index]
+
+            if len(feature_indexes) == 1:
+                # hack. remove the 0th index which is for missing values
+                model_graph = model_graph[1:]
+                errors = errors[1:]
+
+                bin_labels = self.domains_[feature_indexes[0]]
+
+                scores = list(model_graph)
+                upper_bounds = list(model_graph + errors)
+                lower_bounds = list(model_graph - errors)
+                density_dict = {
+                    "names": utils.get_fake_hist_edges(self, feature_indexes[0]),
+                    "scores": utils.get_fake_hist_counts(self, feature_indexes[0]),
+                }
+
+                feature_dict = {
+                    "type": "univariate",
+                    "names": bin_labels,
+                    "scores": scores,
+                    "scores_range": bounds,
+                    "upper_bounds": upper_bounds,
+                    "lower_bounds": lower_bounds,
+                }
+                feature_list.append(feature_dict)
+                density_list.append(density_dict)
+
+                data_dict = {
+                    "type": "univariate",
+                    "names": bin_labels,
+                    "scores": model_graph,
+                    "scores_range": bounds,
+                    "upper_bounds": model_graph + errors,
+                    "lower_bounds": model_graph - errors,
+                    "density": {
+                        "names": utils.get_fake_hist_edges(self, feature_indexes[0]),
+                        "scores": utils.get_fake_hist_counts(self, feature_indexes[0]),
+                    },
+                }
+
+                data_dicts.append(data_dict)
+            else:
+                raise Exception("Interactions greater than 2 not supported.")
+
+        overall_dict = {
+            "type": "univariate",
+            "names": self.feature_names,
+            "scores": self.feature_importances_,
+        }
+        internal_obj = {
+            "overall": overall_dict,
+            "specific": data_dicts,
+            "mli": [
+                {
+                    "explanation_type": "ebm_global",
+                    "value": {"feature_list": feature_list},
+                },
+                {"explanation_type": "density", "value": {"density": density_list}},
+            ],
+        }
+
+        return EBMExplanation(
+            "global",
+            internal_obj,
+            feature_names=self.feature_names,
+            feature_types=['continuous'] * self.n_features_in_,
+            name=self.feature_names,
+            selector=self.selector,
+        )
+
+
+    def _feature_importances_(self, X):
+        res = []
+        X_ = check_array(X)
+        n = len(X_)
+
+        for feature_number in range(self.n_features_in_):
+            grid = self.domains_[feature_number]
+            feature_outputs = self.outputs_[feature_number][
+                np.abs(
+                    np.repeat(grid.reshape(-1, 1), n, axis=1) - X_[:, feature_number]
+                ).argmin(axis=0)
+            ]
+
+            res.append(feature_outputs)
+
+        return np.mean(np.abs(res), axis=1)
+
+    def _selector(self, X):
+        if self.feature_names is None:
+            self.feature_names = range(X.shape[1])
+
+        return pd.DataFrame({
+            'Name': self.feature_names,
+            'Type': 'continuous',
+            '# Unique': len(np.unique(X)),
+            '% Non-zero': (X != 0).mean(),
+        })
